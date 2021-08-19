@@ -7,7 +7,7 @@
  */
 struct env_settings
 {
-    const unsigned MaxNeuron;
+    const uint16_t MaxNeuron;
     const double fitnessGoal;
 } ENV_SETTINGS = { 200, 14.0 };
 

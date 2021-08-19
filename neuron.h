@@ -1,8 +1,6 @@
 #ifndef NEURON_H
 #define NEURON_H
 
-#include <stdbool.h>
-
 typedef struct Neuron Neuron;
 typedef enum NeuronType NeuronType;
 typedef struct Link Link;
@@ -18,11 +16,11 @@ enum NeuronType
 };
 
 /*
- * Represent a connection between a two nodes.
+ * Represent a connection between two nodes.
  */ 
 struct Link
 {
-    struct Link* next;
+    Link* next;
     Neuron* source;
     double weight;
     bool activated;
@@ -33,14 +31,14 @@ struct Link
  */
 struct Neuron 
 {
-    unsigned id;
+    uint16_t id;
     bool enabled;
-    double (*activationFunc)(double input);
-    double bias;
-    NeuronType type;
-    Link* links;
-    double value;
     bool activated;
+    NeuronType type;
+    double (*activationFunc)(double input);
+    double value;
+    double bias;
+    Link* links;
 
 };
 
