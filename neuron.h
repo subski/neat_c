@@ -1,6 +1,10 @@
 #ifndef NEURON_H
 #define NEURON_H
 
+#include <stdbool.h>
+#include <stdint.h>
+#include "llist.h"
+
 typedef struct Neuron Neuron;
 typedef enum NeuronType NeuronType;
 typedef struct Link Link;
@@ -10,9 +14,9 @@ typedef struct Link Link;
  */
 enum NeuronType
 {
-    INPUT,
-    OUTPUT,
-    HIDDEN
+    INPUT_TYPE,
+    OUTPUT_TYPE,
+    HIDDEN_TYPE
 };
 
 /*
@@ -20,7 +24,6 @@ enum NeuronType
  */ 
 struct Link
 {
-    Link* next;
     Neuron* source;
     double weight;
     bool activated;
@@ -38,8 +41,7 @@ struct Neuron
     double (*activationFunc)(double input);
     double value;
     double bias;
-    Link* links;
-
+    llist* links;
 };
 
 #endif
