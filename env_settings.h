@@ -5,12 +5,11 @@
 /*
  * Global settings for the evolution.
  */
-struct env_settings
-{
-    const uint16_t MaxNeuron;
-    const double fitnessGoal;
-} ENV_SETTINGS = { 200, 14.0 };
 
-typedef struct env_settings env_settings;
+
+#define MAX_NEURON 200
+#define FITNESS_GOAL 14.0
+#define INPUT_SIZE 3
+#define OUTPUT_SIZE 2
 
 #endif
