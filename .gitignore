@@ -1,3 +1,5 @@
 *.vscode
 *.exe
 *.code-workspace
+/Debug
+/.vs/neat_c/v16
