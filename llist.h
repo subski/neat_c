@@ -5,12 +5,14 @@ typedef struct llist llist;
 
 struct llist
 {
-    llist* next;
     void* data;
+    llist* next;
 };
 
-void push(llist* list, void* data_ptr);
+void llpush(llist** list, void* data_ptr);
 
-void append(llist* list, void* data_ptr);
+void llappend(llist* list, void* data_ptr);
+
+void lldestroy_list(llist** head);
 
 #endif

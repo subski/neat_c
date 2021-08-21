@@ -3,49 +3,60 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <stdbool.h>
 
-void push(llist* list, void* data_ptr)
+void llpush(llist** head, void* data_ptr)
 {
-    assert(list != NULL || data_ptr != NULL);
-
-    if (list == NULL) {
-        fprintf(stderr, "Cannot push data to linked list, the list pointer is NULL.");
+    if (head == NULL) {
+        fprintf(stderr, "List pointer is NULL.");
         return;
     }
     
-    llist* buffer = malloc(sizeof(llist));
+    llist* new = malloc(sizeof(llist));
     
-    if (buffer == NULL) {
+    if (new == NULL) {
         fprintf(stderr, "Allocation error.");
         return;
     }
-
-    *buffer = (llist){ list->next, list->data };
-    *list = (llist){ buffer, data_ptr };
+    new->next = *head;
+    new->data = data_ptr;
+    *head = new;
 }
 
-void append(llist* list, void* data_ptr)
+void llappend(llist* node, void* data_ptr)
 {
-    assert(list != NULL || data_ptr != NULL);
-
-    if (list == NULL) {
-        fprintf(stderr, "Cannot push data to linked list, the list pointer is NULL.");
+    if (node == NULL) {
+        fprintf(stderr, "List pointer is NULL.");
         return;
     }
 
-    llist* item = list;
-    while (item->next != NULL)
+    while (node->next != NULL)
     {
-        item = item->next;
+        node = node->next;
     }
 
-    llist* buffer = malloc(sizeof(llist));
+    llist* new = malloc(sizeof(llist));
 
-    if (buffer == NULL) {
+    if (new == NULL) {
         fprintf(stderr, "Allocation error.");
         return;
     }
 
-    *buffer = (llist) { NULL, data_ptr };
-    item->next = buffer;
+    new->data = data_ptr;
+    new->next = NULL;
+    node->next = new;
+}
+
+void lldestroy_list(llist** head)
+{
+    llist* current = *head;
+    llist* next;
+
+    while (current != NULL)
+    {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+    *head = NULL;
 }
