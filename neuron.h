@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "llist.h"
+#include "clist.h"
 
 typedef struct Neuron Neuron;
 typedef enum NeuronType NeuronType;
@@ -41,7 +41,7 @@ struct Neuron
     double (*activationFunc)(double input);
     double value;
     double bias;
-    llist* links;
+    clist* links;
 };
 
 #endif
