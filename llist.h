@@ -5,8 +5,8 @@ typedef struct llist llist;
 
 struct llist
 {
-    void* data;
-    llist* next;
+	void* data;
+	llist* next;
 };
 
 void llpush(llist** list, void* data_ptr);

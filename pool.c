@@ -22,7 +22,7 @@ void* request(pool** _pool, size_t type)
 
 	pool* pool_node = (*_pool)->next;
 
-	result = pool_node->data;	
+	result = pool_node->data;
 
 	if (*_pool == (*_pool)->next)
 	{

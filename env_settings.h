@@ -6,7 +6,6 @@
  * Global settings for the evolution.
  */
 
-
 #define MAX_NEURON 200
 #define FITNESS_GOAL 14.0
 #define INPUT_SIZE 3

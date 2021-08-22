@@ -33,7 +33,7 @@ void clear(clist** node)
 
 	clist* current = *node;
 	clist* next;
-	do		
+	do
 	{
 		next = current->next;
 		free(current);
@@ -70,5 +70,5 @@ uint16_t len(clist* node)
 	CLIST_ITER(node, iter,
 		i++;
 	)
-	return i;
+		return i;
 }
