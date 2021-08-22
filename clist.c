@@ -38,7 +38,37 @@ void clear(clist** node)
 		next = current->next;
 		free(current);
 		current = next;
-	} while (current != *node);
+	} while (next != *node);
 
 	*node = NULL;
+}
+
+void clean(clist** node)
+{
+	if (*node == NULL)
+		return;
+
+	clist* current = *node;
+	clist* next;
+	do
+	{
+		next = current->next;
+		free(current->data);
+		free(current);
+		current = next;
+	} while (next != *node);
+
+	*node = NULL;
+}
+
+uint16_t len(clist* node)
+{
+	if (node == NULL)
+		return 0;
+
+	uint16_t i = 0;
+	CLIST_ITER(node, iter,
+		i++;
+	)
+	return i;
 }

@@ -27,4 +27,8 @@ bool insert(clist** node, void* data);
 
 void clear(clist** node);
 
-#endif // !CLIST_H
+void clean(clist** node);
+
+uint16_t len(clist* node);
+
+#endif
