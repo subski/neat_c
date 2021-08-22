@@ -24,6 +24,7 @@
     <ClCompile Include="llist.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="neuron.c" />
+    <ClCompile Include="pool.c" />
     <ClCompile Include="test.c" />
   </ItemGroup>
   <ItemGroup>
@@ -32,6 +33,7 @@
     <ClInclude Include="env_settings.h" />
     <ClInclude Include="llist.h" />
     <ClInclude Include="neuron.h" />
+    <ClInclude Include="pool.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
