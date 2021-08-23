@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "clist.h"
 #include "utils.h"
 
 void* request(pool** _pool, size_t type)

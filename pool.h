@@ -1,11 +1,9 @@
-#pragma once
 #ifndef POOL_H
 #define POOL_H
 
 #include <stddef.h>
 
-#include "clist.h"
-
+typedef struct clist clist;
 typedef clist pool;
 
 /*

@@ -16,7 +16,7 @@ void llpush(llist** head, void* data_ptr)
 	llist* new = malloc(sizeof(llist));
 	MCHECK(new, )
 
-	new->next = *head;
+		new->next = *head;
 	new->data = data_ptr;
 	*head = new;
 }
@@ -36,7 +36,7 @@ void llappend(llist* node, void* data_ptr)
 	llist* new = malloc(sizeof(llist));
 	MCHECK(new, )
 
-	new->data = data_ptr;
+		new->data = data_ptr;
 	new->next = NULL;
 	node->next = new;
 }
