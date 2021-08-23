@@ -23,6 +23,7 @@
     <ClCompile Include="clist.c" />
     <ClCompile Include="llist.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="neurolution.c" />
     <ClCompile Include="neuron.c" />
     <ClCompile Include="pool.c" />
     <ClCompile Include="test.c">
@@ -35,6 +36,7 @@
     <ClInclude Include="clist.h" />
     <ClInclude Include="env_settings.h" />
     <ClInclude Include="llist.h" />
+    <ClInclude Include="neurolution.h" />
     <ClInclude Include="neuron.h" />
     <ClInclude Include="pool.h" />
     <ClInclude Include="utils.h" />

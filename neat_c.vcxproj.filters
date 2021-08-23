@@ -32,6 +32,9 @@
     <ClCompile Include="pool.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="neurolution.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="neuron.h">
@@ -53,6 +56,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="neurolution.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
