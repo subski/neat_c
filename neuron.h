@@ -1,8 +1,5 @@
-#pragma once
 #ifndef NEURON_H
 #define NEURON_H
-
-#include "utils.h"
 
 #define bool _Bool
 
@@ -36,7 +33,7 @@ struct Link
  */
 struct Neuron
 {
-	uint16_t id;
+	unsigned short id;
 	bool enabled;
 	bool activated;
 	NeuronType type;
@@ -45,5 +42,16 @@ struct Neuron
 	double bias;
 	clist* links;
 };
+
+void createNeuron(
+	Neuron* neuron,
+	unsigned short id,
+	bool enabled,
+	bool activated,
+	NeuronType type,
+	double (*activationFunc)(double),
+	double value,
+	double bias,
+	clist* links);
 
 #endif
