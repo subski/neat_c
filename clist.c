@@ -2,15 +2,14 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
+
+#include "utils.h"
 
 bool insert(clist** node, void* data)
 {
 	clist* new_node = malloc(sizeof(clist));
-	if (new_node == NULL)
-	{
-		perror("malloc error in clist => insert()");
-		return false;
-	}
+	mcheck(new_node, false);
 
 	if (*node == NULL) // empty list
 	{

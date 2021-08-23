@@ -16,13 +16,12 @@
 #include "neuron.h"
 #include "agent.h"
 
-static pool* AGENTPOOL = NULL;
-static pool* NEURONPOOL = NULL;
-static pool* LINKPOOL = NULL;
+static pool* P_AGENT = NULL;
+static pool* P_NEURON = NULL;
+static pool* P_LINK = NULL;
 
 int main(void)
 {
-
 	system("pause");
 	return EXIT_SUCCESS;
 }

@@ -5,7 +5,6 @@
 
 int _main(void)
 {
-	
 	return EXIT_SUCCESS;
 }
 

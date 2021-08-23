@@ -2,8 +2,9 @@
 #ifndef NEURON_H
 #define NEURON_H
 
-#include <stdbool.h>
-#include <stdint.h>
+#include "utils.h"
+
+#define bool _Bool
 
 typedef struct clist clist;
 

@@ -3,17 +3,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "utils.h"
+
 void* request(pool** _pool, size_t type)
 {
 	void* result;
 	if (*_pool == NULL) // empty pool
 	{
 		result = malloc(type);
-		if (result == NULL)
-		{
-			perror("malloc error");
-			return NULL;
-		}
+		mcheck(result, NULL);
 		return result;
 	}
 

@@ -2,8 +2,9 @@
 #ifndef CLIST_H
 #define CLIST_H
 
-#include <stdbool.h>
-#include <stdint.h>
+#include "utils.h"
+
+#define bool _Bool
 
 #define next(node) node = node->next
 #define CLIST_ITER(node, iter, code)	\
@@ -13,7 +14,6 @@
 		code							\
 		next(iter);						\
 	} while (iter != node);
-
 
 typedef struct clist clist;
 
