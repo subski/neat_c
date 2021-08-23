@@ -9,7 +9,7 @@
 bool insert(clist** node, void* data)
 {
 	clist* new_node = malloc(sizeof(clist));
-	mcheck(new_node, false);
+	MCHECK(new_node, false);
 
 	if (*node == NULL) // empty list
 	{

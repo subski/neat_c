@@ -11,7 +11,8 @@ void* request(pool** _pool, size_t type)
 	if (*_pool == NULL) // empty pool
 	{
 		result = malloc(type);
-		mcheck(result, NULL);
+		MCHECK(result, NULL);
+
 		return result;
 	}
 

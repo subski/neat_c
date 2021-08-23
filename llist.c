@@ -2,8 +2,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <assert.h>
 #include <stdbool.h>
+
+#include "utils.h"
 
 void llpush(llist** head, void* data_ptr)
 {
@@ -13,11 +14,8 @@ void llpush(llist** head, void* data_ptr)
 	}
 
 	llist* new = malloc(sizeof(llist));
+	MCHECK(new, )
 
-	if (new == NULL) {
-		fprintf(stderr, "Allocation error.");
-		return;
-	}
 	new->next = *head;
 	new->data = data_ptr;
 	*head = new;
@@ -36,11 +34,7 @@ void llappend(llist* node, void* data_ptr)
 	}
 
 	llist* new = malloc(sizeof(llist));
-
-	if (new == NULL) {
-		fprintf(stderr, "Allocation error.");
-		return;
-	}
+	MCHECK(new, )
 
 	new->data = data_ptr;
 	new->next = NULL;
