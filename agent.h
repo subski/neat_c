@@ -1,4 +1,3 @@
-#pragma once
 #ifndef AGENT_H
 #define AGENT_H
 
@@ -17,5 +16,9 @@ struct Agent
 	clist* neurons;
 	clist* links;
 };
+
+Agent* createBasicAgent();
+
+void free_agent(Agent** agent);
 
 #endif
