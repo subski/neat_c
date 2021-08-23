@@ -1,5 +1,8 @@
 #include "clist.h"
 
+#include <stdlib.h>
+#include <stdio.h>
+
 bool insert(clist** node, void* data)
 {
 	clist* new_node = malloc(sizeof(clist));

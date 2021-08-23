@@ -1,3 +1,4 @@
+#pragma once
 #ifndef ENV_SETTINGS_H
 #define ENV_SETTINGS_H
 

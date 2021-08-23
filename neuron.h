@@ -1,23 +1,24 @@
+#pragma once
 #ifndef NEURON_H
 #define NEURON_H
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "clist.h"
+
+typedef struct clist clist;
 
 typedef struct Neuron Neuron;
-typedef enum NeuronType NeuronType;
 typedef struct Link Link;
 
 /*
  * Helper to differenciate different neurons type.
  */
-enum NeuronType
+typedef enum NeuronType
 {
 	INPUT_TYPE,
 	OUTPUT_TYPE,
 	HIDDEN_TYPE
-};
+} NeuronType;
 
 /*
  * Represent a connection between two nodes.

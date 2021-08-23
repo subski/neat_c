@@ -1,9 +1,12 @@
 #include "pool.h"
 
+#include <stdlib.h>
+#include <string.h>
+
 void* request(pool** _pool, size_t type)
 {
 	void* result;
-	if (*_pool == NULL)
+	if (*_pool == NULL) // empty pool
 	{
 		result = malloc(type);
 		if (result == NULL)

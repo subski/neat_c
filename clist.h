@@ -1,14 +1,11 @@
+#pragma once
 #ifndef CLIST_H
 #define CLIST_H
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #define next(node) node = node->next
-
 #define CLIST_ITER(node, iter, code)	\
 	clist* iter = node;					\
 	do									\
@@ -17,11 +14,14 @@
 		next(iter);						\
 	} while (iter != node);
 
-typedef struct clist
+
+typedef struct clist clist;
+
+struct clist
 {
 	void* data;
-	struct clist* next;
-} clist;
+	clist* next;
+};
 
 bool insert(clist** node, void* data);
 

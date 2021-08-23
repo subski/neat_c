@@ -1,9 +1,11 @@
+#pragma once
 #ifndef AGENT_H
 #define AGENT_H
 
-#include "clist.h"
-#include "neuron.h"
 #include "env_settings.h"
+
+typedef struct Neuron Neuron;
+typedef struct clist clist;
 
 typedef struct Agent Agent;
 
