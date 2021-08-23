@@ -1,8 +1,5 @@
-#pragma once
 #ifndef CLIST_H
 #define CLIST_H
-
-#include "utils.h"
 
 #define bool _Bool
 
@@ -23,12 +20,17 @@ struct clist
 	clist* next;
 };
 
+// TODO: Add pooling for Cycled List structs
+// static clist* P_CLIST = 0;
+
 bool insert(clist** node, void* data);
 
 void clear(clist** node);
 
 void clean(clist** node);
 
-uint16_t len(clist* node);
+void pclean(clist** node, clist** pool);
+
+unsigned short len(clist* node);
 
 #endif
