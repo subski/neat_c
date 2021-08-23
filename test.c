@@ -1,80 +1,48 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <Windows.h> // used for Sleep(), use <unistd.h> for linux(?)
-
-typedef struct LinkedList
-{
-	void* data;
-	struct LinkedList* next;
-} LinkedList;
-
-void push(LinkedList** head, void* data_ptr)
-{
-	LinkedList* new = malloc(sizeof(LinkedList));
-	new->next = *head;
-	new->data = data_ptr;
-
-	*head = new;
-}
-
-void append(LinkedList* node, void* data_ptr)
-{
-	while (node->next != NULL)
-		node = node->next;
-
-	LinkedList* new = malloc(sizeof(LinkedList));
-	new->data = data_ptr;
-	new->next = NULL;
-
-	node->next = new;
-}
-
-void destroy_list(LinkedList** head)
-{
-	LinkedList* current_node = *head;
-	LinkedList* next_node;
-
-	//int i = 0;
-
-	while (current_node != NULL)
-	{
-		next_node = current_node->next;
-		free(current_node);
-		current_node = next_node;
-		//i++;
-	}
-	///printf("%d\n", i);
-	*head = NULL;
-}
+#include "pool.h"
+#include "neuron.h"
 
 int _main(void)
 {
-	// create initial head for the list
-	LinkedList* list;
+	
+	return EXIT_SUCCESS;
+}
 
-	for (int j = 0; j < 10; j++)
+void test_pool()
+{
+	pool* neuron_pool = NULL;
+	clist* n = NULL;
+
+	for (int j = 0; j < 100; j++)
 	{
-		list = malloc(sizeof(LinkedList));
-		list->next = NULL;
-		list->data = NULL;
-
-		Sleep(1000); // added delay to better see the memory usage
-
-		// trying to fill the list with both methods and compare the result of memory usage
-		for (int i = 0; i < 20000; i++)
+		for (int i = 0; i < 1000; i++)
 		{
-			append(list, NULL);
+			insert(&n, request(&neuron_pool, sizeof(Neuron)));
+		}
+		printf("pool size: %d\n", len(neuron_pool));
+		printf("n list size: %d\n", len(n));
 
-			push(&list, NULL);
+		for (int i = 0; i < 500; i++)
+		{
+			clist* node = n->next;
+			n->next = node->next;
+			pfree(&neuron_pool, &node->data, 0);
+			free(node);
 		}
 
-		Sleep(1000);
+		printf("pool size: %d\n", len(neuron_pool));
+		printf("n list size: %d\n", len(n));
 
-		// trying to free all struct LinkedList
-		destroy_list(&list);
+		for (int i = 0; i < 250; i++)
+		{
+			insert(&n, request(&neuron_pool, sizeof(Neuron)));
+		}
 
-		Sleep(3000);
+		printf("pool size: %d\n", len(neuron_pool));
+		printf("n list size: %d\n", len(n));
+
+		clean(&n);
+		clean(&neuron_pool);
 	}
-	system("Pause");
-	return EXIT_SUCCESS;
 }
