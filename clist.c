@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#include "pcg_basic.h"
 #include "utils.h"
 
 bool insert(clist** node, void* data)
@@ -81,14 +82,31 @@ void pclean(clist** node, clist** pool)
 	*node = NULL;
 }
 
-unsigned short len(clist* node)
+unsigned int len(clist* node)
 {
 	if (node == NULL)
 		return 0;
 
-	unsigned short i = 0;
+	unsigned int i = 0;
 	CLIST_ITER(node, iter,
 		i++;
 	)
 		return i;
+}
+
+void* random(clist* node)
+{
+	if (node == NULL)
+		return NULL;
+
+	unsigned int index = pcg32_boundedrand(len(node));
+	
+	unsigned int i = 0;
+	CLIST_ITER(node, iter,
+		if (index == i)
+			return iter->data;
+		i++;
+	)
+
+	return NULL;
 }
