@@ -43,7 +43,7 @@ struct Neuron
 	clist* links;
 };
 
-void createNeuron(
+Neuron* createNeuron_f(
 	Neuron* neuron,
 	unsigned short id,
 	bool enabled,
@@ -53,5 +53,7 @@ void createNeuron(
 	double value,
 	double bias,
 	clist* links);
+
+Neuron* createNeuron(Neuron* neuron, unsigned short id);
 
 #endif

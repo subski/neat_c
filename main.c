@@ -5,22 +5,24 @@
 #include <assert.h>
 #include <string.h>
 #include <errno.h>
-
 #include <time.h>
 
 #include <Windows.h>
 
-#include "utils.h"
-#include "env_settings.h"
-#include "clist.h"
-#include "llist.h"
-#include "pool.h"
-#include "neuron.h"
-#include "agent.h"
-#include "neurolution.h"
-#include "mutations.h"
-#include "pcg_basic.h"
-#include "malloc_dbg.h"
+#include "tools/utils.h"
+#include "tools/pcg_basic.h"
+#include "tools/malloc_dbg.h"
+
+#include "data_structures/clist.h"
+#include "data_structures/pool.h"
+#include "data_structures/vector.h"
+
+#include "neurolution/env_settings.h"
+#include "neurolution/neuron.h"
+#include "neurolution/agent.h"
+#include "neurolution/neurolution.h"
+#include "neurolution/mutations.h"
+
 
 void onExit(void)
 {
@@ -34,45 +36,21 @@ void onExit(void)
 	system("pause");
 }
 
-typedef struct pair
+struct pair
 {
 	int item1;
 	int item2;
-} pair;
+};
 
-void print_pair(pair _pair)
+struct pair get_pair(int N[], int count, int index)
 {
-	printf("%d -> %d\n", _pair.item1, _pair.item2);
-}
-
-void print_pairs(pair* rotating_pairs, unsigned int size)
-{
-	for (unsigned int i = 0; i < size; i++)
+	int d = 1;
+	while (1)
 	{
-		printf("%d -> %d\n", rotating_pairs[i].item1, rotating_pairs[i].item2);
+		if (index < count - d)
+			return (struct pair) { N[index], N[index + d] };
+		index -= (count - d++);
 	}
-}
-
-pair* goto_schedule(unsigned int n, pair* rotating_pairs, unsigned int size)
-{
-	if (n == 0 || n > size * 2)
-		return;
-
-	pair* new_pairs = malloc(sizeof(pair) * (size + 1));
-
-	if (n > size)
-	{
-		new_pairs[0].item2 = rotating_pairs[size - (n - size)].item1;
-	}
-	else
-	{
-		new_pairs[0].item2 = rotating_pairs[n - 1].item2;
-	}
-
-	//for (unsigned int i = 0; i < size; i++)
-	//{
-	//	new_pairs[i + 1] = (pair){ numbers[2 + i], numbers[size - 1 - i] };
-	//}
 }
 
 int main(void)
@@ -80,27 +58,60 @@ int main(void)
 	atexit(&onExit);
 	pcg32_srandom((unsigned long long)time(NULL), (unsigned long long) & printf);
 
-	/*Agent* agent = createBasicAgent();
-	mutate_link_add(agent);
-	free_agent(&agent);*/
 
-	unsigned int size = 10;
-	unsigned int numbers[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+	//vector v = vec_init(sizeof(unsigned short), 0);
 
-	unsigned int rotating_pairs_length = (size) / 2;
-	pair* rotating_pairs = malloc(sizeof(pair) * rotating_pairs_length);
-	rotating_pairs[0] = (pair){ numbers[0], numbers[1] };
 
-	for (unsigned int i = 1; i < rotating_pairs_length-1; i++)
-	{
-		rotating_pairs[i] = (pair){ numbers[i+1], numbers[size - 1 - i] };
-	}
+	// Vector tests
 
-	//goto_schedule(i, &locked_pair, rotating_pairs, rotating_pairs_length);
-	//print_pair(locked_pair);
-	print_pairs(rotating_pairs, rotating_pairs_length);
+	vector v = vec_init(sizeof(unsigned short), 4);
 
-	free(rotating_pairs);
+	((unsigned short*)v.start)[0] = 50;
+	((unsigned short*)v.start)[1] = 100;
+	((unsigned short*)v.start)[2] = 200;
+	((unsigned short*)v.start)[3] = 300;
+
+	unsigned short t = 400;
+
+	vec_push(&v, &t);
+
+
+	unsigned short* iter = v.start;
+	REPEAT(i, v.count, 
+		print("%d", iter[i]);
+	);
+
+	unsigned short* ptr;
+
+	vec_pop(&v, &ptr);
+
+	print("%d", *ptr);
+	
+	free(ptr);
+
+	iter = v.start;
+	REPEAT(i, v.count,
+		print("%d", iter[i]);
+	);
+
+	// Mutations tests
+
+	//Agent* agent = createBasicAgent();
+
+	//REPEAT(i, 20,
+
+	//	mutate_link_add(agent);
+
+	//ITER_V(agent->neurons, neuron_node, neuron, Neuron*,
+	//	ITER_V(neuron->links, link_node, link, Link*,
+	//		print("%d -> %d", link->source->id, neuron->id);
+	//);
+	//);
+
+	//print("");
+
+	//);
+	//free_agent(&agent);
 
 	return EXIT_SUCCESS;
 }

@@ -4,8 +4,9 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "pcg_basic.h"
-#include "utils.h"
+#include "tools/pcg_basic.h"
+#include "tools/utils.h"
+#include "tools/malloc_dbg.h"
 
 bool insert(clist** node, void* data)
 {
@@ -88,10 +89,10 @@ unsigned int len(clist* node)
 		return 0;
 
 	unsigned int i = 0;
-	CLIST_ITER(node, iter,
+	ITER(node, iter,
 		i++;
-	)
-		return i;
+	);
+	return i;
 }
 
 void* random(clist* node)
@@ -100,13 +101,43 @@ void* random(clist* node)
 		return NULL;
 
 	unsigned int index = pcg32_boundedrand(len(node));
-	
+
 	unsigned int i = 0;
-	CLIST_ITER(node, iter,
+	ITER(node, iter,
 		if (index == i)
 			return iter->data;
-		i++;
-	)
+	i++;
+	);
 
 	return NULL;
+}
+
+void* random_max(clist* node, int max)
+{
+	if (node == NULL)
+		return NULL;
+
+	unsigned int index = pcg32_boundedrand(max);
+
+	unsigned int i = 0;
+	ITER(node, iter,
+		if (index == i)
+			return iter->data;
+	i++;
+	);
+
+		return NULL;
+}
+
+bool find(clist* node, void* data)
+{
+	if (node == NULL)
+		return false;
+
+	ITER(node, iter,
+		if (iter->data == data)
+			return true;
+	);
+
+	return false;
 }

@@ -1,7 +1,7 @@
 #ifndef AGENT_H
 #define AGENT_H
 
-#include "env_settings.h"
+#include "neurolution/env_settings.h"
 
 typedef struct Neuron Neuron;
 typedef struct clist clist;
@@ -20,5 +20,7 @@ struct Agent
 Agent* createBasicAgent();
 
 void free_agent(Agent** agent);
+
+void print_agent(Agent* agent);
 
 #endif

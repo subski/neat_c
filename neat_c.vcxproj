@@ -19,31 +19,40 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="agent.c" />
-    <ClCompile Include="clist.c" />
-    <ClCompile Include="llist.c" />
+    <ClCompile Include="neurolution\agent.c" />
+    <ClCompile Include="data_structures\clist.c" />
+    <ClCompile Include="data_structures\llist.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="mutations.c" />
-    <ClCompile Include="neurolution.c" />
-    <ClCompile Include="neuron.c" />
-    <ClCompile Include="pcg_basic.c" />
-    <ClCompile Include="pool.c" />
+    <ClCompile Include="tools\malloc_dbg.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="data_structures\matrix.c" />
+    <ClCompile Include="neurolution\mutations.c" />
+    <ClCompile Include="neurolution\neurolution.c" />
+    <ClCompile Include="neurolution\neuron.c" />
+    <ClCompile Include="tools\pcg_basic.c" />
+    <ClCompile Include="data_structures\pool.c" />
     <ClCompile Include="test.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
     </ClCompile>
+    <ClCompile Include="tools\utils.c" />
+    <ClCompile Include="data_structures\vector.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="agent.h" />
-    <ClInclude Include="clist.h" />
-    <ClInclude Include="env_settings.h" />
-    <ClInclude Include="llist.h" />
-    <ClInclude Include="mutations.h" />
-    <ClInclude Include="neurolution.h" />
-    <ClInclude Include="neuron.h" />
-    <ClInclude Include="pcg_basic.h" />
-    <ClInclude Include="pool.h" />
-    <ClInclude Include="utils.h" />
+    <ClInclude Include="neurolution\agent.h" />
+    <ClInclude Include="data_structures\clist.h" />
+    <ClInclude Include="neurolution\env_settings.h" />
+    <ClInclude Include="data_structures\llist.h" />
+    <ClInclude Include="tools\malloc_dbg.h" />
+    <ClInclude Include="data_structures\matrix.h" />
+    <ClInclude Include="neurolution\mutations.h" />
+    <ClInclude Include="neurolution\neurolution.h" />
+    <ClInclude Include="neurolution\neuron.h" />
+    <ClInclude Include="tools\pcg_basic.h" />
+    <ClInclude Include="data_structures\pool.h" />
+    <ClInclude Include="tools\utils.h" />
+    <ClInclude Include="data_structures\vector.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -113,6 +122,7 @@
     <IntDir>$(Configuration)\</IntDir>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
+    <IncludePath>D:\User\Desktop\projects\neat_c;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>

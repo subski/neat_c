@@ -1,6 +1,9 @@
-#include "neuron.h"
+#include "neurolution/neuron.h"
 
-void createNeuron(
+#include <stdlib.h>
+#include <stdbool.h>
+
+Neuron* createNeuron_f(
 	Neuron* neuron,
 	unsigned short id,
 	bool enabled,
@@ -19,4 +22,11 @@ void createNeuron(
 	neuron->value = value;
 	neuron->bias = bias;
 	neuron->links = links;
+
+	return neuron;
+}
+
+Neuron* createNeuron(Neuron* neuron, unsigned short id)
+{
+	return createNeuron_f(neuron, id, true, false, HIDDEN_TYPE, NULL, 0.0, 0.0, NULL);
 }

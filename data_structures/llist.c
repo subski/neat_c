@@ -4,7 +4,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "utils.h"
+#include "tools/malloc_dbg.h"
+#include "tools/utils.h"
 
 void llpush(llist** head, void* data_ptr)
 {
@@ -14,9 +15,9 @@ void llpush(llist** head, void* data_ptr)
 	}
 
 	llist* new = malloc(sizeof(llist));
-	MCHECK(new, )
+	MCHECK(new, );
 
-		new->next = *head;
+	new->next = *head;
 	new->data = data_ptr;
 	*head = new;
 }
@@ -34,9 +35,9 @@ void llappend(llist* node, void* data_ptr)
 	}
 
 	llist* new = malloc(sizeof(llist));
-	MCHECK(new, )
+	MCHECK(new, );
 
-		new->data = data_ptr;
+	new->data = data_ptr;
 	new->next = NULL;
 	node->next = new;
 }

@@ -1,17 +1,18 @@
-#include "pool.h"
+#include "data_structures/pool.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-#include "clist.h"
-#include "utils.h"
+#include "data_structures/clist.h"
+#include "tools/utils.h"
+#include "tools/malloc_dbg.h"
 
-void* request(pool** _pool, size_t type)
+void* request(pool** _pool, size_t size)
 {
 	void* result;
 	if (*_pool == NULL) // empty pool
 	{
-		result = malloc(type);
+		result = malloc(size);
 		MCHECK(result, NULL);
 
 		return result;
@@ -41,11 +42,11 @@ void* request(pool** _pool, size_t type)
 	return result;
 }
 
-void pfree(pool** _pool, void** data, size_t type)
+void pfree(pool** _pool, void** data, size_t size)
 {
 	insert(_pool, *data);
-	if (type != 0)
-		memset(*data, 0, type);
+	if (size != 0)
+		memset(*data, 0, size);
 
 	*data = NULL;
 }

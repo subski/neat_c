@@ -21,12 +21,12 @@
  *     http://www.pcg-random.org
  */
 
-/*
- * This code is derived from the full C implementation, which is in turn
- * derived from the canonical C++ PCG implementation. The C++ version
- * has many additional features and is preferable if you can use C++ in
- * your project.
- */
+ /*
+  * This code is derived from the full C implementation, which is in turn
+  * derived from the canonical C++ PCG implementation. The C++ version
+  * has many additional features and is preferable if you can use C++ in
+  * your project.
+  */
 
 #ifndef PCG_BASIC_H_INCLUDED
 #define PCG_BASIC_H_INCLUDED 1
@@ -34,9 +34,9 @@
 #include <inttypes.h>
 
 struct pcg_state_setseq_64 {    // Internals are *Private*.
-    uint64_t state;             // RNG state.  All values are possible.
-    uint64_t inc;               // Controls which RNG sequence (stream) is
-                                // selected. Must *always* be odd.
+	uint64_t state;             // RNG state.  All values are possible.
+	uint64_t inc;               // Controls which RNG sequence (stream) is
+								// selected. Must *always* be odd.
 };
 typedef struct pcg_state_setseq_64 pcg32_random_t;
 
@@ -51,7 +51,7 @@ typedef struct pcg_state_setseq_64 pcg32_random_t;
 
 void pcg32_srandom(uint64_t initstate, uint64_t initseq);
 void pcg32_srandom_r(pcg32_random_t* rng, uint64_t initstate,
-                     uint64_t initseq);
+	uint64_t initseq);
 
 // pcg32_random()
 // pcg32_random_r(rng)

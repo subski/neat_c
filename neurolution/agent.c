@@ -1,12 +1,13 @@
-#include "agent.h"
+#include "neurolution/agent.h"
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdio.h>
 
-#include "clist.h"
-#include "pool.h"
-#include "neuron.h"
-#include "neurolution.h"
+#include "data_structures/clist.h"
+#include "data_structures/pool.h"
+#include "neurolution/neuron.h"
+#include "neurolution/neurolution.h"
 
 Agent* createBasicAgent()
 {
@@ -74,9 +75,40 @@ Agent* createBasicAgent()
 void free_agent(Agent** agent)
 {
 	pclean(&(*agent)->links, &P_LINK);
-	CLIST_ITER((*agent)->neurons, neuron_node,
+	ITER((*agent)->neurons, neuron_node,
 		clear(&((Neuron*)neuron_node->data)->links);
-	)
+	);
 		pclean(&(*agent)->neurons, &P_NEURON);
 	pfree(&P_AGENT, agent, 0);
+}
+
+// TODO: use macros instead.
+
+void print_agent(Agent* agent)
+{
+	printf("agent:\n");
+	clist* neuron_node = agent->neurons;
+	Neuron* neuron;
+	do
+	{
+		neuron = (Neuron*)neuron_node->data;
+
+		if (neuron->links == NULL)
+		{
+			next(neuron_node);
+			continue;
+		}
+		clist* link_node = neuron->links;
+		Link* link;
+		do
+		{
+			link = (Neuron*)link_node->data;
+			printf("%d->%d\n", link->source->id, neuron->id);
+			next(link_node);
+		} while (link_node != neuron->links);
+
+		next(neuron_node);
+	} while (neuron_node != agent->neurons);
+
+	printf("%d\n\n", len(agent->links));
 }
