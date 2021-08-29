@@ -1,8 +1,4 @@
-#include "llist.h"
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
+#include "data_structures/llist.h"
 
 #include "tools/malloc_dbg.h"
 #include "tools/utils.h"

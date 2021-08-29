@@ -1,8 +1,6 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include <stdlib.h>
-
 typedef struct vector vector;
 
 struct vector
@@ -12,9 +10,9 @@ struct vector
 	unsigned int count;
 	unsigned int max;
 
-	void* start;
-	void* finish;
-	void* end_storage;
+	char* start;
+	char* finish;
+	char* end_storage;
 };
 
 vector vec_init(size_t type_size, unsigned int elementCount);

@@ -1,15 +1,11 @@
 #include "neurolution/agent.h"
 
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdio.h>
-
 #include "data_structures/clist.h"
 #include "data_structures/pool.h"
 #include "neurolution/neuron.h"
 #include "neurolution/neurolution.h"
 
-Agent* createBasicAgent()
+Agent* createBasicAgent(void)
 {
 	Agent* new_agent = request(&P_AGENT, sizeof(Agent));
 
@@ -61,8 +57,8 @@ Agent* createBasicAgent()
 			Link* new_link = request(&P_LINK, sizeof(Link));
 
 			new_link->source = new_agent->inputNeurons[j];
-			new_link->weight = 1.0;
-			new_link->activated = true;
+			new_link->weight = 0.0;
+			new_link->enabled = true;
 
 			insert(&new_agent->outputNeurons[i]->links, new_link);
 			insert(&new_agent->links, new_link);
@@ -78,8 +74,8 @@ void free_agent(Agent** agent)
 	ITER((*agent)->neurons, neuron_node,
 		clear(&((Neuron*)neuron_node->data)->links);
 	);
-		pclean(&(*agent)->neurons, &P_NEURON);
-	pfree(&P_AGENT, agent, 0);
+	pclean(&(*agent)->neurons, &P_NEURON);
+	pfree(&P_AGENT, agent);
 }
 
 // TODO: use macros instead.
@@ -102,7 +98,7 @@ void print_agent(Agent* agent)
 		Link* link;
 		do
 		{
-			link = (Neuron*)link_node->data;
+			link = link_node->data;
 			printf("%d->%d\n", link->source->id, neuron->id);
 			next(link_node);
 		} while (link_node != neuron->links);

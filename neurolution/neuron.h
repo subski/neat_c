@@ -1,8 +1,6 @@
 #ifndef NEURON_H
 #define NEURON_H
 
-#define bool _Bool
-
 typedef struct clist clist;
 
 typedef struct Neuron Neuron;
@@ -25,7 +23,7 @@ struct Link
 {
 	Neuron* source;
 	double weight;
-	bool activated;
+	bool enabled;
 };
 
 /*

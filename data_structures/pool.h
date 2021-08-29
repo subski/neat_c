@@ -1,8 +1,6 @@
 #ifndef POOL_H
 #define POOL_H
 
-#include <stddef.h>
-
 typedef struct clist clist;
 typedef clist pool;
 
@@ -16,6 +14,6 @@ void* request(pool** _pool, size_t size);
 Save unused memory blocks into the pool for futur uses.
 If a type is given, all bits int the block will be set to 0.
 */
-void pfree(pool** _pool, void** data, size_t size);
+void pfree(pool** _pool, void** data);
 
 #endif

@@ -1,8 +1,5 @@
 #include "neurolution/neuron.h"
 
-#include <stdlib.h>
-#include <stdbool.h>
-
 Neuron* createNeuron_f(
 	Neuron* neuron,
 	unsigned short id,

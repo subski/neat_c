@@ -17,7 +17,7 @@ struct Agent
 	clist* links;
 };
 
-Agent* createBasicAgent();
+Agent* createBasicAgent(void);
 
 void free_agent(Agent** agent);
 

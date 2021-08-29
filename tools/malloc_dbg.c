@@ -4,10 +4,7 @@
  * @author [tinouduart33](https://github.com/tinouduart33)
  */
 
-#include <stdlib.h> /// For the malloc, calloc and free functions.
-#include <stdio.h> /// For IO operations (printf).
-#include <string.h> /// For the memcmp function.
-#include "malloc_dbg.h" /// Header file which contains the prototypes of malloc_dbg, calloc_dbg and fre_dbg.
+#include "tools/malloc_dbg.h" /// Header file which contains the prototypes of malloc_dbg, calloc_dbg and fre_dbg.
 
 #include "data_structures/clist.h"
 
@@ -264,7 +261,7 @@ void printLeaks()
 	while (tmp)
 	{
 		previous = tmp;
-		printf("\n%ld bytes lost\n", tmp->bytes);
+		printf("\n%zd bytes lost\n", tmp->bytes);
 		printf("address : 0x%p in %s\t%s:%d\n", tmp->ptr, tmp->functionName, tmp->fileName, tmp->line);
 		printf("\n====================================\n");
 		sum += tmp->bytes;
@@ -273,5 +270,5 @@ void printLeaks()
 		nbBlocks++;
 	}
 
-	printf("SUMMARY :\n%ld bytes lost in %d blocks\n", sum, nbBlocks);
+	printf("SUMMARY :\n%zd bytes lost in %d blocks\n", sum, nbBlocks);
 }

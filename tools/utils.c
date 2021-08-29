@@ -1,8 +1,6 @@
 #include "tools/utils.h"
 
-#include <stdbool.h>
-
-_Bool isInArray(void* ptr, void* _array[], unsigned int size)
+bool ptrInArray(void* ptr, void* _array[], unsigned int size)
 {
 	for (unsigned int i = 0; i < size; i++)
 	{

@@ -1,8 +1,4 @@
-#include "clist.h"
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
+#include "data_structures/clist.h"
 
 #include "tools/pcg_basic.h"
 #include "tools/utils.h"
@@ -126,7 +122,7 @@ void* random_max(clist* node, int max)
 	i++;
 	);
 
-		return NULL;
+	return NULL;
 }
 
 bool find(clist* node, void* data)

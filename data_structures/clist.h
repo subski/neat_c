@@ -2,7 +2,6 @@
 #define CLIST_H
 
 #include <stdarg.h>
-#include <stdbool.h>
 
 #define next(node) node = node->next
 
@@ -53,8 +52,6 @@ struct clist
 // static clist* P_CLIST = 0;
 
 bool insert(clist** node, void* data);
-
-bool insert_data(clist** node, size_t size, ...);
 
 void clear(clist** node);
 

@@ -15,8 +15,6 @@
 
 #define USE_DEBUG_MALLOC 1
 
-#include <stdlib.h>
-
 #if USE_DEBUG_MALLOC
 
  /** This macro replace the standard malloc function with malloc_dbg.
@@ -35,7 +33,6 @@
  * */
 #define free(ptr) free_dbg(ptr)
 
-
 #endif // !USE_DEBUG_MALLOC
 
 void* malloc_dbg(size_t bytes, int line, const char* filename, const char* functionName);
@@ -47,6 +44,5 @@ void* realloc_dbg(void* block, size_t bytes, int line, const char* filename, con
 void free_dbg(void* ptrToFree);
 
 void printLeaks(void);
-
 
 #endif /* MALLOC_DBG_H */

@@ -28,6 +28,9 @@
   * your project.
   */
 
+#pragma warning (push)
+#pragma warning (disable : 4146 4244 6297 6295 26451)
+
 #include "pcg_basic.h"
 
   // state for global RNGs
@@ -66,7 +69,7 @@ uint32_t pcg32_random_r(pcg32_random_t* rng)
 	return (xorshifted >> rot) | (xorshifted << ((-rot) & 31));
 }
 
-uint32_t pcg32_random()
+uint32_t pcg32_random(void)
 {
 	return pcg32_random_r(&pcg32_global);
 }
@@ -111,3 +114,16 @@ uint32_t pcg32_boundedrand(uint32_t bound)
 {
 	return pcg32_boundedrand_r(&pcg32_global, bound);
 }
+
+#define MAXSHIFT    (8 * sizeof(long) - 2)
+double pcg32_doublerand(void)
+{
+	double value = pcg32_random();
+	int exp = -32;
+
+	for (; exp < -MAXSHIFT; exp += MAXSHIFT)
+		value *= 1.0 / (1L << MAXSHIFT); /* mult faster than div */
+	return (value / (1L << -exp));
+}
+
+#pragma warning (pop) 

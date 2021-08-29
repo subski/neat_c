@@ -1,8 +1,5 @@
 #include "data_structures/pool.h"
 
-#include <stdlib.h>
-#include <string.h>
-
 #include "data_structures/clist.h"
 #include "tools/utils.h"
 #include "tools/malloc_dbg.h"
@@ -42,11 +39,9 @@ void* request(pool** _pool, size_t size)
 	return result;
 }
 
-void pfree(pool** _pool, void** data, size_t size)
+void pfree(pool** _pool, void** data)
 {
 	insert(_pool, *data);
-	if (size != 0)
-		memset(*data, 0, size);
 
 	*data = NULL;
 }
