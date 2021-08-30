@@ -33,10 +33,9 @@ bool mutate_link_add(Agent* agent)
 			return false;
 	);
 
-	Link* new_link = request(&P_LINK, sizeof(Link));
-
-	new_link->source = neuron_source;
-	new_link->weight = 1.0;
+	Link* new_link    = request(&P_LINK, sizeof(Link));
+	new_link->source  = neuron_source;
+	new_link->weight  = 1.0;
 	new_link->enabled = true;
 
 	insert(&neuron_target->links, new_link);

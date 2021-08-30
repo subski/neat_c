@@ -31,26 +31,34 @@ struct Link
  */
 struct Neuron
 {
-	unsigned short id;
-	bool enabled;
-	bool activated;
-	NeuronType type;
-	double (*activationFunc)(double input);
-	double value;
-	double bias;
-	clist* links;
+    unsigned   short id;
+
+    bool enabled;
+    bool activated;
+
+    NeuronType type;
+
+    double (*activationFunc)(double input);
+    double value;
+    double bias;
+
+    clist* links;
 };
 
 Neuron* createNeuron_f(
-	Neuron* neuron,
-	unsigned short id,
-	bool enabled,
-	bool activated,
-	NeuronType type,
-	double (*activationFunc)(double),
-	double value,
-	double bias,
-	clist* links);
+    Neuron* neuron,
+    unsigned short id,
+
+    bool enabled,
+    bool activated,
+
+    NeuronType type,
+
+    double (*activationFunc)(double),
+    double value,
+    double bias,
+
+    clist* links);
 
 Neuron* createNeuron(Neuron* neuron, unsigned short id);
 

@@ -11,14 +11,14 @@ Neuron* createNeuron_f(
 	double bias,
 	clist* links)
 {
-	neuron->id = id;
-	neuron->enabled = enabled;
-	neuron->activated = activated;
-	neuron->type = type;
+	neuron->id             = id;
+	neuron->enabled        = enabled;
+	neuron->activated      = activated;
+	neuron->type           = type;
 	neuron->activationFunc = activationFunc;
-	neuron->value = value;
-	neuron->bias = bias;
-	neuron->links = links;
+	neuron->value          = value;
+	neuron->bias           = bias;
+	neuron->links          = links;
 
 	return neuron;
 }

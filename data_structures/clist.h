@@ -51,20 +51,20 @@ struct clist
 // TODO: Add pooling for Cycled List structs
 // static clist* P_CLIST = 0;
 
-bool insert(clist** node, void* data);
+bool insert     (clist** node, void* data);
 
-void clear(clist** node);
+void clear      (clist** node);
 
-void clean(clist** node);
+void clean      (clist** node);
 
-void pclean(clist** node, clist** pool);
+void pclean     (clist** node, clist** pool);
 
 unsigned int len(clist* node);
 
-void* random(clist* node);
+void* random    (clist* node);
 
 void* random_max(clist* node, int max);
 
-bool find(clist* node, void* data);
+bool find       (clist* node, void* data);
 
 #endif

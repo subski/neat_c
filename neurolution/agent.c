@@ -18,14 +18,14 @@ Agent* createBasicAgent(void)
 	{
 		Neuron* input_neuron = request(&P_NEURON, sizeof(Neuron));
 
-		input_neuron->id = i + 1;
-		input_neuron->enabled = true;
-		input_neuron->activated = false;
-		input_neuron->type = INPUT_TYPE;
+		input_neuron->id             = i + 1;
+		input_neuron->enabled        = true;
+		input_neuron->activated      = false;
+		input_neuron->type           = INPUT_TYPE;
 		input_neuron->activationFunc = NULL;
-		input_neuron->value = 0.0;
-		input_neuron->bias = 0.0;
-		input_neuron->links = NULL;
+		input_neuron->value          = 0.0;
+		input_neuron->bias           = 0.0;
+		input_neuron->links          = NULL;
 
 		new_agent->inputNeurons[i] = input_neuron;
 		insert(&new_agent->neurons, input_neuron);
@@ -36,14 +36,14 @@ Agent* createBasicAgent(void)
 	{
 		Neuron* output_neuron = request(&P_NEURON, sizeof(Neuron));
 
-		output_neuron->id = INPUT_SIZE + i + 1;
-		output_neuron->enabled = true;
-		output_neuron->activated = false;
-		output_neuron->type = OUTPUT_TYPE;
+		output_neuron->id             = INPUT_SIZE + i + 1;
+		output_neuron->enabled        = true;
+		output_neuron->activated      = false;
+		output_neuron->type           = OUTPUT_TYPE;
 		output_neuron->activationFunc = NULL;
-		output_neuron->value = 0.0;
-		output_neuron->bias = 0.0;
-		output_neuron->links = NULL;
+		output_neuron->value          = 0.0;
+		output_neuron->bias           = 0.0;
+		output_neuron->links          = NULL;
 
 		new_agent->outputNeurons[i] = output_neuron;
 		insert(&new_agent->neurons, output_neuron);
@@ -56,8 +56,8 @@ Agent* createBasicAgent(void)
 		{
 			Link* new_link = request(&P_LINK, sizeof(Link));
 
-			new_link->source = new_agent->inputNeurons[j];
-			new_link->weight = 0.0;
+			new_link->source  = new_agent->inputNeurons[j];
+			new_link->weight  = 0.0;
 			new_link->enabled = true;
 
 			insert(&new_agent->outputNeurons[i]->links, new_link);

@@ -3,13 +3,13 @@
 
 typedef struct Agent Agent;
 
-bool mutate_link_add(Agent* agent);
+bool mutate_link_add   (Agent* agent);
 
 void mutate_link_toggle(Agent* agent);
 
-void mutate_link_shift(Agent* agent, double shift);
+void mutate_link_shift (Agent* agent, double shift);
 
-bool mutate_node_add(Agent* agent);
+bool mutate_node_add   (Agent* agent);
 
 void mutate_node_toggle(Agent* agent);
 
