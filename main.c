@@ -1,6 +1,5 @@
 #include "tools/utils.h"
 #include "tools/pcg_basic.h"
-#include "tools/malloc_dbg.h"
 
 #include "data_structures/clist.h"
 #include "data_structures/pool.h"
@@ -34,16 +33,32 @@ void onStart(void)
 	programTimer = (float)clock();
 }
 
+bool test()
+{
+	int co1, co2;
+
+	for (int i = 1; i < 11; i++)
+	{
+		idToPair(i, &co1, &co2);
+		print("%d: (%d, %d)", i, co1, co2);
+	}
+
+	return true;
+}
+
 int main(void)
 {
 	onStart();
 
+	if (!test())
+		return 0;
+
 	Agent* agent = createBasicAgent();
 
-	REPEAT(i, 10,
+	REPEAT(i, 0,
 		mutate_link_add(agent);
-	mutate_link_toggle(agent);
-	mutate_link_shift(agent, 0.2);
+		mutate_link_toggle(agent);
+		mutate_link_shift(agent, 0.2);
 
 	ITER_V(agent->neurons, neuron_node, neuron, Neuron*,
 		ITER_V(neuron->links, link_node, link, Link*,

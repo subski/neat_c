@@ -59,11 +59,11 @@ void clean      (clist** node);
 
 void pclean     (clist** node, clist** pool);
 
-unsigned int len(clist* node);
+uint32_t len	(clist* node);
 
 void* random    (clist* node);
 
-void* random_max(clist* node, int max);
+void* random_max(clist* node, uint32_t max);
 
 bool find       (clist* node, void* data);
 

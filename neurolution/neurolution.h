@@ -26,4 +26,20 @@ extern pool* P_AGENT;
 extern pool* P_NEURON;
 extern pool* P_LINK;
 
+extern uint32_t NeuronCount;
+
+typedef struct NeuronHistory NeuronHistory;
+
+struct NeuronHistory
+{
+	uint32_t neuronId;
+	uint32_t linkId;
+
+	NeuronHistory* next;
+};
+
+void idToPair(uint32_t id, uint32_t* p1, uint32_t* p2);
+
+uint32_t pairToId(uint32_t p1, uint32_t p2);
+
 #endif // !NEUROLUTION_H

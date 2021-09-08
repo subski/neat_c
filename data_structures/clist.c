@@ -2,7 +2,6 @@
 
 #include "tools/pcg_basic.h"
 #include "tools/utils.h"
-#include "tools/malloc_dbg.h"
 
 bool insert(clist** node, void* data)
 {
@@ -84,7 +83,7 @@ unsigned int len(clist* node)
 	if (node == NULL)
 		return 0;
 
-	unsigned int i = 0;
+	uint32_t i = 0;
 	ITER(node, iter,
 		i++;
 	);

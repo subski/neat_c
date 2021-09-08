@@ -35,6 +35,6 @@
 		free(str_full);									\
 	} while (0);
 
-bool ptrInArray(void* ptr, void* _array[], unsigned int size);
+bool ptrInArray(void* ptr, void* _array[], size_t size);
 
 #endif // !UTILS_H

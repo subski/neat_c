@@ -1,6 +1,5 @@
 #include "data_structures/llist.h"
 
-#include "tools/malloc_dbg.h"
 #include "tools/utils.h"
 
 void llpush(llist** head, void* data_ptr)

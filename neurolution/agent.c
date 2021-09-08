@@ -56,7 +56,8 @@ Agent* createBasicAgent(void)
 		{
 			Link* new_link = request(&P_LINK, sizeof(Link));
 
-			new_link->source  = new_agent->inputNeurons[j];
+			new_link->source = new_agent->inputNeurons[j];
+			new_link->target  = new_agent->outputNeurons[i];
 			new_link->weight  = 0.0;
 			new_link->enabled = true;
 

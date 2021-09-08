@@ -2,7 +2,6 @@
 
 #include "data_structures/clist.h"
 #include "tools/utils.h"
-#include "tools/malloc_dbg.h"
 
 void* request(pool** _pool, size_t size)
 {

@@ -21,7 +21,8 @@ typedef enum NeuronType
  */
 struct Link
 {
-	Neuron* source;
+    Neuron* source;
+    Neuron* target;
 	double weight;
 	bool enabled;
 };
@@ -31,7 +32,7 @@ struct Link
  */
 struct Neuron
 {
-    unsigned   short id;
+    uint32_t id;
 
     bool enabled;
     bool activated;
@@ -47,7 +48,7 @@ struct Neuron
 
 Neuron* createNeuron_f(
     Neuron* neuron,
-    unsigned short id,
+    uint32_t id,
 
     bool enabled,
     bool activated,
@@ -60,6 +61,6 @@ Neuron* createNeuron_f(
 
     clist* links);
 
-Neuron* createNeuron(Neuron* neuron, unsigned short id);
+Neuron* createNeuron(Neuron* neuron, uint32_t id);
 
 #endif

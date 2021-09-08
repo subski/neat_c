@@ -1,9 +1,8 @@
 #include "data_structures/vector.h"
 
 #include "tools/utils.h"
-#include "tools/malloc_dbg.h"
 
-vector vec_init(size_t type_size, unsigned int elementCount)
+vector vec_init(size_t type_size, uint32_t elementCount)
 {
 	vector new_vector;
 
@@ -43,11 +42,11 @@ void vec_pop(vector* vec, void** dest)
 	vec->count--;
 }
 
-void vec_insert(vector* vec, void* val, unsigned int index);
+void vec_insert(vector* vec, void* val, uint32_t index);
 
-void vec_resize(vector* vec, unsigned int elementCount);
+void vec_resize(vector* vec, uint32_t elementCount);
 
-void vec_mresize(vector* vec, unsigned int maxCount)
+void vec_mresize(vector* vec, uint32_t maxCount)
 {
 	if (vec->max == maxCount)
 		return;
@@ -58,7 +57,7 @@ void vec_mresize(vector* vec, unsigned int maxCount)
 		vec->count = maxCount;
 	}
 
-	char* new_mem = realloc(vec->start, vec->type_size * maxCount);
+	byte_t* new_mem = realloc(vec->start, vec->type_size * maxCount);
 	MCHECK(new_mem, );
 
 	vec->start = new_mem;

@@ -2,7 +2,7 @@
 
 Neuron* createNeuron_f(
 	Neuron* neuron,
-	unsigned short id,
+	uint32_t id,
 	bool enabled,
 	bool activated,
 	NeuronType type,
@@ -23,7 +23,7 @@ Neuron* createNeuron_f(
 	return neuron;
 }
 
-Neuron* createNeuron(Neuron* neuron, unsigned short id)
+Neuron* createNeuron(Neuron* neuron, uint32_t id)
 {
 	return createNeuron_f(neuron, id, true, false, HIDDEN_TYPE, NULL, 0.0, 0.0, NULL);
 }
