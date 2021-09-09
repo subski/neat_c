@@ -63,4 +63,6 @@ Neuron* createNeuron_f(
 
 Neuron* createNeuron(Neuron* neuron, uint32_t id);
 
+Link* createLink(Link* link, Neuron* source, Neuron* target, double weight, bool enabled);
+
 #endif

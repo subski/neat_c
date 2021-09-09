@@ -40,10 +40,11 @@ bool test()
 	for (int i = 1; i < 11; i++)
 	{
 		idToPair(i, &co1, &co2);
-		print("%d: (%d, %d)", i, co1, co2);
+		printf("%d: (%d, %d) ", i, co1, co2);
+		print("%d: (%d, %d)", pairToId(co1, co2), co1, co2);
 	}
 
-	return true;
+	return false;
 }
 
 int main(void)

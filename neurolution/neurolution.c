@@ -9,7 +9,10 @@ pool* P_AGENT  = NULL;
 pool* P_NEURON = NULL;
 pool* P_LINK   = NULL;
 
-unsigned int NeuronCount = INPUT_SIZE + OUTPUT_SIZE;
+uint32_t NeuronCount = INPUT_SIZE + OUTPUT_SIZE;
+
+NeuronHistory_s NeuronHistory = { 0, 0, NULL };
+
 
 // TODO: neuron mutation history list.
 

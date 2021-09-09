@@ -4,7 +4,7 @@
 typedef struct clist clist;
 typedef clist pool;
 
-// References for speciation:
+// Web links for speciation methods:
 /*
  * K-means algo in plain C :
  *	https://github.com/TheAlgorithms/C/blob/master/machine_learning/k_means_clustering.c
@@ -28,14 +28,14 @@ extern pool* P_LINK;
 
 extern uint32_t NeuronCount;
 
-typedef struct NeuronHistory NeuronHistory;
+typedef struct NeuronHistory_s NeuronHistory_s;
 
-struct NeuronHistory
+struct NeuronHistory_s
 {
 	uint32_t neuronId;
 	uint32_t linkId;
 
-	NeuronHistory* next;
+	NeuronHistory_s* next;
 };
 
 void idToPair(uint32_t id, uint32_t* p1, uint32_t* p2);

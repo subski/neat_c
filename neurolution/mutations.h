@@ -7,7 +7,7 @@ bool mutate_link_add     (Agent* agent);
 
 void mutate_link_toggle  (Agent* agent);
 
-void mutate_link_shift   (Agent* agent, double shift);
+bool mutate_link_shift   (Agent* agent, double shift);
 
 void mutate_neuron_add   (Agent* agent);
 

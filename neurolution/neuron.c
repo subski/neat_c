@@ -27,3 +27,13 @@ Neuron* createNeuron(Neuron* neuron, uint32_t id)
 {
 	return createNeuron_f(neuron, id, true, false, HIDDEN_TYPE, NULL, 0.0, 0.0, NULL);
 }
+
+Link* createLink(Link* link, Neuron* source, Neuron* target, double weight, bool enabled)
+{
+	link->source = source;
+	link->target = target;
+	link->weight = weight;
+	link->enabled = enabled;
+
+	return link;
+}

@@ -95,9 +95,9 @@ void* random(clist* node)
 	if (node == NULL)
 		return NULL;
 
-	unsigned int index = pcg32_boundedrand(len(node));
+	uint32_t index = pcg32_boundedrand(len(node));
 
-	unsigned int i = 0;
+	uint32_t i = 0;
 	ITER(node, iter,
 		if (index == i)
 			return iter->data;
@@ -112,9 +112,9 @@ void* random_max(clist* node, int max)
 	if (node == NULL)
 		return NULL;
 
-	unsigned int index = pcg32_boundedrand(max);
+	uint32_t index = pcg32_boundedrand(max);
 
-	unsigned int i = 0;
+	uint32_t i = 0;
 	ITER(node, iter,
 		if (index == i)
 			return iter->data;
