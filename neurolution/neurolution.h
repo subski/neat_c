@@ -22,13 +22,15 @@ typedef clist pool;
  *  https://www.researchgate.net/publication/220741366_Speciation_in_evolutionary_algorithms_Adaptive_Species_Discovery
  */
 
+typedef struct NeuronHistory_s NeuronHistory_s;
+
 extern pool* P_AGENT;
 extern pool* P_NEURON;
 extern pool* P_LINK;
 
 extern uint32_t NeuronCount;
 
-typedef struct NeuronHistory_s NeuronHistory_s;
+extern NeuronHistory_s NeuronHistory;
 
 struct NeuronHistory_s
 {
@@ -41,5 +43,7 @@ struct NeuronHistory_s
 void idToPair(uint32_t id, uint32_t* p1, uint32_t* p2);
 
 uint32_t pairToId(uint32_t p1, uint32_t p2);
+
+void free_neurolution();
 
 #endif // !NEUROLUTION_H

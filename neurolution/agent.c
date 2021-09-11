@@ -59,6 +59,42 @@ void free_agent(Agent** agent)
 	pfree(&P_AGENT, agent);
 }
 
+bool check_agent(Agent* agent)
+{
+	// Check dupplicate links
+	int cpt;
+	ITER_V(agent->links, link_node, link, Link*,
+		cpt = 0;
+		ITER_V(agent->links, link_node2, link2, Link*,
+			if (link->source->id == link2->source->id && link->target->id == link2->target->id)
+				cpt++;
+		);
+		if (cpt != 1)
+			return false;
+	);
+	
+	// Check dupplicate neurons
+	ITER_V(agent->neurons, neuron_node, neuron, Neuron*,
+		cpt = 0;
+		ITER_V(agent->neurons, neuron_node2, neuron2, Neuron*,
+			if (neuron->id == neuron2->id)
+				cpt++;
+		);
+		if (cpt != 1)
+			return false;
+	);
+
+	// Input neurons are not supposed to have any links attached to them
+	for (int i = 0; i < INPUT_SIZE; i++)
+	{
+		if (agent->inputNeurons[i]->links != NULL)
+			return false;
+	}
+
+
+	return true;
+}
+
 // TODO: use macros instead.
 
 void print_agent(Agent* agent)

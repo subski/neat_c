@@ -107,7 +107,7 @@ void* random(clist* node)
 	return NULL;
 }
 
-void* random_max(clist* node, int max)
+void* random_max(clist* node, uint32_t max)
 {
 	if (node == NULL)
 		return NULL;

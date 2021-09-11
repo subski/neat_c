@@ -70,20 +70,49 @@ void mutate_neuron_add(Agent* agent)
 
 bool mutate_neuron_insert(Agent* agent)
 {
+	// Select random enabled link
 	Link* target_link = random(agent->links);
 	if (!target_link->enabled)
 		return false;
 
-	uint32_t neuron_id = pairToId(target_link->source->id, target_link->target->id);
 
-	ITER_V(agent->neurons, neuron_node, neuron, Neuron*,
-		if (neuron->id == neuron_id)
-			return false;
-	);
+	uint32_t link_id = pairToId(target_link->source->id, target_link->target->id);
+
+	NeuronHistory_s* neuron_node = NeuronHistory.next;
+	uint32_t neuron_id = 0;
+
+
+	while (neuron_node)
+	{
+		if (neuron_node->linkId == link_id)
+		{
+			neuron_id = neuron_node->neuronId;
+			break;
+		}
+		neuron_node = neuron_node->next;
+	}
+
+	if (!neuron_id)
+	{
+		neuron_id = ++NeuronCount;
+
+		NeuronHistory_s* new_node = malloc(sizeof(NeuronHistory_s));
+		new_node->linkId = link_id;
+		new_node->neuronId = neuron_id;
+		new_node->next = NeuronHistory.next;
+		NeuronHistory.next = new_node;
+	}
+	else
+	{
+		ITER_V(agent->neurons, neuron_node, neuron, Neuron*,
+			if (neuron->id == neuron_id)
+				return false;
+		);
+	}
 
 	target_link->enabled = false;
 
-	Neuron* new_neuron = new_BasicNeuron(++NeuronCount);
+	Neuron* new_neuron = new_BasicNeuron(neuron_id);
 	insert(&agent->neurons, new_neuron);
 
 	Link* link_src = new_Link(target_link->source, new_neuron, target_link->weight, true);

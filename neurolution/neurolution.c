@@ -44,7 +44,43 @@ void idToPair(uint32_t id, uint32_t* p1, uint32_t* p2)
 	}
 }
 
+
+// TODO: Simplify equation.
 uint32_t pairToId(uint32_t p1, uint32_t p2)
 {
-	return 0;
+	uint32_t tmp = 0;
+	if (p1 < p2)
+	{
+		tmp = p1;
+		p1 = p2;
+		p2 = tmp;
+	}
+
+	uint32_t N = p1 * (p1 - 1) / 2;
+	uint32_t N2 = (p1-1) * (p1 - 2) / 2;
+	
+	uint32_t id = (int)N2 + (((float)p2 / p1) * (N - N2));
+	id = id*2+1;
+
+	if (tmp)
+		id++;
+
+	return id;
+}
+
+void free_neurolution()
+{
+	clean(&P_LINK);
+	clean(&P_NEURON);
+	clean(&P_AGENT);
+
+	NeuronHistory_s* node = NeuronHistory.next;
+	NeuronHistory_s* tmp;
+
+	while (node)
+	{
+		tmp = node->next;
+		free(node);
+		node = tmp;
+	}
 }
