@@ -110,3 +110,40 @@ void test_pool()
 		clean(&neuron_pool);
 	}
 }
+
+void test_vec_agents(void)
+{
+	vector agents = new_vector(sizeof(Agent*), 200, 0);
+
+	Agent* tmp;
+	REPEAT(i, 200,
+		   tmp = new_BasicAgent();
+	tmp->fitness = i;
+	vec_insert(&agents, &tmp, i);
+	);
+
+	Agent* a;
+
+	REPEAT(j, 200,
+		   REPEAT(i, 200,
+		   a = *(Agent**)vec_get(&agents, i);
+	mutate_neuron_insert(a);
+	mutate_link_add(a);
+	mutate_link_toggle(a);
+	mutate_link_shift(a, 0.2);
+	);
+	);
+
+	REPEAT(i, 200,
+		   a = *(Agent**)vec_get(&agents, i);
+	print_agent(a);
+	);
+
+	REPEAT(i, 200,
+		   free_agent(vec_get(&agents, i));
+	);
+
+	free_vector(&agents);
+
+	return 0;
+}

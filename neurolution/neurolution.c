@@ -3,6 +3,8 @@
 #include <math.h>
 
 #include "data_structures/pool.h"
+#include "data_structures/clist.h"
+
 #include "neurolution/env_settings.h"
 
 pool* P_AGENT  = NULL;
@@ -12,9 +14,6 @@ pool* P_LINK   = NULL;
 uint32_t NeuronCount = INPUT_SIZE + OUTPUT_SIZE;
 
 NeuronHistory_s NeuronHistory = { 0, 0, NULL };
-
-
-// TODO: neuron mutation history list.
 
 void idToPair(uint32_t id, uint32_t* p1, uint32_t* p2)
 {

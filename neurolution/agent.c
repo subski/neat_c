@@ -53,7 +53,7 @@ void free_agent(Agent** agent)
 {
 	pclean(&(*agent)->links, &P_LINK);
 	ITER((*agent)->neurons, neuron_node,
-		clear(&((Neuron*)neuron_node->data)->links);
+		 clear(&((Neuron*)neuron_node->data)->links);
 	);
 	pclean(&(*agent)->neurons, &P_NEURON);
 	pfree(&P_AGENT, agent);
@@ -100,28 +100,10 @@ bool check_agent(Agent* agent)
 void print_agent(Agent* agent)
 {
 	printf("agent:\n");
-	clist* neuron_node = agent->neurons;
-	Neuron* neuron;
-	do
-	{
-		neuron = (Neuron*)neuron_node->data;
+	ITER_V(agent->neurons, neuron_node, neuron, Neuron*,
+		   ITER_V(neuron->links, link_node, link, Link*,
+		   printf("%d -> %d [%.2lf, %d]\n", link->source->id, neuron->id, link->weight, link->enabled);
+	);	);
 
-		if (neuron->links == NULL)
-		{
-			next(neuron_node);
-			continue;
-		}
-		clist* link_node = neuron->links;
-		Link* link;
-		do
-		{
-			link = link_node->data;
-			printf("%d->%d\n", link->source->id, neuron->id);
-			next(link_node);
-		} while (link_node != neuron->links);
-
-		next(neuron_node);
-	} while (neuron_node != agent->neurons);
-
-	printf("%d\n\n", len(agent->links));
+	printf("Neurons: %d | Links: %d | Fitness: %lf\n", len(agent->neurons), len(agent->links), agent->fitness);
 }

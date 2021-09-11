@@ -1,9 +1,17 @@
 #ifndef NEURON_H
 #define NEURON_H
 
-typedef struct clist clist;
+#include "data_structures/clist.h"
 
+/*
+ * Classic NN neuron with a list of incoming connections ('links') and an activation function.
+ */
 typedef struct Neuron Neuron;
+
+
+/*
+ * Represent a connection between two nodes.
+ */
 typedef struct Link Link;
 
 /*
@@ -16,9 +24,7 @@ typedef enum NeuronType
 	HIDDEN_TYPE
 } NeuronType;
 
-/*
- * Represent a connection between two nodes.
- */
+
 struct Link
 {
     Neuron* source;
@@ -27,9 +33,7 @@ struct Link
 	bool enabled;
 };
 
-/*
- * Store a neuron with references to links with other neurons.
- */
+
 struct Neuron
 {
     uint32_t id;

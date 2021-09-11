@@ -1,6 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+// Shortcut for checking return value of malloc.
 #define MCHECK(ptr, ret)								\
 	do {												\
 		if (ptr == NULL)								\
@@ -10,11 +11,13 @@
 		}												\
 	} while (0);
 
-#define TIMER(timer, code)								\												\
+// Mesure time duration of a given code.
+#define TIMER(timer, code)								\
 	float timer = clock();								\
 	code												\
-	timer = (clock() - timer) / CLOCKS_PER_SEC			\
+	timer = (clock() - timer) / CLOCKS_PER_SEC; 		\
 
+// Shortcut for a basic FOR loop.
 #define REPEAT(iter, nb, code)							\
 	do {												\
 		for (unsigned int iter = 0; iter < nb; iter++)	\
@@ -23,6 +26,7 @@
 		}												\
 	} while (0);
 
+// Very ugly way to automatically insert '\n' at the end of printf. Use like printf.
 #define print(string, ...)								\
 	do {												\
 		char str_to_print[] = string;					\
@@ -35,6 +39,9 @@
 		free(str_full);									\
 	} while (0);
 
-bool ptrInArray(void* ptr, void* _array[], size_t size);
+/*
+	Check if a given pointer is in an array.
+*/
+bool isPtrInArray(void* ptr, void* _array[], size_t size);
 
 #endif // !UTILS_H

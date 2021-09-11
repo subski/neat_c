@@ -18,14 +18,17 @@
 
 bool mutate_link_add(Agent* agent)
 {
+	// Select two random neurons that are different and not input neurons.
 	uint32_t neuron_count = len(agent->neurons);
 	Neuron* neuron_source = random_max(agent->neurons, neuron_count);
 	Neuron* neuron_target = random_max(agent->neurons, neuron_count);
 
-	if (neuron_source == neuron_target || ptrInArray(neuron_target, agent->inputNeurons, INPUT_SIZE))
+	if (neuron_source == neuron_target || isPtrInArray(neuron_target, agent->inputNeurons, INPUT_SIZE))
 	{
 		return false;
 	}
+
+	// Check if the two neurons are not connected to each other
 
 	ITER_V(neuron_target->links, node_link, link, Link*,
 		if (link->source == neuron_source)
@@ -36,7 +39,8 @@ bool mutate_link_add(Agent* agent)
 		if (link->source == neuron_target)
 			return false;
 	);
-
+	
+	// Adding the link
 	Link* new_link = new_Link(neuron_source, neuron_target, 1.0, true);
 	insert(&agent->links, new_link);
 
@@ -51,13 +55,14 @@ void mutate_link_toggle(Agent* agent)
 
 bool mutate_link_shift(Agent* agent, double shift)
 {
+	// Select random enabled link
 	uint32_t link_count = len(agent->links);
 	Link* target_link = random_max(agent->links, link_count);
 	
 	if (!target_link->enabled)
 		return false;
-	
-	target_link = random_max(agent->links, link_count);
+
+	// shift the weight randomly
 	target_link->weight += (shift * 2) * pcg32_doublerand() - shift;
 
 	return true;
@@ -81,7 +86,8 @@ bool mutate_neuron_insert(Agent* agent)
 	NeuronHistory_s* neuron_node = NeuronHistory.next;
 	uint32_t neuron_id = 0;
 
-
+	// Cycle through the history of neurons
+	// to check for existing neuron id
 	while (neuron_node)
 	{
 		if (neuron_node->linkId == link_id)
@@ -92,6 +98,8 @@ bool mutate_neuron_insert(Agent* agent)
 		neuron_node = neuron_node->next;
 	}
 
+	// If no neuron id was found, we add a new one to the history
+	// else we check if the id we found is not already part of the agent
 	if (!neuron_id)
 	{
 		neuron_id = ++NeuronCount;
@@ -109,6 +117,8 @@ bool mutate_neuron_insert(Agent* agent)
 				return false;
 		);
 	}
+
+	// Split the original link and connect the new links to the new neurons
 
 	target_link->enabled = false;
 
