@@ -46,8 +46,7 @@ struct Neuron
     clist* links;
 };
 
-Neuron* createNeuron_f(
-    Neuron* neuron,
+Neuron* new_Neuron(
     uint32_t id,
 
     bool enabled,
@@ -61,8 +60,8 @@ Neuron* createNeuron_f(
 
     clist* links);
 
-Neuron* createNeuron(Neuron* neuron, uint32_t id);
+Neuron* new_BasicNeuron(uint32_t id);
 
-Link* createLink(Link* link, Neuron* source, Neuron* target, double weight, bool enabled);
+Link* new_Link(Neuron* source, Neuron* target, double weight, bool enabled);
 
 #endif

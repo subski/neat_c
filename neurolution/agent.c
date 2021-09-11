@@ -2,10 +2,11 @@
 
 #include "data_structures/clist.h"
 #include "data_structures/pool.h"
+
 #include "neurolution/neuron.h"
 #include "neurolution/neurolution.h"
 
-Agent* createBasicAgent(void)
+Agent* new_BasicAgent(void)
 {
 	Agent* new_agent = request(&P_AGENT, sizeof(Agent));
 
@@ -16,16 +17,9 @@ Agent* createBasicAgent(void)
 	// create input neurons
 	for (int i = 0; i < INPUT_SIZE; i++)
 	{
-		Neuron* input_neuron = request(&P_NEURON, sizeof(Neuron));
+		Neuron* input_neuron = new_BasicNeuron(i + 1);
 
-		input_neuron->id             = i + 1;
-		input_neuron->enabled        = true;
-		input_neuron->activated      = false;
-		input_neuron->type           = INPUT_TYPE;
-		input_neuron->activationFunc = NULL;
-		input_neuron->value          = 0.0;
-		input_neuron->bias           = 0.0;
-		input_neuron->links          = NULL;
+		input_neuron->type = INPUT_TYPE;
 
 		new_agent->inputNeurons[i] = input_neuron;
 		insert(&new_agent->neurons, input_neuron);
@@ -34,16 +28,9 @@ Agent* createBasicAgent(void)
 	// create output neurons
 	for (int i = 0; i < OUTPUT_SIZE; i++)
 	{
-		Neuron* output_neuron = request(&P_NEURON, sizeof(Neuron));
+		Neuron* output_neuron = new_BasicNeuron(INPUT_SIZE + i + 1);
 
-		output_neuron->id             = INPUT_SIZE + i + 1;
-		output_neuron->enabled        = true;
-		output_neuron->activated      = false;
-		output_neuron->type           = OUTPUT_TYPE;
-		output_neuron->activationFunc = NULL;
-		output_neuron->value          = 0.0;
-		output_neuron->bias           = 0.0;
-		output_neuron->links          = NULL;
+		output_neuron->type = OUTPUT_TYPE;
 
 		new_agent->outputNeurons[i] = output_neuron;
 		insert(&new_agent->neurons, output_neuron);
@@ -54,14 +41,7 @@ Agent* createBasicAgent(void)
 	{
 		for (int j = 0; j < INPUT_SIZE; j++)
 		{
-			Link* new_link = request(&P_LINK, sizeof(Link));
-
-			new_link->source = new_agent->inputNeurons[j];
-			new_link->target  = new_agent->outputNeurons[i];
-			new_link->weight  = 0.0;
-			new_link->enabled = true;
-
-			insert(&new_agent->outputNeurons[i]->links, new_link);
+			Link* new_link = new_Link(new_agent->inputNeurons[j], new_agent->outputNeurons[i], 0.0, true);
 			insert(&new_agent->links, new_link);
 		}
 	}

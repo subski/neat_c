@@ -37,13 +37,7 @@ bool mutate_link_add(Agent* agent)
 			return false;
 	);
 
-	Link* new_link    = request(&P_LINK, sizeof(Link));
-	new_link->source  = neuron_source;
-	new_link->target  = neuron_target;
-	new_link->weight  = 1.0;
-	new_link->enabled = true;
-
-	insert(&neuron_target->links, new_link);
+	Link* new_link = new_Link(neuron_source, neuron_target, 1.0, true);
 	insert(&agent->links, new_link);
 
 	return true;
@@ -71,7 +65,7 @@ bool mutate_link_shift(Agent* agent, double shift)
 
 void mutate_neuron_add(Agent* agent)
 {
-	insert(&agent->neurons, createNeuron(request(&P_NEURON, sizeof(Neuron)), ++NeuronCount));
+	insert(&agent->neurons, new_BasicNeuron(++NeuronCount));
 }
 
 bool mutate_neuron_insert(Agent* agent)
@@ -87,25 +81,16 @@ bool mutate_neuron_insert(Agent* agent)
 			return false;
 	);
 
-	Neuron* new_neuron = request(&P_NEURON, sizeof(Neuron));
-
-	createNeuron_f(new_neuron, ++NeuronCount, true, false, HIDDEN_TYPE, NULL, 0.0, 0.0, NULL);
-
 	target_link->enabled = false;
 
-	Link* link_src = request(&P_LINK, sizeof(Link));
-	Link* link_target = request(&P_LINK, sizeof(Link));
-
-	createLink(link_src, target_link->source, new_neuron, target_link->weight, true);
-	createLink(link_src, new_neuron, target_link->target, 0.0, true);
-
-	insert(&new_neuron->links, link_src);
-	insert(&target_link->target->links, link_target);
-
-	insert(&agent->links, link_src);
-	insert(&agent->links, link_target);
-
+	Neuron* new_neuron = new_BasicNeuron(++NeuronCount);
 	insert(&agent->neurons, new_neuron);
+
+	Link* link_src = new_Link(target_link->source, new_neuron, target_link->weight, true);
+	insert(&agent->links, link_src);
+
+	Link* link_target = new_Link(new_neuron, target_link->target, 0.0, true);
+	insert(&agent->links, link_target);
 
 	return true;
 }

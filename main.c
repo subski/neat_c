@@ -54,7 +54,7 @@ int main(void)
 	if (!test())
 		return 0;
 
-	Agent* agent = createBasicAgent();
+	Agent* agent = new_BasicAgent();
 
 	REPEAT(i, 0,
 		mutate_link_add(agent);
