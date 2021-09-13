@@ -24,7 +24,7 @@ Neuron* new_Neuron(
 	neuron->activationFunc = activationFunc;
 	neuron->value          = value;
 	neuron->bias           = bias;
-	neuron->links          = links;
+	neuron->linkList       = links;
 
 	return neuron;
 }
@@ -43,7 +43,7 @@ Link* new_Link(Neuron* source, Neuron* target, double weight, bool enabled)
 	link->weight = weight;
 	link->enabled = enabled;
 
-	insert(&target->links, link);
+	insert(&target->linkList, link);
 
 	return link;
 }

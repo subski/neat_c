@@ -1,8 +1,8 @@
 #include "tools/utils.h"
 
-bool isPtrInArray(void* ptr, void* _array[], size_t size)
+bool isPtrInArray(void* ptr, void* _array[], uint32_t arraySize)
 {
-	for (uint32_t i = 0; i < size; i++)
+	for (uint32_t i = 0; i < arraySize; i++)
 	{
 		if (_array[i] == ptr)
 			return true;

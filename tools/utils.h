@@ -42,6 +42,6 @@
 /*
 	Check if a given pointer is in an array.
 */
-bool isPtrInArray(void* ptr, void* _array[], size_t size);
+bool isPtrInArray(void* ptr, void* _array[], uint32_t arraySize);
 
 #endif // !UTILS_H

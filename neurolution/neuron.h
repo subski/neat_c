@@ -47,7 +47,7 @@ struct Neuron
     double value;
     double bias;
 
-    clist* links;
+    clist* linkList;
 };
 
 Neuron* new_Neuron(

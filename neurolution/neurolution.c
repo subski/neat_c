@@ -4,7 +4,9 @@
 
 #include "data_structures/pool.h"
 #include "data_structures/clist.h"
+#include "data_structures/vector.h"
 
+#include "neurolution/Agent.h"
 #include "neurolution/env_settings.h"
 
 pool* P_AGENT  = NULL;
@@ -14,6 +16,24 @@ pool* P_LINK   = NULL;
 uint32_t NeuronCount = INPUT_SIZE + OUTPUT_SIZE;
 
 NeuronHistory_s NeuronHistory = { 0, 0, NULL };
+
+vector Population;
+
+void evolve(void)
+{
+	Population = new_vector(sizeof(Agent*), MAX_POPULATION, 0);
+
+	createInitialPopulation(&Population, MAX_POPULATION);
+}
+
+void createInitialPopulation(vector* population, uint32_t count)
+{
+	for (uint32_t i = 0; i < count; i++)
+	{
+		Agent* agent = new_BasicAgent(INPUT_SIZE, OUTPUT_SIZE);
+		vec_insert(population, &agent, i);
+	}
+}
 
 void idToPair(uint32_t id, uint32_t* p1, uint32_t* p2)
 {
@@ -69,10 +89,21 @@ uint32_t pairToId(uint32_t p1, uint32_t p2)
 
 void free_neurolution()
 {
+	// Free the agents
+	for (int i = 0; i < Population.count; i++)
+	{
+		free_agent(vec_get(&Population, i));
+	}
+
+	free_vector(&Population);
+
+
+	// Free memory pools
 	clean(&P_LINK);
 	clean(&P_NEURON);
 	clean(&P_AGENT);
 
+	// Free neuron history
 	NeuronHistory_s* node = NeuronHistory.next;
 	NeuronHistory_s* tmp;
 

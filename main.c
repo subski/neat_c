@@ -38,17 +38,10 @@ void onStart(void)
 }
 
 bool test()
-{
-    int co1, co2;
+{   
     
-    for (int i = 1; i < 11; i++)
-    {
-        idToPair(i, &co1, &co2);
-        printf("%d: (%d, %d) ", i, co1, co2);
-        print("%d: (%d, %d)", pairToId(co1, co2), co1, co2);
-    }
 
-    return true;
+    return false;
 }
 
 int main(void)
@@ -57,28 +50,25 @@ int main(void)
 
     //if (!test()) return 0;
 
-    Agent* agent = new_BasicAgent();
+    evolve();
 
+    Agent* agent = * (Agent**) Population.start;
+
+    /*mutate_neuron_insert(agent);
     mutate_neuron_insert(agent);
     mutate_neuron_insert(agent);
     mutate_neuron_insert(agent);
     mutate_neuron_insert(agent);
-    mutate_neuron_insert(agent);
-    mutate_neuron_insert(agent);
+    mutate_neuron_insert(agent);*/
 
 
-    REPEAT(i, 1,
-        //mutate_link_add(agent);
-        //mutate_link_toggle(agent);
-        //mutate_link_shift(agent, 0.2);
+    REPEAT(i, 100,
+           mutate_neuron_insert(agent);
+           mutate_link_add(agent);
+           mutate_link_toggle(agent);
+           mutate_link_shift(agent, 0.2);
 
-        ITER_V(agent->neurons, neuron_node, neuron, Neuron*,
-            ITER_V(neuron->links, link_node, link, Link*,
-                print("%d -> %d [%.2lf, %d]", link->source->id, neuron->id, link->weight, link->enabled);
-            );
-        );
-        
-        print("Neurons: %d | Links: %d", len(agent->neurons), len(agent->links));
+           print_agent(agent);
         
         printf("\n");
     );
@@ -90,8 +80,6 @@ int main(void)
     {
         print("AGENT CORRUPTED!");
     }
-
-    free_agent(&agent);
 
     return EXIT_SUCCESS;
 }

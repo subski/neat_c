@@ -117,7 +117,7 @@ void test_vec_agents(void)
 
 	Agent* tmp;
 	REPEAT(i, 200,
-		   tmp = new_BasicAgent();
+		   tmp = new_BasicAgent(INPUT_SIZE, OUTPUT_SIZE);
 	tmp->fitness = i;
 	vec_insert(&agents, &tmp, i);
 	);
@@ -146,4 +146,55 @@ void test_vec_agents(void)
 	free_vector(&agents);
 
 	return 0;
+}
+
+void test_pair(void)
+{
+	int co1, co2;
+
+	for (int i = 1; i < 11; i++)
+	{
+		idToPair(i, &co1, &co2);
+		printf("%d: (%d, %d) ", i, co1, co2);
+		print("%d: (%d, %d)", pairToId(co1, co2), co1, co2);
+	}
+}
+
+void test_isPtrInArray(void)
+{
+	Agent* agent = new_BasicAgent(INPUT_SIZE, OUTPUT_SIZE);
+
+	for (int i = 0; i < INPUT_SIZE; i++)
+	{
+		print("%p", agent->inputVector.start + (i * sizeof(void*)));
+	}
+	print("%p", (Neuron*)agent->inputVector.start);
+
+	if (isPtrInArray((Neuron*)agent->inputVector.start, agent->inputVector.start, INPUT_SIZE))
+		print("Correct! Ptr is in fact in the array");
+}
+
+void test_neuronInInput(void)
+{
+	Neuron* n;
+
+	for (int i = 0; i < INPUT_SIZE; i++)
+	{
+		n = *(Neuron**)vec_get(&agent->inputVector, i);
+		print("Neuron %d: %p", n->id, n);
+	}
+	print("");
+	for (int i = 0; i < OUTPUT_SIZE; i++)
+	{
+		n = *(Neuron**)vec_get(&agent->outputVector, i);
+
+		print("Neuron %d: %p", n->id, n);
+	}
+
+	print("");
+	print("");
+
+	ITER_V(agent->neuronList, neuron_node, neuron, Neuron*,
+		   print("Neuron %d: %p", neuron->id, neuron);
+	);
 }

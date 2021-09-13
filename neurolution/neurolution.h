@@ -1,8 +1,8 @@
 #ifndef NEUROLUTION_H
 #define NEUROLUTION_H
 
-typedef struct clist clist;
-typedef clist pool;
+#include "data_structures/vector.h"
+#include "data_structures/pool.h"
 
 // Web links for speciation methods:
 /*
@@ -32,6 +32,8 @@ extern uint32_t NeuronCount;
 
 extern NeuronHistory_s NeuronHistory;
 
+extern vector Population;
+
 struct NeuronHistory_s
 {
 	uint32_t neuronId;
@@ -39,6 +41,10 @@ struct NeuronHistory_s
 
 	NeuronHistory_s* next;
 };
+
+void evolve(void);
+
+void createInitialPopulation(vector* population, uint32_t count);
 
 void idToPair(uint32_t id, uint32_t* p1, uint32_t* p2);
 
