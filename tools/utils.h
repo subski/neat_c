@@ -39,9 +39,18 @@
 		free(str_full);									\
 	} while (0);
 
+
+static int ZERO = 0;
+static int ONE = 1;
+
 /*
 	Check if a given pointer is in an array.
 */
 bool isPtrInArray(void* ptr, void* _array[], uint32_t arraySize);
+
+/*
+	Return the absolute value of a double.
+*/
+double double_abs(double x);
 
 #endif // !UTILS_H

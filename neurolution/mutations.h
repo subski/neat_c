@@ -17,4 +17,6 @@ void mutate_neuron_toggle(Agent* agent);
 
 void mutate_neuron_bias  (Agent* agent);
 
+void mutate_agent        (Agent* agent);
+
 #endif // !MUTATIONS_H

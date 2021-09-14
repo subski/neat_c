@@ -68,4 +68,6 @@ Neuron* new_BasicNeuron(uint32_t id);
 
 Link* new_Link(Neuron* source, Neuron* target, double weight, bool enabled);
 
+Link* getLinkInNeuron(Neuron* neuron, uint32_t id);
+
 #endif

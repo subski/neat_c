@@ -7,6 +7,9 @@
 #include "neurolution/neuron.h"
 #include "neurolution/neurolution.h"
 
+#include "tools/utils.h"
+
+
 Agent* new_BasicAgent(uint32_t inputCount, uint32_t outputCount)
 {
 	Agent* new_agent = request(&P_AGENT, sizeof(Agent));
@@ -25,7 +28,7 @@ Agent* new_BasicAgent(uint32_t inputCount, uint32_t outputCount)
 
 		input_neuron->type = INPUT_TYPE;
 
-		vec_insert(&new_agent->inputVector, &input_neuron, i);
+		vec_set(&new_agent->inputVector, &input_neuron, i);
 		insert(&new_agent->neuronList, input_neuron);
 	}
 
@@ -36,7 +39,7 @@ Agent* new_BasicAgent(uint32_t inputCount, uint32_t outputCount)
 
 		output_neuron->type = OUTPUT_TYPE;
 
-		vec_insert(&new_agent->outputVector, &output_neuron, i);
+		vec_set(&new_agent->outputVector, &output_neuron, i);
 		insert(&new_agent->neuronList, output_neuron);
 	}
 
@@ -51,6 +54,131 @@ Agent* new_BasicAgent(uint32_t inputCount, uint32_t outputCount)
 	}
 
 	return new_agent;
+}
+
+double distance(Agent* agent1, Agent* agent2)
+{
+	double c1 = 1;
+	double c2 = 1;
+
+	double matching = 0;
+	double disjoint = 0;
+	double total;
+	double weight_diff = 0;
+
+	vector totalNeuron = new_vector(sizeof(int), NeuronCount, 0);
+	memset(totalNeuron.start, 0, totalNeuron.type_size * totalNeuron.count);
+
+	ITER_V(agent1->neuronList, neuron_node, neuron, Neuron*,
+		   vec_set(&totalNeuron, &ONE, neuron->id-1);
+	);
+	ITER_V(agent2->neuronList, neuron_node, neuron, Neuron*,
+		   vec_set(&totalNeuron, &ONE, neuron->id - 1);
+	);
+
+
+	Neuron* neuron_1;
+	Neuron* neuron_2;
+
+	Link* link_2;
+
+	int neuron_matching_links = 0;
+
+	for (uint32_t i = 0; i < totalNeuron.count; i++)
+	{
+		if (*(int*)vec_get(&totalNeuron, i) == 0)
+			continue;
+
+		neuron_1 = getNeuronInAgent(agent1, i + 1);
+		neuron_2 = getNeuronInAgent(agent2, i + 1);
+
+		if (neuron_1 == NULL)
+		{
+			disjoint += len(neuron_2->linkList);
+		}
+		else if (neuron_2 == NULL)
+		{
+			disjoint += len(neuron_1->linkList);
+		}
+		else
+		{
+			if (neuron_1->linkList != NULL)
+			{
+				neuron_matching_links = 0;
+
+				clist* iter = neuron_1->linkList;
+				Link* link_1;
+				do
+				{
+					link_1 = (Link*)iter->data;
+
+					link_2 = getLinkInNeuron(neuron_2, pairToId(link_1->source->id, link_1->target->id));
+					if (link_2 == NULL)
+					{
+						disjoint++;
+						continue;
+					}
+
+					neuron_matching_links++;
+					weight_diff += double_abs(link_1->weight - link_2->weight);
+
+					next(iter);
+				} while (iter != neuron_1->linkList);
+			}
+
+			disjoint += len(neuron_2->linkList) - neuron_matching_links;
+			matching += neuron_matching_links;	
+		}		
+	}
+
+	weight_diff /= matching;
+	total = matching + disjoint;
+
+	free_vector(&totalNeuron);
+
+
+	print("Weight Diff: %lf", weight_diff);
+	print("Disjoint: %lf", disjoint);
+	print("Matching: %lf", matching);
+
+	return disjoint * c1 / total + weight_diff * c2;
+}
+
+Agent* crossOver(Agent* agent1, Agent* agent2)
+{
+
+}
+
+bool isNeuronInAgent(Agent* agent, uint32_t id)
+{
+	ITER_V(agent->neuronList, neuron_node, neuron, Neuron*,
+		   if (neuron->id == id)
+			   return true;
+	);
+	return false;
+}
+
+Neuron* getNeuronInAgent(Agent* agent, uint32_t id)
+{
+	ITER_V(agent->neuronList, neuron_node, neuron, Neuron*,
+		   if (neuron->id == id)
+			   return neuron;
+	);
+	return NULL;
+}
+
+bool addLinkInAgent(Agent* agent, uint32_t source, uint32_t target, double weight, bool enabled)
+{
+	Neuron* neuron_source = getNeuronInAgent(agent, source);
+	Neuron* neuron_target = getNeuronInAgent(agent, target);
+
+	if (neuron_source == NULL || neuron_target == NULL)
+		return false;
+
+	Link* new_link = new_Link(neuron_source, neuron_target, weight, enabled);
+	insert(&agent->linkList, new_link);
+
+	return true;
 }
 
 void free_agent(Agent** agent)

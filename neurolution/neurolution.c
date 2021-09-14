@@ -24,6 +24,18 @@ void evolve(void)
 	Population = new_vector(sizeof(Agent*), MAX_POPULATION, 0);
 
 	createInitialPopulation(&Population, MAX_POPULATION);
+	
+	
+	// Speciate
+	
+	// Selection
+	
+	// Reproduction
+
+	// Mutation
+
+	// Calcul Fitness
+
 }
 
 void createInitialPopulation(vector* population, uint32_t count)
@@ -31,7 +43,7 @@ void createInitialPopulation(vector* population, uint32_t count)
 	for (uint32_t i = 0; i < count; i++)
 	{
 		Agent* agent = new_BasicAgent(INPUT_SIZE, OUTPUT_SIZE);
-		vec_insert(population, &agent, i);
+		vec_set(population, &agent, i);
 	}
 }
 
@@ -90,7 +102,7 @@ uint32_t pairToId(uint32_t p1, uint32_t p2)
 void free_neurolution()
 {
 	// Free the agents
-	for (int i = 0; i < Population.count; i++)
+	for (uint32_t i = 0; i < Population.count; i++)
 	{
 		free_agent(vec_get(&Population, i));
 	}

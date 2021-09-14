@@ -143,3 +143,8 @@ void mutate_neuron_bias(Agent* agent)
 {
 
 }
+
+void mutate_agent(Agent* agent)
+{
+
+}

@@ -57,7 +57,7 @@ void vec_pop(vector* vec, void** dest)
     vec->count--;
 }
 
-void vec_insert(vector* vec, void* val, uint32_t index)
+void vec_set(vector* vec, void* val, uint32_t index)
 {
     if (index >= vec->count)
         return;

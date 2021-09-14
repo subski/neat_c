@@ -46,7 +46,7 @@ void vec_pop(vector* vec, void** dest);
     Copy the data pointed by 'val' to a given index inside the vector.
     Cannot insert outside the range of [start,finish] (index should be < vec.count).
 */
-void vec_insert(vector* vec, void* val, uint32_t index);
+void vec_set(vector* vec, void* val, uint32_t index);
 
 /*
     Return a pointer to a position in the dynamic array.

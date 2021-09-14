@@ -39,7 +39,24 @@ void onStart(void)
 
 bool test()
 {   
-    
+    NeuronCount = 10;
+
+    Agent* agent1 = new_BasicAgent(3, 2);
+    Agent* agent2 = new_BasicAgent(3, 2);
+
+    insert(&agent2->neuronList, new_BasicNeuron(8));
+
+    if (addLinkInAgent(agent2, 1, 8, 1.0, true))
+    {
+        print("Added new link in agent2");
+    }
+
+    double d = distance(agent1, agent2);
+
+    print("Distance: %lf", d);
+
+    free_agent(&agent1);
+    free_agent(&agent2);
 
     return false;
 }
@@ -48,7 +65,7 @@ int main(void)
 {
     onStart();
 
-    //if (!test()) return 0;
+    if (!test()) return 0;
 
     evolve();
 
