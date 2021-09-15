@@ -11,9 +11,12 @@
 #include "neurolution/neurolution.h"
 #include "neurolution/mutations.h"
 
-#include <sys\timeb.h> 
 
+#ifdef _WIN32
+#include <sys\timeb.h> 
 struct timeb progStart, progEnd;
+#endif
+
 void onExit(void)
 {
     free_neurolution();
@@ -22,11 +25,13 @@ void onExit(void)
     printLeaks();
 #endif
 
+#ifdef _WIN32
     ftime(&progEnd);
     
     printf("\n\n---------------------------------------------------------------------------------------------------------------------\n");
     printf("Program ended in %.3f seconds.\n", (1000 * (progEnd.time - progStart.time) + (progEnd.millitm - progStart.millitm)) / 1000.f);
     system("pause");
+#endif
 }
 
 void onStart(void)
@@ -34,7 +39,9 @@ void onStart(void)
     atexit(&onExit);
     pcg32_srandom((unsigned long long)time(NULL), (unsigned long long) & printf);
 
+#ifdef _WIN32
     ftime(&progStart);
+#endif
 }
 
 bool test()
@@ -48,12 +55,12 @@ bool test()
 
     if (addLinkInAgent(agent2, 1, 8, 1.0, true))
     {
-        print("Added new link in agent2");
+        printf("Added new link in agent2\n");
     }
 
     double d = distance(agent1, agent2);
 
-    print("Distance: %lf", d);
+    printf("Distance: %lf\n", d);
 
     free_agent(&agent1);
     free_agent(&agent2);
@@ -95,7 +102,7 @@ int main(void)
 
     if (!check_agent(agent))
     {
-        print("AGENT CORRUPTED!");
+        printf("AGENT CORRUPTED!\n");
     }
 
     return EXIT_SUCCESS;

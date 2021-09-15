@@ -90,7 +90,7 @@ unsigned int len(clist* node)
 	return i;
 }
 
-void* random(clist* node)
+void* random_data(clist* node)
 {
 	if (node == NULL)
 		return NULL;

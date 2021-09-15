@@ -137,9 +137,9 @@ double distance(Agent* agent1, Agent* agent2)
 	free_vector(&totalNeuron);
 
 
-	print("Weight Diff: %lf", weight_diff);
-	print("Disjoint: %lf", disjoint);
-	print("Matching: %lf", matching);
+	printf("Weight Diff: %lf\n", weight_diff);
+	printf("Disjoint: %lf\n", disjoint);
+	printf("Matching: %lf\n", matching);
 
 	return disjoint * c1 / total + weight_diff * c2;
 }

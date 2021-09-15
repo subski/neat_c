@@ -26,19 +26,6 @@
 		}												\
 	} while (0);
 
-// Very ugly way to automatically insert '\n' at the end of printf. Use like printf.
-#define print(string, ...)								\
-	do {												\
-		char str_to_print[] = string;					\
-		char* str_full = malloc(strlen(str_to_print)+2);\
-		if (str_full == NULL) break;					\
-		_Pragma("warning (suppress : 4996)")			\
-		strcpy(str_full, str_to_print);					\
-		strncat(str_full, "\n\0", 2);					\
-		printf(str_full, __VA_ARGS__);					\
-		free(str_full);									\
-	} while (0);
-
 
 static int ZERO = 0;
 static int ONE = 1;

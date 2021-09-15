@@ -25,7 +25,7 @@ bool mutate_link_add(Agent* agent)
 
 	if (neuron_source == neuron_target || isPtrInArray(neuron_target, agent->inputVector.start, INPUT_SIZE))
 	{
-		print("Neuroninarray");
+		printf("Neuroninarray\n");
 		return false;
 	}
 
@@ -50,7 +50,7 @@ bool mutate_link_add(Agent* agent)
 
 void mutate_link_toggle(Agent* agent)
 {
-	Link* target_link = random(agent->linkList);
+	Link* target_link = random_data(agent->linkList);
 	target_link->enabled ^= 1;
 }
 
@@ -77,7 +77,7 @@ void mutate_neuron_add(Agent* agent)
 bool mutate_neuron_insert(Agent* agent)
 {
 	// Select random enabled link
-	Link* target_link = random(agent->linkList);
+	Link* target_link = random_data(agent->linkList);
 	if (!target_link->enabled)
 		return false;
 
