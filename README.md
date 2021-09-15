@@ -12,4 +12,4 @@ run `build/NEAT_C` in the command line.
 
 ### Windows
 
-run the file `build_windows\Debug\NEAT_C.exe` after building it in Visual Studio.
+run the file `build_windows\Debug\NEAT_C.exe` after building the `NEAT_C` project in Visual Studio.
