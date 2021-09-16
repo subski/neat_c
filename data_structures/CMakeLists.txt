@@ -13,9 +13,7 @@ set(SOURCES
 
         vector.h
         vector.c
-
 )
-
 
 list(TRANSFORM SOURCES PREPEND ${CMAKE_CURRENT_LIST_DIR}/)
 
