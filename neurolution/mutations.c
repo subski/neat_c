@@ -25,7 +25,6 @@ bool mutate_link_add(Agent* agent)
 
 	if (neuron_source == neuron_target || isPtrInArray(neuron_target, agent->inputVector.start, INPUT_SIZE))
 	{
-		printf("Neuroninarray\n");
 		return false;
 	}
 
@@ -146,5 +145,15 @@ void mutate_neuron_bias(Agent* agent)
 
 void mutate_agent(Agent* agent)
 {
-
+	if (0.3 > pcg32_doublerand())
+		mutate_link_add(agent);
+	
+	if (0.85 > pcg32_doublerand())
+		mutate_link_shift(agent, 0.2);
+	
+	if (0.025 > pcg32_doublerand())
+		mutate_link_toggle(agent);
+	
+	if (0.01 > pcg32_doublerand())
+		mutate_neuron_insert(agent);
 }
