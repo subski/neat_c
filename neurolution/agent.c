@@ -48,7 +48,14 @@ Agent* new_BasicAgent(uint32_t inputCount, uint32_t outputCount)
 	{
 		for (uint32_t j = 0; j < inputCount; j++)
 		{
-			Link* new_link = new_Link(*(Neuron**)vec_get(&new_agent->inputVector, j), *(Neuron**)vec_get(&new_agent->outputVector, i), 0.0, true);
+			// Link* new_link = new_Link(
+			// 	*(Neuron**)vec_get(&new_agent->inputVector, j), 
+			// 	*(Neuron**)vec_get(&new_agent->outputVector, i),
+			// 	0.0, true);
+            Link* new_link = new_Link(
+				((Neuron**)new_agent->inputVector.start)[j],
+				((Neuron**)new_agent->outputVector.start)[i],
+				0.0, true);
 			insert(&new_agent->linkList, new_link);
 		}
 	}
@@ -121,12 +128,13 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 					if (link_2 == NULL)
 					{
 						disjoint++;
-						continue;
 					}
-
-					// Else we register the difference between links
-					neuron_matching_links++;
-					weight_diff += double_abs(link_1->weight - link_2->weight);
+					else
+					{						
+						// Else we register the difference between links
+						neuron_matching_links++;
+						weight_diff += double_abs(link_1->weight - link_2->weight);
+					}
 
 					next(n_node);
 				} while (n_node != neuron_1->linkList);
@@ -225,7 +233,8 @@ bool check_agent(Agent* agent)
 	// Input neurons are not supposed to have any links attached to them
 	for (int i = 0; i < INPUT_SIZE; i++)
 	{
-		if ((*(Neuron**)vec_get(&agent->inputVector, i))->linkList != NULL)
+		// if ((*(Neuron**)vec_get(&agent->inputVector, i))->linkList != NULL)
+		if (((Neuron**)agent->inputVector.start)[i]->linkList != NULL)
 			return false;
 	}
 
@@ -243,5 +252,5 @@ void print_agent(Agent* agent)
 		   printf("%d -> %d [%.2lf, %d]\n", link->source->id, neuron->id, link->weight, link->enabled);
 	);	);
 
-	printf("Neurons: %d | Links: %d | Fitness: %lf\n", len(agent->neuronList), len(agent->linkList), agent->fitness);
+	printf("Neurons: %d | Links: %d | Fitness: %lf\n\n", len(agent->neuronList), len(agent->linkList), agent->fitness);
 }
