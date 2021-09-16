@@ -6,7 +6,7 @@
 #include "data_structures/clist.h"
 #include "data_structures/vector.h"
 
-#include "neurolution/Agent.h"
+#include "neurolution/agent.h"
 #include "neurolution/env_settings.h"
 
 pool* P_AGENT  = NULL;
