@@ -24,7 +24,7 @@ struct Agent
 
 Agent* new_BasicAgent(uint32_t inputCount, uint32_t outputCount);
 
-double distance(Agent* agent1, Agent* agent2);
+double distance(Agent* agent1, Agent* agent2, double c1, double c2);
 
 Agent* crossOver(Agent* agent1, Agent* agent2);
 

@@ -58,7 +58,7 @@ bool test()
         printf("Added new link in agent2\n");
     }
 
-    double d = distance(agent1, agent2);
+    double d = distance(agent1, agent2, 1.0, 1.0);
 
     printf("Distance: %lf\n", d);
 

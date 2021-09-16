@@ -198,3 +198,27 @@ void test_neuronInInput(void)
 		   printf("Neuron %d: %p\n", neuron->id, neuron);
 	);
 }
+
+bool test_distance()
+{   
+    NeuronCount = 10;
+
+    Agent* agent1 = new_BasicAgent(3, 2);
+    Agent* agent2 = new_BasicAgent(3, 2);
+
+    insert(&agent2->neuronList, new_BasicNeuron(8));
+
+    if (addLinkInAgent(agent2, 1, 8, 1.0, true))
+    {
+        printf("Added new link in agent2\n");
+    }
+
+    double d = distance(agent1, agent2, 1.0, 1.0);
+
+    printf("Distance: %lf\n", d);
+
+    free_agent(&agent1);
+    free_agent(&agent2);
+
+    return false;
+}

@@ -56,36 +56,40 @@ Agent* new_BasicAgent(uint32_t inputCount, uint32_t outputCount)
 	return new_agent;
 }
 
-double distance(Agent* agent1, Agent* agent2)
+double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 {
-	double c1 = 1;
-	double c2 = 1;
-
 	double matching = 0;
 	double disjoint = 0;
 	double total;
 	double weight_diff = 0;
 
+	// Create an array of 'int' the size of NeuronCount
+	// where a '1' indicate that a neuron exist in either agent
+	// and a '0' means no neurons.
 	vector totalNeuron = new_vector(sizeof(int), NeuronCount, 0);
 	memset(totalNeuron.start, 0, totalNeuron.type_size * totalNeuron.count);
 
 	ITER_V(agent1->neuronList, neuron_node, neuron, Neuron*,
-		   vec_set(&totalNeuron, &ONE, neuron->id-1);
+		vec_set(&totalNeuron, &ONE, neuron->id - 1);
 	);
 	ITER_V(agent2->neuronList, neuron_node, neuron, Neuron*,
-		   vec_set(&totalNeuron, &ONE, neuron->id - 1);
+		vec_set(&totalNeuron, &ONE, neuron->id - 1);
 	);
 
-
+	// Store the neuron of the agents 1 and 2 as we go through each neurons 
 	Neuron* neuron_1;
 	Neuron* neuron_2;
 
+	// Used to compare links in neurons
+	Link* link_1;
 	Link* link_2;
 
+	// Counter of matching links between two neurons
 	int neuron_matching_links = 0;
 
 	for (uint32_t i = 0; i < totalNeuron.count; i++)
 	{
+		// If neither agent has a neuron of id 'i+1' we got to the next neuron
 		if (*(int*)vec_get(&totalNeuron, i) == 0)
 			continue;
 
@@ -106,12 +110,13 @@ double distance(Agent* agent1, Agent* agent2)
 			{
 				neuron_matching_links = 0;
 
-				clist* iter = neuron_1->linkList;
-				Link* link_1;
+				// Cycle through the links in 'neuron_1'
+				clist* n_node = neuron_1->linkList;
 				do
 				{
-					link_1 = (Link*)iter->data;
-
+					link_1 = (Link*)n_node->data;
+					
+					// If 'neuron_2' doesn't have the same link we increment disjoint and continue
 					link_2 = getLinkInNeuron(neuron_2, pairToId(link_1->source->id, link_1->target->id));
 					if (link_2 == NULL)
 					{
@@ -119,13 +124,15 @@ double distance(Agent* agent1, Agent* agent2)
 						continue;
 					}
 
+					// Else we register the difference between links
 					neuron_matching_links++;
 					weight_diff += double_abs(link_1->weight - link_2->weight);
 
-					next(iter);
-				} while (iter != neuron_1->linkList);
+					next(n_node);
+				} while (n_node != neuron_1->linkList);
 			}
 
+			// For every neuron we count disjoint and matching links
 			disjoint += len(neuron_2->linkList) - neuron_matching_links;
 			matching += neuron_matching_links;	
 		}		
@@ -135,11 +142,6 @@ double distance(Agent* agent1, Agent* agent2)
 	total = matching + disjoint;
 
 	free_vector(&totalNeuron);
-
-
-	printf("Weight Diff: %lf\n", weight_diff);
-	printf("Disjoint: %lf\n", disjoint);
-	printf("Matching: %lf\n", matching);
 
 	return disjoint * c1 / total + weight_diff * c2;
 }
