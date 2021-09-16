@@ -1,4 +1,4 @@
-[![Build](https://github.com/subski/neat_c/workflows/cmake/badge.svg)](https://github.com/subski/neat_c/actions)
+[![Build](https://github.com/subski/neat_c/workflows/CMake/badge.svg)](https://github.com/subski/neat_c/actions)
 ## How to build
 
 In the root directory, run the commands:
