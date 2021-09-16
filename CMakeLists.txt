@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.10.0)
 project(NEAT_C C)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set(CMAKE_BUILD_TYPE Debug)
 
 set(SOURCES
     ${PROJECT_SOURCE_DIR}/main.c
