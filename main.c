@@ -13,71 +13,8 @@
 #include "neurolution/neurolution.h"
 #include "neurolution/mutations.h"
 
-
-#ifdef _WIN32
-#include <sys\timeb.h> 
-struct timeb progStart, progEnd;
-#endif
-
-void onExit(void)
-{
-    free_neurolution();
-
-#if USE_DEBUG_MALLOC
-    printLeaks();
-#endif
-
-#ifdef _WIN32
-    ftime(&progEnd);
-    
-    printf("\n\n---------------------------------------------------------------------------------------------------------------------\n");
-    printf("Program ended in %.3f seconds.\n", (1000 * (progEnd.time - progStart.time) + (progEnd.millitm - progStart.millitm)) / 1000.f);
-    system("pause");
-#endif
-}
-
-void onStart(int argc, char* argv[])
-{
-    atexit(&onExit);
-    pcg32_srandom((unsigned long long)time(NULL), (unsigned long long) & printf);
-
-#ifdef _WIN32
-    ftime(&progStart);
-#endif
-
-    for (int i=1; i<argc; i++)
-    {
-        switch (argv[i][1])
-        {
-            case 'p':
-                printf("Plotting agent from file: %s\n", argv[i+1]);
-#ifdef _WIN32
-                char cmd[255] = "python ";
-#else
-                char cmd[255] = "python3 ";
-#endif
-                strcat(cmd, argv[0]);
-                for (int i=strlen(cmd)-1; i>=0; i--)
-                {
-                    if (cmd[i] == '/' || cmd[i] == '\\')
-                    {
-                        cmd[i+1] = '\0';
-                        break;
-                    }
-                }
-
-                strcat(cmd, "plot.py ");
-                strcat(cmd, argv[i+1]);
-
-                system(cmd);
-                exit(0);
-            break;
-            default:
-
-            break;
-        }
-    }
-}
+void onStart(int argc, char* argv[]);
+void onExit(void);
 
 bool test()
 {
@@ -138,4 +75,68 @@ int main(int argc, char* argv[])
     }
 
     return EXIT_SUCCESS;
+}
+
+#ifdef _WIN32
+#include <sys\timeb.h> 
+struct timeb progStart, progEnd;
+#endif
+
+void onStart(int argc, char* argv[])
+{
+    atexit(&onExit);
+    pcg32_srandom((unsigned long long)time(NULL), (unsigned long long) & printf);
+
+#ifdef _WIN32
+    ftime(&progStart);
+#endif
+
+    for (int i=1; i<argc; i++)
+    {
+        switch (argv[i][1])
+        {
+            case 'p':
+                printf("Plotting agent from file: %s\n", argv[i+1]);
+#ifdef _WIN32
+                char cmd[255] = "python ";
+#else
+                char cmd[255] = "python3 ";
+#endif
+                strcat(cmd, argv[0]);
+                for (int i=strlen(cmd)-1; i>=0; i--)
+                {
+                    if (cmd[i] == '/' || cmd[i] == '\\')
+                    {
+                        cmd[i+1] = '\0';
+                        break;
+                    }
+                }
+
+                strcat(cmd, "plot.py ");
+                strcat(cmd, argv[i+1]);
+
+                system(cmd);
+                exit(0);
+            break;
+            default:
+            break;
+        }
+    }
+}
+
+void onExit(void)
+{
+    free_neurolution();
+
+#if USE_DEBUG_MALLOC
+    printLeaks();
+#endif
+
+#ifdef _WIN32
+    ftime(&progEnd);
+    
+    printf("\n\n---------------------------------------------------------------------------------------------------------------------\n");
+    printf("Program ended in %.3f seconds.\n", (1000 * (progEnd.time - progStart.time) + (progEnd.millitm - progStart.millitm)) / 1000.f);
+    system("pause");
+#endif
 }
