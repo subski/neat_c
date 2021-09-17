@@ -1,11 +1,14 @@
 [![Build](https://github.com/subski/neat_c/workflows/CMake/badge.svg)](https://github.com/subski/neat_c/actions)
-## How to build
+## How to build (Linux & Windows)
 
-1. Build the CMake project with the command: `cmake -S . -B build/` (Linux & Windows).
-2. 
-   - (Linux)   Compile the binaries with the command: `make -C build/`
-   - (Windows) Build the Visual Studio solution `build/NEAT_C.sln`
+1. Build the CMake project with the command: `cmake -B build/`
+2. Build the binaries with the command:      `cmake --build build/`
 
 ## How to run
 
 Execute the `NEAT_C` binary in the `build/bin/` folder.
+
+### OPTIONS
+   Arguments `NEAT_C [<options>]`
+   - `-p <filename>`: Display a graph of the nodes and connections stored in `<filename>`.
+                     *Requires Python 3 with the packages: matplotlib, networkx.*

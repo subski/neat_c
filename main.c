@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "tools/utils.h"
 #include "tools/pcg_basic.h"
 
@@ -34,7 +36,7 @@ void onExit(void)
 #endif
 }
 
-void onStart(void)
+void onStart(int argc, char* argv[])
 {
     atexit(&onExit);
     pcg32_srandom((unsigned long long)time(NULL), (unsigned long long) & printf);
@@ -42,14 +44,48 @@ void onStart(void)
 #ifdef _WIN32
     ftime(&progStart);
 #endif
+
+    for (int i=1; i<argc; i++)
+    {
+        switch (argv[i][1])
+        {
+            case 'p':
+                printf("Plotting agent from file: %s\n", argv[i+1]);
+#ifdef _WIN32
+                char cmd[255] = "python ";
+#else
+                char cmd[255] = "python3 ";
+#endif
+                strcat(cmd, argv[0]);
+                for (int i=strlen(cmd)-1; i>=0; i--)
+                {
+                    if (cmd[i] == '/' || cmd[i] == '\\')
+                    {
+                        cmd[i+1] = '\0';
+                        break;
+                    }
+                }
+
+                strcat(cmd, "plot.py ");
+                strcat(cmd, argv[i+1]);
+
+                system(cmd);
+                exit(0);
+            break;
+            default:
+
+            break;
+        }
+    }
 }
 
 bool test()
 {
     // NEXT: plot agent
     // NEXT: crossover function
-    Agent* agent1;
+    Agent* agent1 = new_BasicAgent(3, 2);
     
+    save_agent("test.genome", agent1);
     //agent1 = load_agent("test.genome");
 
     print_agent(agent1);
@@ -64,9 +100,9 @@ bool test()
     return false;
 }
 
-int main(void)
+int main(int argc, char* argv[])
 {
-    onStart();
+    onStart(argc, argv);
 
     if (!test()) return 0;
     

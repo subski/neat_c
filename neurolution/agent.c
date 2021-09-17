@@ -305,6 +305,8 @@ bool save_agent(char filename[], Agent* agent)
 	fputc(EOF, target_file);
 
 	fclose(target_file);
+
+	printf("Save agent in file: %s\n", filename);
 	return true;
 }
 
@@ -387,5 +389,8 @@ Agent* load_agent(char filename[])
 	}
 
 	fclose(target_file);
+
+	printf("Loaded agent from file: %s\n", filename);
+
 	return new_agent;
 }
