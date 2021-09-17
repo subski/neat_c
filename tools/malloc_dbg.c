@@ -186,6 +186,9 @@ void* realloc_dbg(void* block, size_t bytes, int line, const char* filename, con
 int free_count = 0;
 void free_dbg(void* ptrToFree)
 {
+	if (ptrToFree == NULL)
+		return;
+
 	free_count++;
 
 	mem_info* tmp = memoryInformation;

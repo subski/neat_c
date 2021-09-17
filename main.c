@@ -45,23 +45,22 @@ void onStart(void)
 }
 
 bool test()
-{   
-    NeuronCount = 10;
-
+{
+    // NEXT: plot agent
+    // NEXT: crossover function
     Agent* agent1;
     
-    agent1 = load_agent("test.genome");
+    //agent1 = load_agent("test.genome");
 
     print_agent(agent1);
 
     // throw segmentation fault because we don't initialize inputVector when loading the agent.
-    if (!check_agent(agent1))
-    {
-        printf("AGENT CORRUPTED!\n");
-    }
+    // if (!check_agent(agent1))
+    // {
+    //     printf("AGENT CORRUPTED!\n");
+    // }
 
     free_agent(&agent1);
-
     return false;
 }
 

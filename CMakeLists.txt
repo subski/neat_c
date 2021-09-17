@@ -3,21 +3,35 @@ cmake_minimum_required(VERSION 3.10.0)
 project(NEAT_C C)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 set(CMAKE_BUILD_TYPE Debug)
 
+# binary folder after building
+set(BIN_OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin/)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BIN_OUTPUT_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG  ${BIN_OUTPUT_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE  ${BIN_OUTPUT_DIR})
+
+# source code at root
 set(SOURCES
     ${PROJECT_SOURCE_DIR}/main.c
     ${PROJECT_SOURCE_DIR}/pch.c
 )
 
+# copy script 'plot.py' in the bin/ dir to be used by the app
+configure_file(${PROJECT_SOURCE_DIR}/plot.py ${BIN_OUTPUT_DIR}/plot.py COPYONLY)
+
 add_executable(${PROJECT_NAME} ${SOURCES})
 
+# sub folders
 add_subdirectory(neurolution)
 add_subdirectory(data_structures)
 add_subdirectory(tools)
 
+# includes
 target_include_directories(${PROJECT_NAME} PRIVATE ./)
 
+# precompile header
 target_precompile_headers(${PROJECT_NAME} PRIVATE pch.h)
 
 # Link the math library, needed on UNIX systems.
@@ -41,4 +55,5 @@ if (WIN32)
     endforeach()
 endif (WIN32)
 
+# disable ZERO_CHECK project
 set(CMAKE_SUPPRESS_REGENERATION true)

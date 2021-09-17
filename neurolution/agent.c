@@ -169,7 +169,7 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 Agent* crossOver(Agent* agent1, Agent* agent2)
 {
     Agent* new_agent = request(&P_AGENT, sizeof(Agent));
-	int a = 0;
+
     new_agent->fitness = 0;
     new_agent->neuronList = NULL;
     new_agent->linkList = NULL;

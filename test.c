@@ -231,9 +231,7 @@ bool test_distance()
 }
 
 bool test_io()
-{   
-    NeuronCount = 10;
-
+{
     Agent* agent1;
     
     agent1 = load_agent("test.genome");
