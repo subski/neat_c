@@ -48,29 +48,19 @@ bool test()
 {   
     NeuronCount = 10;
 
-    Agent* agent1 = new_BasicAgent(3, 2);
-    Agent* agent2 = new_BasicAgent(3, 2);
-
-    for (int i = 0; i < 40; i++)
-    {
-        mutate_agent(agent1);
-        mutate_agent(agent2);
-    }
+    Agent* agent1;
+    
+    agent1 = load_agent("test.genome");
 
     print_agent(agent1);
-    print_agent(agent2);
 
-    if (!check_agent(agent1) || !check_agent(agent2))
+    // throw segmentation fault because we don't initialize inputVector when loading the agent.
+    if (!check_agent(agent1))
     {
         printf("AGENT CORRUPTED!\n");
     }
 
-    double d = distance(agent1, agent2, 1.0, 1.0);
-
-    printf("Distance: %lf\n", d);
-
     free_agent(&agent1);
-    free_agent(&agent2);
 
     return false;
 }
@@ -80,7 +70,7 @@ int main(void)
     onStart();
 
     if (!test()) return 0;
-
+    
     evolve();
 
     Agent* agent = * (Agent**) Population.start;

@@ -206,11 +206,18 @@ bool test_distance()
     Agent* agent1 = new_BasicAgent(3, 2);
     Agent* agent2 = new_BasicAgent(3, 2);
 
-    insert(&agent2->neuronList, new_BasicNeuron(8));
-
-    if (addLinkInAgent(agent2, 1, 8, 1.0, true))
+    for (int i = 0; i < 40; i++)
     {
-        printf("Added new link in agent2\n");
+        mutate_agent(agent1);
+        mutate_agent(agent2);
+    }
+
+    print_agent(agent1);
+    print_agent(agent2);
+
+    if (!check_agent(agent1) || !check_agent(agent2))
+    {
+        printf("AGENT CORRUPTED!\n");
     }
 
     double d = distance(agent1, agent2, 1.0, 1.0);
@@ -219,6 +226,27 @@ bool test_distance()
 
     free_agent(&agent1);
     free_agent(&agent2);
+
+    return false;
+}
+
+bool test_io()
+{   
+    NeuronCount = 10;
+
+    Agent* agent1;
+    
+    agent1 = load_agent("test.genome");
+
+    print_agent(agent1);
+
+    // throw segmentation fault because we don't initialize inputVector when loading the agent.
+    if (!check_agent(agent1))
+    {
+        printf("AGENT CORRUPTED!\n");
+    }
+
+    free_agent(&agent1);
 
     return false;
 }

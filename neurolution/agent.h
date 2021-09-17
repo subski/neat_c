@@ -11,6 +11,7 @@ typedef struct clist clist;
 typedef struct Agent Agent;
 
 // TODO: replace neurons array by vectors
+// TODO: add documentation for agent.h
 struct Agent
 {
     double fitness;
@@ -22,7 +23,9 @@ struct Agent
     clist* linkList;
 };
 
-Agent* new_BasicAgent(uint32_t inputCount, uint32_t outputCount);
+Agent* new_Agent(uint32_t inputSize, uint32_t outputSize);
+
+Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize);
 
 double distance(Agent* agent1, Agent* agent2, double c1, double c2);
 
@@ -39,5 +42,9 @@ void free_agent(Agent** agent);
 bool check_agent(Agent* agent);
 
 void print_agent(Agent* agent);
+
+bool save_agent(char filename[], Agent* agent);
+
+Agent* load_agent(char filename[]);
 
 #endif

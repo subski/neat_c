@@ -9,20 +9,32 @@
 
 #include "tools/utils.h"
 
-
-Agent* new_BasicAgent(uint32_t inputCount, uint32_t outputCount)
+Agent* new_Agent(uint32_t inputSize, uint32_t outputSize)
 {
 	Agent* new_agent = request(&P_AGENT, sizeof(Agent));
 
-	new_agent->inputVector = new_vector(sizeof(Neuron*), inputCount, 0);
-	new_agent->outputVector = new_vector(sizeof(Neuron*), outputCount, 0);
+	new_agent->fitness = 0.0;
+	new_agent->neuronList = NULL;
+	new_agent->linkList = NULL;
+	new_agent->inputVector = new_vector(sizeof(Neuron*), inputSize, 0);
+	new_agent->outputVector = new_vector(sizeof(Neuron*), outputSize, 0);
+
+	return new_agent;
+}
+
+Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize)
+{
+	Agent* new_agent = request(&P_AGENT, sizeof(Agent));
+
+	new_agent->inputVector = new_vector(sizeof(Neuron*), inputSize, 0);
+	new_agent->outputVector = new_vector(sizeof(Neuron*), outputSize, 0);
 
 	new_agent->fitness = 0.0;
 	new_agent->neuronList = NULL;
 	new_agent->linkList = NULL;
 
 	// create input neurons
-	for (uint32_t i = 0; i < inputCount; i++)
+	for (uint32_t i = 0; i < inputSize; i++)
 	{
 		Neuron* input_neuron = new_BasicNeuron(i + 1);
 
@@ -33,9 +45,9 @@ Agent* new_BasicAgent(uint32_t inputCount, uint32_t outputCount)
 	}
 
 	// create output neurons
-	for (uint32_t i = 0; i < outputCount; i++)
+	for (uint32_t i = 0; i < outputSize; i++)
 	{
-		Neuron* output_neuron = new_BasicNeuron(inputCount + i + 1);
+		Neuron* output_neuron = new_BasicNeuron(inputSize + i + 1);
 
 		output_neuron->type = OUTPUT_TYPE;
 
@@ -44,9 +56,9 @@ Agent* new_BasicAgent(uint32_t inputCount, uint32_t outputCount)
 	}
 
 	// create links
-	for (uint32_t i = 0; i < outputCount; i++)
+	for (uint32_t i = 0; i < outputSize; i++)
 	{
-		for (uint32_t j = 0; j < inputCount; j++)
+		for (uint32_t j = 0; j < inputSize; j++)
 		{
 			// Link* new_link = new_Link(
 			// 	*(Neuron**)vec_get(&new_agent->inputVector, j), 
@@ -156,7 +168,15 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 
 Agent* crossOver(Agent* agent1, Agent* agent2)
 {
+    Agent* new_agent = request(&P_AGENT, sizeof(Agent));
+	int a = 0;
+    new_agent->fitness = 0;
+    new_agent->neuronList = NULL;
+    new_agent->linkList = NULL;
+    new_agent->inputVector = new_vector(sizeof(Neuron*), INPUT_SIZE, 0);
+    new_agent->outputVector = new_vector(sizeof(Neuron*), OUTPUT_SIZE, 0);
 
+    return new_agent;
 }
 
 bool isNeuronInAgent(Agent* agent, uint32_t id)
@@ -253,4 +273,119 @@ void print_agent(Agent* agent)
 	);	);
 
 	printf("Neurons: %d | Links: %d | Fitness: %lf\n\n", len(agent->neuronList), len(agent->linkList), agent->fitness);
+}
+
+// TODO: load special activation function from file
+// TODO: log enabled/disabled neurons and bias
+// TODO: maybe different format for neurons like: 'neuron_id': 'incoming connections'
+// TODO: log enabled/disabled connections information
+// TODO: retrive inputs/outputs links and save them in inputVector/outputVector
+bool save_agent(char filename[], Agent* agent)
+{
+	FILE* target_file = fopen(filename, "w");
+	if (target_file == NULL)
+	{
+		fprintf(stderr, "Cannot write agent data in file '%s'.", filename);
+		return false;
+	}
+
+	fprintf(target_file, "# Input and output node counts.\n");
+	fprintf(target_file, "%d\t%d\n\n", INPUT_SIZE, OUTPUT_SIZE);
+
+	fprintf(target_file, "# Connections (source target weight).\n");
+	ITER_V(agent->linkList, link_node, link, Link*,
+		fprintf(target_file, "%d %d %lf\n", link->source->id, link->target->id, link->weight);
+	);
+
+	fprintf(target_file, ";\n\n");
+
+	fprintf(target_file, "# Activation functions (functionId functionCode).\n");
+	fprintf(target_file, "0 None\n\n");
+
+	fputc(EOF, target_file);
+
+	fclose(target_file);
+	return true;
+}
+
+Agent* load_agent(char filename[])
+{
+	Agent* new_agent;
+	char line[255];
+
+	uint32_t inputSize = 0, outputSize = 0;
+	uint32_t id_source, id_target;
+	Neuron* neuron_source;
+	Neuron* neuron_target;
+	double weight;
+	uint32_t activationFunctionId;
+	char activationFunctionName[255];
+
+	bool r_ioSize = false, r_connections = false, r_activationFunction = false;
+
+	FILE* target_file = fopen(filename, "r");
+
+	while (fgets(line, sizeof(line), target_file) != NULL)
+	{
+		if (line[0] == '#' || line[0] == '\n')
+			continue;
+		
+		if (!r_ioSize)
+		{
+			sscanf(line, "%d\t%d\n", &inputSize, &outputSize);
+			new_agent = new_Agent(inputSize, outputSize);
+
+			printf("D> inputSize: %d, outputSize: %d\n", inputSize, outputSize);
+
+			r_ioSize = true;
+			continue;
+		}
+
+		if (!r_connections)
+		{
+			if (line[0] == ';')
+			{
+				r_connections = true;
+				continue;
+			}
+
+			sscanf(line, "%d\t%d\t%lf\n", &id_source, &id_target, &weight);
+			
+			printf("D> id_source: %d, id_target: %d, weight: %lf\n", id_source, id_target, weight);
+
+			if (!isNeuronInAgent(new_agent, id_source))
+			{
+				neuron_source = new_BasicNeuron(id_source);
+				insert(&new_agent->neuronList, neuron_source);
+			}
+			else
+			{
+				neuron_source = getNeuronInAgent(new_agent, id_source);
+			}
+
+			if (!isNeuronInAgent(new_agent, id_target))
+			{
+				neuron_target = new_BasicNeuron(id_target);
+				insert(&new_agent->neuronList, neuron_target);
+			}
+			else
+			{
+				neuron_target = getNeuronInAgent(new_agent, id_target);
+			}
+
+			insert(&new_agent->linkList, new_Link(neuron_source, neuron_target, weight, true));
+			
+			// r_connections = true;
+			continue;
+		}
+
+		if (!r_activationFunction)
+		{
+			r_activationFunction = true;
+			continue;
+		}
+	}
+
+	fclose(target_file);
+	return new_agent;
 }
