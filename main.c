@@ -52,7 +52,7 @@ bool test()
     
     //agent1 = load_agent("test.genome");
 
-    print_agent(agent1);
+    print_agent(agent1)
 
     // throw segmentation fault because we don't initialize inputVector when loading the agent.
     // if (!check_agent(agent1))
