@@ -18,8 +18,7 @@ void onExit(void);
 
 bool test()
 {
-    // NEXT: plot agent
-    // NEXT: crossover function
+    // NEXT: check todo for 'distance()' and 'crossOver()' functions
     Agent* agent1 = new_BasicAgent(3, 2);
     
     save_agent("test.genome", agent1);

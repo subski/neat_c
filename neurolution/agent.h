@@ -10,7 +10,6 @@ typedef struct clist clist;
 
 typedef struct Agent Agent;
 
-// TODO: replace neurons array by vectors
 // TODO: add documentation for agent.h
 struct Agent
 {

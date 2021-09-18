@@ -75,6 +75,7 @@ Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize)
 	return new_agent;
 }
 
+// TODO: use ++ ont totalNeuron value so if its 2: both neurons are present (it saves an if check)
 double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 {
 	double matching = 0;
@@ -106,6 +107,9 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 	// Counter of matching links between two neurons
 	int neuron_matching_links = 0;
 
+	// node iterator
+	clist* n_node;
+
 	for (uint32_t i = 0; i < totalNeuron.count; i++)
 	{
 		// If neither agent has a neuron of id 'i+1' we got to the next neuron
@@ -130,7 +134,7 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 				neuron_matching_links = 0;
 
 				// Cycle through the links in 'neuron_1'
-				clist* n_node = neuron_1->linkList;
+				n_node = neuron_1->linkList;
 				do
 				{
 					link_1 = (Link*)n_node->data;
@@ -166,6 +170,8 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 	return disjoint * c1 / total + weight_diff * c2;
 }
 
+// TODO: use the same totalNeuron as in 'distance()'
+// TODO: check if we can just cycle through links instead of neurons
 Agent* crossOver(Agent* agent1, Agent* agent2)
 {
     Agent* new_agent = request(&P_AGENT, sizeof(Agent));
@@ -175,6 +181,41 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
     new_agent->linkList = NULL;
     new_agent->inputVector = new_vector(sizeof(Neuron*), INPUT_SIZE, 0);
     new_agent->outputVector = new_vector(sizeof(Neuron*), OUTPUT_SIZE, 0);
+
+	vector totalNeuron_1 = new_vector(sizeof(int), NeuronCount, 0);
+	vector totalNeuron_2 = new_vector(sizeof(int), NeuronCount, 0);
+	memset(totalNeuron_1.start, 0, totalNeuron_1.type_size * totalNeuron_1.count);
+	memset(totalNeuron_2.start, 0, totalNeuron_2.type_size * totalNeuron_2.count);
+
+	ITER_V(agent1->neuronList, neuron_node, neuron, Neuron*,
+		vec_set(&totalNeuron_1, &ONE, neuron->id - 1);
+	);
+	ITER_V(agent2->neuronList, neuron_node, neuron, Neuron*,
+		vec_set(&totalNeuron_2, &ONE, neuron->id - 1);
+	);
+
+
+	bool exist_1;
+	bool exist_2;
+	for (uint32_t i = 0; i < NeuronCount; i++)
+	{
+		// WARNING: check the syntax im too drunk
+		exist_1 = ((int*)totalNeuron_1.start)[i];
+		exist_2 = ((int*)totalNeuron_2.start)[i];
+
+		if (exist_1 == 1 && exist_2 == 0)
+		{
+
+		}
+		else if (exist_1 == 0 && exist_2 == 1)
+		{
+
+		}
+		else
+		{
+			
+		}
+	}
 
     return new_agent;
 }
@@ -262,8 +303,6 @@ bool check_agent(Agent* agent)
 	return true;
 }
 
-// TODO: use macros instead.
-
 void print_agent(Agent* agent)
 {
 	printf("agent:\n");
@@ -290,7 +329,7 @@ bool save_agent(char filename[], Agent* agent)
 	}
 
 	fprintf(target_file, "# Input and output node counts.\n");
-	fprintf(target_file, "%d\t%d\n\n", INPUT_SIZE, OUTPUT_SIZE);
+	fprintf(target_file, "%d\t%d\n\n", agent->inputVector.count, agent->inputVector.count);
 
 	fprintf(target_file, "# Connections (source target weight).\n");
 	ITER_V(agent->linkList, link_node, link, Link*,
@@ -337,8 +376,6 @@ Agent* load_agent(char filename[])
 			sscanf(line, "%d\t%d\n", &inputSize, &outputSize);
 			new_agent = new_Agent(inputSize, outputSize);
 
-			printf("D> inputSize: %d, outputSize: %d\n", inputSize, outputSize);
-
 			r_ioSize = true;
 			continue;
 		}
@@ -352,8 +389,6 @@ Agent* load_agent(char filename[])
 			}
 
 			sscanf(line, "%d\t%d\t%lf\n", &id_source, &id_target, &weight);
-			
-			printf("D> id_source: %d, id_target: %d, weight: %lf\n", id_source, id_target, weight);
 
 			if (!isNeuronInAgent(new_agent, id_source))
 			{
