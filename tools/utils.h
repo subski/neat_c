@@ -27,8 +27,8 @@
 	} while (0);
 
 
-static int ZERO = 0;
-static int ONE = 1;
+extern const int ZERO;
+extern const int ONE;
 
 /*
 	Check if a given pointer is in an array.

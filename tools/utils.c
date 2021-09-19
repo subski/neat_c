@@ -1,5 +1,8 @@
 #include "tools/utils.h"
 
+const int ZERO = 0;
+const int ONE = 1;
+
 bool isPtrInArray(void* ptr, void* _array[], uint32_t arraySize)
 {
 	for (uint32_t i = 0; i < arraySize; i++)
