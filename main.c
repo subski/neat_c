@@ -10,6 +10,7 @@
 #include "neurolution/env_settings.h"
 #include "neurolution/neuron.h"
 #include "neurolution/agent.h"
+#include "neurolution/agent_io.h"
 #include "neurolution/neurolution.h"
 #include "neurolution/mutations.h"
 
@@ -22,10 +23,12 @@ bool test(int argc, char* argv[])
     // NEXT: interactive plot mutation on agent
     // NEXT: documentation for agent.h
     Agent* agent1 = new_BasicAgent(3, 2);
+    Agent* agent2 = new_BasicAgent(3, 2);
 
 #if _WIN32
     char pid_str[32];
     plot_agent(agent1, argv, pid_str);
+    plot_agent(agent2, argv, pid_str);
 
     _sleep(3000);
 
@@ -35,6 +38,7 @@ bool test(int argc, char* argv[])
 #endif
 
     free_agent(&agent1);
+    free_agent(&agent2);
     return false;
 }
 

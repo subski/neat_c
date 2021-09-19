@@ -1,18 +1,18 @@
 set(SOURCES 
-        clist.h
-        clist.c
+    clist.h
+    clist.c
 
-        llist.h
-        llist.c
+    llist.h
+    llist.c
 
-        matrix.h
-        matrix.c
+    matrix.h
+    matrix.c
 
-        pool.h
-        pool.c
+    pool.h
+    pool.c
 
-        vector.h
-        vector.c
+    vector.h
+    vector.c
 )
 
 list(TRANSFORM SOURCES PREPEND ${CMAKE_CURRENT_LIST_DIR}/)

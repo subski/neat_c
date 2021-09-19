@@ -1,17 +1,20 @@
-set(SOURCES 
-        agent.h
-        agent.c
+set(SOURCES
+    neurolution.h
+    neurolution.c
 
-        mutations.h
-        mutations.c
+    agent.h
+    agent.c
 
-        neurolution.h
-        neurolution.c
+    agent_io.h
+    agent_io.c
 
-        neuron.h
-        neuron.c
+    neuron.h
+    neuron.c
 
-        env_settings.h
+    mutations.h
+    mutations.c
+
+    env_settings.h
 )
 
 list(TRANSFORM SOURCES PREPEND ${CMAKE_CURRENT_LIST_DIR}/)
