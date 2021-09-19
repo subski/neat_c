@@ -16,21 +16,23 @@
 void onStart(int argc, char* argv[]);
 void onExit(void);
 
-bool test()
+bool test(int argc, char* argv[])
 {
     // NEXT: check todo for 'distance()' and 'crossOver()' functions
+    // NEXT: interactive plot mutation on agent
+    // NEXT: documentation for agent.h
     Agent* agent1 = new_BasicAgent(3, 2);
-    
-    save_agent("test.genome", agent1);
-    //agent1 = load_agent("test.genome");
 
-    print_agent(agent1);
+#if _WIN32
+    char pid_str[32];
+    plot_agent(agent1, argv, pid_str);
 
-    // throw segmentation fault because we don't initialize inputVector when loading the agent.
-    // if (!check_agent(agent1))
-    // {
-    //     printf("AGENT CORRUPTED!\n");
-    // }
+    _sleep(3000);
+
+    char cmd[100] = "taskkill /F /PID ";    
+    strcat(cmd, pid_str);
+    system(cmd);    
+#endif
 
     free_agent(&agent1);
     return false;
@@ -40,7 +42,7 @@ int main(int argc, char* argv[])
 {
     onStart(argc, argv);
 
-    if (!test()) return 0;
+    if (!test(argc, argv)) return 0;
     
     evolve();
 
@@ -102,7 +104,7 @@ void onStart(int argc, char* argv[])
                 char cmd[255] = "python3 ";
 #endif
                 strcat(cmd, argv[0]);
-                for (int i=strlen(cmd)-1; i>=0; i--)
+                for (size_t i=strlen(cmd)-1; i>=0; i--)
                 {
                     if (cmd[i] == '/' || cmd[i] == '\\')
                     {
@@ -115,6 +117,7 @@ void onStart(int argc, char* argv[])
                 strcat(cmd, argv[i+1]);
 
                 system(cmd);
+
                 exit(0);
             break;
             default:

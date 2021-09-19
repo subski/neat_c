@@ -46,4 +46,6 @@ bool save_agent(char filename[], Agent* agent);
 
 Agent* load_agent(char filename[]);
 
+int plot_agent(Agent* agent, char* argv[], char pid_str[]);
+
 #endif

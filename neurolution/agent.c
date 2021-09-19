@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "neurolution/agent.h"
 
 #include "data_structures/clist.h"
@@ -359,8 +361,8 @@ Agent* load_agent(char filename[])
 	Neuron* neuron_source;
 	Neuron* neuron_target;
 	double weight;
-	uint32_t activationFunctionId;
-	char activationFunctionName[255];
+	// uint32_t activationFunctionId;
+	// char activationFunctionName[255];
 
 	bool r_ioSize = false, r_connections = false, r_activationFunction = false;
 
@@ -428,4 +430,75 @@ Agent* load_agent(char filename[])
 	printf("Loaded agent from file: %s\n", filename);
 
 	return new_agent;
+}
+
+int plot_agent(Agent* agent, char* argv[], char pid_str[])
+{
+	printf("Plotting agent.\n");
+#ifdef _WIN32
+	char cmd[255] = "";
+	char unique_id[39] = "";
+	char bin_path[255] = "";
+	char tasklist_cmd[255] = "";
+	char pid_tmp[255] = "";
+	char tmp_file[255] = "";
+
+	FILE* pipe;
+
+	
+	pipe = _popen("powershell '{'+[guid]::NewGuid().ToString()+'}'", "r");
+	fgets(unique_id, 39, pipe);
+	_pclose(pipe);
+
+	strcat(cmd, "start \"");
+	strcat(cmd, unique_id);
+
+
+	strcat(cmd, "\" python ");
+
+	strcpy(bin_path, argv[0]);
+	for (size_t i=strlen(bin_path)-1; i>=0; i--)
+	{
+		if (bin_path[i] == '/' || bin_path[i] == '\\')
+		{
+			bin_path[i+1] = '\0';
+			break;
+		}
+	}
+	
+	strcat(tmp_file, bin_path);
+	strcat(tmp_file, "tmp_agent.g ");
+	save_agent(tmp_file, agent);
+
+	strcat(cmd, bin_path);
+	strcat(cmd, "plot.py ");
+	strcat(cmd, tmp_file);
+
+	system(cmd);
+
+	strcat(tasklist_cmd, "tasklist /v /fo csv | findstr /i \"");
+	strcat(tasklist_cmd, unique_id);
+	strcat(tasklist_cmd, "\"");
+
+	pipe = _popen(tasklist_cmd, "r");
+	fgets(pid_tmp, 15, pipe);
+	fgets(pid_tmp, 20, pipe);
+	_pclose(pipe);
+
+	for (int i = 0; i < 20; i++)
+	{
+		if (pid_tmp[i] == '"' || pid_tmp[i] == '\0')
+		{
+			pid_tmp[i] = '\0';
+			break;
+		}
+	}
+
+	if (pid_str != NULL)
+		strcpy(pid_str, pid_tmp);
+
+	return atoi(pid_tmp);
+
+#endif
+	return 0;
 }
