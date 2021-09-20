@@ -254,12 +254,16 @@ bool addLinkInAgent(Agent* agent, uint32_t source, uint32_t target, double weigh
 
 void free_agent(Agent** agent)
 {
+	// free links and linkList containers inside of neurons
 	pclean(&(*agent)->linkList, &P_LINK);
 	ITER((*agent)->neuronList, neuron_node,
 		 clear(&((Neuron*)neuron_node->data)->linkList);
 	);
+
+	// free neurons
 	pclean(&(*agent)->neuronList, &P_NEURON);
 
+	// free IO vectors
 	free_vector(&(*agent)->inputVector);
 	free_vector(&(*agent)->outputVector);
 

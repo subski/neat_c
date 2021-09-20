@@ -15,9 +15,9 @@ void print_agent(Agent* agent)
 	printf("Neurons: %d | Links: %d | Fitness: %lf\n\n", len(agent->neuronList), len(agent->linkList), agent->fitness);
 }
 
+// TODO: maybe different format for neurons like: 'neuron_id': 'incoming connections'
 // TODO: load special activation function from file
 // TODO: log enabled/disabled neurons and bias
-// TODO: maybe different format for neurons like: 'neuron_id': 'incoming connections'
 // TODO: log enabled/disabled connections information
 // TODO: retrive inputs/outputs links and save them in inputVector/outputVector
 bool save_agent(char filename[], Agent* agent)
@@ -30,7 +30,7 @@ bool save_agent(char filename[], Agent* agent)
 	}
 
 	fprintf(target_file, "# Input and output node counts.\n");
-	fprintf(target_file, "%d\t%d\n\n", agent->inputVector.count, agent->inputVector.count);
+	fprintf(target_file, "%d\t%d\n\n", agent->inputVector.count, agent->outputVector.count);
 
 	fprintf(target_file, "# Connections (source target weight).\n");
 	ITER_V(agent->linkList, link_node, link, Link*,
@@ -135,26 +135,26 @@ int plot_agent(Agent* agent, char* argv[], char pid_str[])
 {
 	printf("Plotting agent.\n");
 #ifdef _WIN32
-	char cmd[255] = "";
-	char unique_id[39] = "";
-	char bin_path[255] = "";
-	char tasklist_cmd[255] = "";
-	char pid_tmp[255] = "";
-	char tmp_file[255] = "";
+	char cmd[255] = "";          // command that will launch 'plot.py'
+	char unique_id[39] = "";	 // unique id used as title of the cmd window
+	char bin_path[255] = "";     // path of directory containing NEAT_C and plot.py
+	char tasklist_cmd[255] = ""; // command to get the pid of a given window
+	char pid_tmp[255] = "";      // store the new process pid temporary
+	char tmp_file[255] = "";     // store the temporary agent file generated
 
-	FILE* pipe;
-
+	FILE* pipe; // used to read the output of windows commands
 	
+    // generate a unique ID
 	pipe = _popen("powershell '{'+[guid]::NewGuid().ToString()+'}'", "r");
 	fgets(unique_id, 39, pipe);
 	_pclose(pipe);
 
+    // begining of the 'cmd' in the form: 'start "<unique_id>" python '
 	strcat(cmd, "start \"");
 	strcat(cmd, unique_id);
-
-
 	strcat(cmd, "\" python ");
 
+    // retrieve 'bin_path' from the program arguments
 	strcpy(bin_path, argv[0]);
 	for (size_t i=strlen(bin_path)-1; i>=0; i--)
 	{
@@ -165,16 +165,20 @@ int plot_agent(Agent* agent, char* argv[], char pid_str[])
 		}
 	}
 	
+    // save temp agent file at '<bin_path>/tmp_agent.g'
 	strcat(tmp_file, bin_path);
 	strcat(tmp_file, "tmp_agent.g ");
 	save_agent(tmp_file, agent);
 
+    // continue the 'cmd' with '<bin_path>/plot.py <bin_path>/tmp_agent.g'
 	strcat(cmd, bin_path);
 	strcat(cmd, "plot.py ");
 	strcat(cmd, tmp_file);
 
+    // call the command
 	system(cmd);
 
+    // retrieve our command process PID
 	strcat(tasklist_cmd, "tasklist /v /fo csv | findstr /i \"");
 	strcat(tasklist_cmd, unique_id);
 	strcat(tasklist_cmd, "\"");
@@ -184,6 +188,7 @@ int plot_agent(Agent* agent, char* argv[], char pid_str[])
 	fgets(pid_tmp, 20, pipe);
 	_pclose(pipe);
 
+    // extract PID from the output of 'tasklist'
 	for (int i = 0; i < 20; i++)
 	{
 		if (pid_tmp[i] == '"' || pid_tmp[i] == '\0')
@@ -193,6 +198,7 @@ int plot_agent(Agent* agent, char* argv[], char pid_str[])
 		}
 	}
 
+    // return the pid as a string if needed
 	if (pid_str != NULL)
 		strcpy(pid_str, pid_tmp);
 
