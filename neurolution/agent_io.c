@@ -20,7 +20,6 @@ void print_agent(Agent* agent)
 // TODO: maybe different format for neurons like: 'neuron_id': 'incoming connections'
 // TODO: load special activation function from file
 // TODO: log enabled/disabled neurons and bias
-// TODO: log enabled/disabled connections information
 // TODO: retrive inputs/outputs links and save them in inputVector/outputVector
 bool save_agent(char filename[], Agent* agent)
 {
@@ -36,7 +35,7 @@ bool save_agent(char filename[], Agent* agent)
 
 	fprintf(target_file, "# Connections (source target weight).\n");
 	ITER_V(agent->linkList, link_node, link, Link*,
-		fprintf(target_file, "%d %d %lf\n", link->source->id, link->target->id, link->weight);
+		fprintf(target_file, "%d\t%d\t%lf\t%d\n", link->source->id, link->target->id, link->weight, link->enabled);
 	);
 
 	fprintf(target_file, ";\n\n");
@@ -62,6 +61,7 @@ Agent* load_agent(char filename[])
 	Neuron* neuron_source;
 	Neuron* neuron_target;
 	double weight;
+	bool enabled;
 	// uint32_t activationFunctionId;
 	// char activationFunctionName[255];
 
@@ -91,7 +91,7 @@ Agent* load_agent(char filename[])
 				continue;
 			}
 
-			sscanf(line, "%d\t%d\t%lf\n", &id_source, &id_target, &weight);
+			sscanf(line, "%d\t%d\t%lf\t%d\n", &id_source, &id_target, &weight, &enabled);
 
 			if (!isNeuronInAgent(new_agent, id_source))
 			{
@@ -113,9 +113,7 @@ Agent* load_agent(char filename[])
 				neuron_target = getNeuronInAgent(new_agent, id_target);
 			}
 
-			insert(&new_agent->linkList, new_Link(neuron_source, neuron_target, weight, true));
-			
-			// r_connections = true;
+			insert(&new_agent->linkList, new_Link(neuron_source, neuron_target, weight, enabled));
 			continue;
 		}
 
@@ -167,6 +165,7 @@ int plot_agent(Agent* agent, char pid_str[])
 	strcat(cmd, tmp_file);
 
     // call the command
+	printf(cmd);
 	system(cmd);
 
     // retrieve our command process PID

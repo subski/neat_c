@@ -21,7 +21,6 @@ bool test(int argc, char* argv[])
 {
     // NEXT: check todo for 'distance()' and 'crossOver()' functions
     // NEXT: interactive plot mutation on agent
-    // NEXT: documentation for agent.h
     // NEXT: don't show disabled links in agent plot
     Agent* agent1 = new_BasicAgent(3, 2);
 
@@ -40,7 +39,6 @@ bool test(int argc, char* argv[])
 #endif
 
     free_agent(&agent1);
-    free_agent(&agent2);
     return false;
 }
 

@@ -20,8 +20,9 @@ def plot_agent(filename):
             if len(info) == 2:
                 inputSize = int(info[0])
                 outputSize = int(info[1])
-            if len(info) == 3:
-                F.add_edge(int(info[0]), int(info[1]))
+            if len(info) == 4:
+                if info[3] == "1":
+                    F.add_edge(int(info[0]), int(info[1]))
 
     for i in range(1, inputSize+1):
         G.add_node(i, layer=1)
