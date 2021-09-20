@@ -2,6 +2,8 @@
 
 #include "neurolution/neuron.h"
 
+#include "tools/utils.h"
+
 #include <stdio.h>
 
 void print_agent(Agent* agent)
@@ -131,13 +133,13 @@ Agent* load_agent(char filename[])
 	return new_agent;
 }
 
-int plot_agent(Agent* agent, char* argv[], char pid_str[])
+// TODO: function system(...)
+int plot_agent(Agent* agent, char pid_str[])
 {
 	printf("Plotting agent.\n");
 #ifdef _WIN32
 	char cmd[255] = "";          // command that will launch 'plot.py'
 	char unique_id[39] = "";	 // unique id used as title of the cmd window
-	char bin_path[255] = "";     // path of directory containing NEAT_C and plot.py
 	char tasklist_cmd[255] = ""; // command to get the pid of a given window
 	char pid_tmp[255] = "";      // store the new process pid temporary
 	char tmp_file[255] = "";     // store the temporary agent file generated
@@ -153,25 +155,14 @@ int plot_agent(Agent* agent, char* argv[], char pid_str[])
 	strcat(cmd, "start \"");
 	strcat(cmd, unique_id);
 	strcat(cmd, "\" python ");
-
-    // retrieve 'bin_path' from the program arguments
-	strcpy(bin_path, argv[0]);
-	for (size_t i=strlen(bin_path)-1; i>=0; i--)
-	{
-		if (bin_path[i] == '/' || bin_path[i] == '\\')
-		{
-			bin_path[i+1] = '\0';
-			break;
-		}
-	}
 	
-    // save temp agent file at '<bin_path>/tmp_agent.g'
-	strcat(tmp_file, bin_path);
-	strcat(tmp_file, "tmp_agent.g ");
+    // save temp agent file at '<BIN_PATH>/<unique_id>'
+	strcat(tmp_file, BIN_PATH);
+	strcat(tmp_file, unique_id);
 	save_agent(tmp_file, agent);
 
-    // continue the 'cmd' with '<bin_path>/plot.py <bin_path>/tmp_agent.g'
-	strcat(cmd, bin_path);
+    // continue the 'cmd' with '<BIN_PATH>/plot.py <BIN_PATH>/<unique_id>'
+	strcat(cmd, BIN_PATH);
 	strcat(cmd, "plot.py ");
 	strcat(cmd, tmp_file);
 

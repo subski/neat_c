@@ -19,14 +19,14 @@ Agent* load_agent(char filename[]);
 
     Info:
         (Windows)
-        Store the agent into a file 'tmp_agent.g'.
-        Calls the command 'python plot.py tmp_agent.g'.
+        Store the agent into a file '<unique_id>'.
+        Calls the command 'python plot.py <unique_id>'.
         Returns the python process id with 'tasklist'.
         To close a plot window, use:
             char cmd[100] = "taskkill /F /PID ";    
             strcat(cmd, <PID>);
             system(cmd);        
 */
-int plot_agent(Agent* agent, char* argv[], char pid_str[]);
+int plot_agent(Agent* agent, char pid_str[]);
 
 #endif

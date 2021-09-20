@@ -22,15 +22,17 @@ bool test(int argc, char* argv[])
     // NEXT: check todo for 'distance()' and 'crossOver()' functions
     // NEXT: interactive plot mutation on agent
     // NEXT: documentation for agent.h
+    // NEXT: don't show disabled links in agent plot
     Agent* agent1 = new_BasicAgent(3, 2);
-    Agent* agent2 = new_BasicAgent(3, 2);
+
+    mutate_neuron_insert(agent1);
+
 
 #if _WIN32
     char pid_str[32];
-    plot_agent(agent1, argv, pid_str);
-    plot_agent(agent2, argv, pid_str);
+    plot_agent(agent1, pid_str);
 
-    _sleep(3000);
+    system("pause");
 
     char cmd[100] = "taskkill /F /PID ";    
     strcat(cmd, pid_str);
@@ -92,6 +94,16 @@ void onStart(int argc, char* argv[])
     atexit(&onExit);
     pcg32_srandom((unsigned long long)time(NULL), (unsigned long long) & printf);
 
+    strcpy(BIN_PATH, argv[0]);
+	for (size_t i=strlen(BIN_PATH)-1; i>=0; i--)
+	{
+		if (BIN_PATH[i] == '/' || BIN_PATH[i] == '\\')
+		{
+			BIN_PATH[i+1] = '\0';
+			break;
+		}
+	}
+    
 #ifdef _WIN32
     ftime(&progStart);
 #endif
@@ -107,16 +119,7 @@ void onStart(int argc, char* argv[])
 #else
                 char cmd[255] = "python3 ";
 #endif
-                strcat(cmd, argv[0]);
-                for (size_t i=strlen(cmd)-1; i>=0; i--)
-                {
-                    if (cmd[i] == '/' || cmd[i] == '\\')
-                    {
-                        cmd[i+1] = '\0';
-                        break;
-                    }
-                }
-
+                strcat(cmd, BIN_PATH);
                 strcat(cmd, "plot.py ");
                 strcat(cmd, argv[i+1]);
 
@@ -143,6 +146,11 @@ void onExit(void)
     
     printf("\n\n---------------------------------------------------------------------------------------------------------------------\n");
     printf("Program ended in %.3f seconds.\n", (1000 * (progEnd.time - progStart.time) + (progEnd.millitm - progStart.millitm)) / 1000.f);
-    system("pause");
+    //system("pause");
+
+    char cmd[255] = "del ";
+    strcat(cmd, BIN_PATH);
+    strcat(cmd, "{*}");
+    system(cmd);
 #endif
 }

@@ -30,6 +30,8 @@
 extern const int ZERO;
 extern const int ONE;
 
+extern char BIN_PATH[];
+
 /*
 	Check if a given pointer is in an array.
 */
