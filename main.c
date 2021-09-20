@@ -21,11 +21,9 @@ bool test(int argc, char* argv[])
 {
     // NEXT: check todo for 'distance()' and 'crossOver()' functions
     // NEXT: interactive plot mutation on agent
-    // NEXT: don't show disabled links in agent plot
     Agent* agent1 = new_BasicAgent(3, 2);
 
     mutate_neuron_insert(agent1);
-
 
 #if _WIN32
     char pid_str[32];

@@ -47,56 +47,44 @@ void createInitialPopulation(vector* population, uint32_t count)
 	}
 }
 
-void idToPair(uint32_t id, uint32_t* p1, uint32_t* p2)
+void idToPair(int id, uint32_t* p1, uint32_t* p2)
 {
-	uint32_t r_id;
-
-	if (id % 2 == 0)
+	bool invert = false;
+	if (id < 0)
 	{
-		r_id = id / 2;
+		id = -id;
+		invert = true;
+	}
+
+	float n1 = 0.5f + sqrt(2 * id + 0.25f);
+	uint32_t n1_c = ceilf(n1);
+	
+	uint32_t n2 = (n1_c - 1) * (n1 - (n1_c - 1 ));
+
+	if (!invert)
+	{
+		*p1 = n1_c;
+		*p2 = n2;
 	}
 	else
 	{
-		r_id = (id + 1) / 2;
-	}
-
-	float n = 0.5f + sqrtf(0.25f + 2 * r_id);
-	float nb = ceilf(n) - 1;
-
-	if (id % 2 == 0)
-	{
-		*p1 = (int)roundf(nb * (n - nb));
-		*p2 = (int)ceilf(n);
-	}
-	else
-	{
-		*p1 = (int)ceilf(n);
-		*p2 = (int)roundf(nb * (n - nb));
+		*p1 = n2;
+		*p2 = n1_c;
 	}
 }
 
-
-// TODO: Simplify equation.
-uint32_t pairToId(uint32_t p1, uint32_t p2)
+int pairToId(uint32_t p1, uint32_t p2)
 {
-	uint32_t tmp = 0;
-	if (p1 < p2)
+	int invert = 1;
+	if (p2 > p1)
 	{
-		tmp = p1;
+		invert = -1;
+		int tmp = p1;
 		p1 = p2;
-		p2 = tmp;
+		p2 = tmp;		
 	}
 
-	uint32_t N = p1 * (p1 - 1) / 2;
-	uint32_t N2 = (p1-1) * (p1 - 2) / 2;
-	
-	uint32_t id = (int)N2 + (((float)p2 / p1) * (N - N2));
-	id = id*2+1;
-
-	if (tmp)
-		id++;
-
-	return id;
+	return invert * ((p1 * (p1 - 1)) / 2 - (p1 - p2 - 1));
 }
 
 void free_neurolution()

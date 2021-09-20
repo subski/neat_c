@@ -37,7 +37,7 @@ extern vector Population;
 struct NeuronHistory_s
 {
 	uint32_t neuronId;
-	uint32_t linkId;
+	int linkId;
 
 	NeuronHistory_s* next;
 };
@@ -46,9 +46,9 @@ void evolve(void);
 
 void createInitialPopulation(vector* population, uint32_t count);
 
-void idToPair(uint32_t id, uint32_t* p1, uint32_t* p2);
+void idToPair(int id, uint32_t* p1, uint32_t* p2);
 
-uint32_t pairToId(uint32_t p1, uint32_t p2);
+int pairToId(uint32_t p1, uint32_t p2);
 
 void free_neurolution();
 

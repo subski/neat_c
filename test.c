@@ -150,14 +150,14 @@ void test_vec_agents(void)
 
 void test_pair(void)
 {
-	int co1, co2;
+	uint32_t p1, p2;
+    for (int i=-9; i<10; i++)
+    {
+        idToPair(i, &p1, &p2);
+        printf("%d: (%d, %d)\n", pairToId(p1, p2), p1, p2);
+    }
 
-	for (int i = 1; i < 11; i++)
-	{
-		idToPair(i, &co1, &co2);
-		printf("%d: (%d, %d) ", i, co1, co2);
-		printf("%d: (%d, %d)\n", pairToId(co1, co2), co1, co2);
-	}
+    return false;
 }
 
 void test_isPtrInArray(void)

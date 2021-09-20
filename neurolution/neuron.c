@@ -48,7 +48,7 @@ Link* new_Link(Neuron* source, Neuron* target, double weight, bool enabled)
 	return link;
 }
 
-Link* getLinkInNeuron(Neuron* neuron, uint32_t id)
+Link* getLinkInNeuron(Neuron* neuron, int id)
 {
 	ITER_V(neuron->linkList, link_node, link, Link*,
 		   if (pairToId(link->source->id, link->target->id) == id)

@@ -81,7 +81,7 @@ bool mutate_neuron_insert(Agent* agent)
 		return false;
 
 
-	uint32_t link_id = pairToId(target_link->source->id, target_link->target->id);
+	int link_id = pairToId(target_link->source->id, target_link->target->id);
 
 	NeuronHistory_s* neuron_node = NeuronHistory.next;
 	uint32_t neuron_id = 0;
