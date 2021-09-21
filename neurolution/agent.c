@@ -172,6 +172,7 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 
 // TODO: use the same totalNeuron as in 'distance()'
 // TODO: check if we can just cycle through links instead of neurons
+// https://github.com/CodeReclaimers/neat-python/blob/c2b79c88667a1798bfe33c00dd8e251ef8be41fa/neat/genome.py#L234
 Agent* crossOver(Agent* agent1, Agent* agent2)
 {
     Agent* new_agent = request(&P_AGENT, sizeof(Agent));
@@ -187,6 +188,7 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
 	memset(totalNeuron_1.start, 0, totalNeuron_1.type_size * totalNeuron_1.count);
 	memset(totalNeuron_2.start, 0, totalNeuron_2.type_size * totalNeuron_2.count);
 
+	// TODO: use '2' when both neurons exist
 	ITER_V(agent1->neuronList, neuron_node, neuron, Neuron*,
 		vec_set(&totalNeuron_1, &ONE, neuron->id - 1);
 	);
