@@ -33,7 +33,7 @@ bool save_agent(char filename[], Agent* agent)
 	fprintf(target_file, "# Input and output node counts.\n");
 	fprintf(target_file, "%d\t%d\n\n", agent->inputVector.count, agent->outputVector.count);
 
-	fprintf(target_file, "# Connections (source target weight).\n");
+	fprintf(target_file, "# Connections (source target weight enabled).\n");
 	ITER_V(agent->linkList, link_node, link, Link*,
 		fprintf(target_file, "%d\t%d\t%lf\t%d\n", link->source->id, link->target->id, link->weight, link->enabled);
 	);
