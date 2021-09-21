@@ -1,0 +1,16 @@
+# Input and output node counts.
+3	2
+
+# Connections (source target weight).
+1	4	0.000000	1
+3	5	0.000000	1
+2	5	0.000000	1
+1	5	0.000000	1
+3	4	0.000000	1
+2	4	0.000000	1
+;
+
+# Activation functions (functionId functionCode).
+0 None
+
+ÿ

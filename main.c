@@ -19,63 +19,54 @@ void onExit(void);
 
 bool test(int argc, char* argv[])
 {
-    // NEXT: check todo for 'distance()' and 'crossOver()' functions
-    // NEXT: interactive plot mutation on agent
-    Agent* agent1 = new_BasicAgent(3, 2);
-
-    mutate_neuron_insert(agent1);
-
-#if _WIN32
-    char pid_str[32];
-    plot_agent(agent1, pid_str);
-
-    system("pause");
-
-    char cmd[100] = "taskkill /F /PID ";    
-    strcat(cmd, pid_str);
-    system(cmd);    
-#endif
-
-    free_agent(&agent1);
-    return false;
+    return true;
 }
 
+// NEXT: check todo for 'distance()' and 'crossOver()' functions
 int main(int argc, char* argv[])
 {
     onStart(argc, argv);
-
     if (!test(argc, argv)) return 0;
     
     evolve();
 
     Agent* agent = * (Agent**) Population.start;
+    save_agent("example_agent.g", agent);
+#if _WIN32
 
-    /*mutate_neuron_insert(agent);
-    mutate_neuron_insert(agent);
-    mutate_neuron_insert(agent);
-    mutate_neuron_insert(agent);
-    mutate_neuron_insert(agent);
-    mutate_neuron_insert(agent);*/
-
-
-    REPEAT(i, 100,
-           mutate_neuron_insert(agent);
-           mutate_link_add(agent);
-           mutate_link_toggle(agent);
-           mutate_link_shift(agent, 0.2);
-
-           print_agent(agent);
-        
-        printf("\n");
-    );
-
-    //insert(&agent->links, new_Link(agent->inputNeurons[1], agent->inputNeurons[0], 0, 0));
-    //insert(&agent->neurons, new_BasicNeuron(1));
-
-    if (!check_agent(agent))
+    char inp = '\0';
+    char pid[32];
+    char cmd[100];
+    while (inp != 'q')
     {
-        printf("AGENT CORRUPTED!\n");
+        plot_agent(agent, pid);
+        printf(">");
+        scanf(" %c", &inp);
+
+        strcpy(cmd, "start taskkill /F /PID ");    
+        strcat(cmd, pid);
+        system(cmd); 
+
+        switch (inp)
+        {
+            case 'l':
+                mutate_link_add(agent);
+                break;
+            case 's':
+                mutate_link_shift(agent, 0.2);
+                break;
+            case 't':
+                mutate_link_toggle(agent);
+                break;
+            case 'n':
+                mutate_neuron_insert(agent);
+                break;
+            default:
+            break;
+        }
     }
+    
+#endif
 
     return EXIT_SUCCESS;
 }
@@ -144,7 +135,7 @@ void onExit(void)
     printf("Program ended in %.3f seconds.\n", (1000 * (progEnd.time - progStart.time) + (progEnd.millitm - progStart.millitm)) / 1000.f);
     //system("pause");
 
-    char cmd[255] = "del ";
+    char cmd[255] = "start cmd /c del ";
     strcat(cmd, BIN_PATH);
     strcat(cmd, "{*}");
     system(cmd);

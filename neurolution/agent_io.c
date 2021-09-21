@@ -47,7 +47,7 @@ bool save_agent(char filename[], Agent* agent)
 
 	fclose(target_file);
 
-	printf("Save agent in file: %s\n", filename);
+	//printf("Save agent in file: %s\n", filename);
 	return true;
 }
 
@@ -126,7 +126,7 @@ Agent* load_agent(char filename[])
 
 	fclose(target_file);
 
-	printf("Loaded agent from file: %s\n", filename);
+	//printf("Loaded agent from file: %s\n", filename);
 
 	return new_agent;
 }
@@ -134,7 +134,6 @@ Agent* load_agent(char filename[])
 // TODO: function system(...)
 int plot_agent(Agent* agent, char pid_str[])
 {
-	printf("Plotting agent.\n");
 #ifdef _WIN32
 	char cmd[255] = "";          // command that will launch 'plot.py'
 	char unique_id[39] = "";	 // unique id used as title of the cmd window
@@ -165,7 +164,7 @@ int plot_agent(Agent* agent, char pid_str[])
 	strcat(cmd, tmp_file);
 
     // call the command
-	printf(cmd);
+	// printf(cmd);
 	system(cmd);
 
     // retrieve our command process PID
