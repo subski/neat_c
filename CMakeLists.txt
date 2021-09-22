@@ -18,10 +18,18 @@ set(SOURCES
     ${PROJECT_SOURCE_DIR}/pch.c
 )
 
+add_executable(${PROJECT_NAME} ${SOURCES})
+
 # copy script 'plot.py' in the bin/ dir to be used by the app
 configure_file(${PROJECT_SOURCE_DIR}/plot.py ${BIN_OUTPUT_DIR}/plot.py COPYONLY)
+# file(COPY ${PROJECT_SOURCE_DIR}/plot.py DESTINATION ${BIN_OUTPUT_DIR})
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_custom_command(
+        TARGET ${PROJECT_NAME}  POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            ${PROJECT_SOURCE_DIR}/plot.py
+            ${BIN_OUTPUT_DIR}/plot.py)
+
 
 # sub folders
 add_subdirectory(neurolution)

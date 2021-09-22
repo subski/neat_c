@@ -7,6 +7,7 @@
 #include "data_structures/vector.h"
 
 #include "neurolution/agent.h"
+#include "neurolution/mutations.h"
 #include "neurolution/env_settings.h"
 
 pool* P_AGENT  = NULL;
@@ -24,7 +25,6 @@ void evolve(void)
 	Population = new_vector(sizeof(Agent*), MAX_POPULATION, 0);
 
 	createInitialPopulation(&Population, MAX_POPULATION);
-	
 	
 	// Speciate
 	

@@ -19,7 +19,12 @@ void onExit(void);
 
 bool test(int argc, char* argv[])
 {
-    return true;
+    Agent* agent = new_BasicAgent(3, 2);
+    plot_agent(agent, NULL);
+    system("Pause");
+    free_agent(&agent);
+    
+    return true; // continue the program?
 }
 
 int main(int argc, char* argv[])
@@ -27,7 +32,7 @@ int main(int argc, char* argv[])
     onStart(argc, argv);
     if (!test(argc, argv)) return 0;
     
-    // evolve();
+    evolve();
 
     return EXIT_SUCCESS;
 }
