@@ -40,9 +40,12 @@ struct timeb progStart, progEnd;
 // TODO: add welcolme msg
 void onStart(int argc, char* argv[])
 {
+    // Add function on program exit event
     atexit(&onExit);
+    // Setup the random number generator
     pcg32_srandom((unsigned long long)time(NULL), (unsigned long long) & printf);
 
+    // Get the program binary path from the program arguments
     strcpy(BIN_PATH, argv[0]);
 	for (size_t i=strlen(BIN_PATH)-1; i>=0; i--)
 	{
@@ -54,13 +57,16 @@ void onStart(int argc, char* argv[])
 	}
     
 #ifdef _WIN32
+    // Save the time when the program starts to get the execution time later
     ftime(&progStart);
 #endif // !_WIN32
 
+    // Handle program's argument
     for (int i=1; i<argc; i++)
     {
         switch (argv[i][1])
         {
+            // Plot agent from file
             case 'p':
                 printf("Plotting agent from file: %s\n", argv[i+1]);
 #ifdef _WIN32
@@ -97,6 +103,7 @@ void onExit(void)
     printf("Program ended in %.3f seconds.\n", (1000 * (progEnd.time - progStart.time) + (progEnd.millitm - progStart.millitm)) / 1000.f);
     //system("pause");
 
+    // Clear temporary files created when ploting agents
     char cmd[255] = "start cmd /c del ";
     strcat(cmd, BIN_PATH);
     strcat(cmd, "{*}");
