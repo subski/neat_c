@@ -38,12 +38,26 @@ Link* new_Link(Neuron* source, Neuron* target, double weight, bool enabled)
 {
 	Link* link = request(&P_LINK, sizeof(Link));
 
+	link->id = 0;
 	link->source = source;
 	link->target = target;
 	link->weight = weight;
 	link->enabled = enabled;
 
 	insert(&target->linkList, link);
+
+	return link;
+}
+
+Link* new_LinkId(uint32_t source, uint32_t target, double weight, bool enabled)
+{
+	Link* link = request(&P_LINK, sizeof(Link));
+
+	link->id = pairToId(source, target);
+	link->source = NULL;
+	link->target = NULL;
+	link->weight = weight;
+	link->enabled = enabled;
 
 	return link;
 }
@@ -55,4 +69,28 @@ Link* getLinkInNeuron(Neuron* neuron, int id)
 			   return link;
 	);
 	return NULL;
+}
+
+Neuron* cloneNeuron(Neuron* neuron)
+{
+	Neuron* new_neuron = new_Neuron(
+		neuron->id, 
+		neuron->enabled, 
+		neuron->activated, 
+		neuron->type, 
+		neuron->activationFunc, 
+		neuron->value, 
+		neuron->bias, 
+		NULL);
+
+	ITER_V(neuron->linkList, link_node, link, Link*,
+		insert(&new_neuron->linkList,
+			new_LinkId(
+				link->source->id, 
+				link->target->id, 
+				link->weight, 
+				link->enabled));
+	);
+
+	return new_neuron;
 }

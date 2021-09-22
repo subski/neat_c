@@ -27,6 +27,7 @@ typedef enum NeuronType
 
 struct Link
 {
+    int id;
     Neuron* source;
     Neuron* target;
 	double weight;
@@ -68,6 +69,10 @@ Neuron* new_BasicNeuron(uint32_t id);
 
 Link* new_Link(Neuron* source, Neuron* target, double weight, bool enabled);
 
+Link* new_LinkId(uint32_t source, uint32_t target, double weight, bool enabled);
+
 Link* getLinkInNeuron(Neuron* neuron, int id);
+
+Neuron* cloneNeuron(Neuron* neuron);
 
 #endif

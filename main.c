@@ -19,10 +19,34 @@ void onExit(void);
 
 bool test(int argc, char* argv[])
 {
-    return true;
+    NeuronCount = 10;
+
+    Agent* agent1 = new_BasicAgent(3, 2);
+    Agent* agent2 = new_BasicAgent(3, 2);
+    
+    mutate_neuron_insert(agent1);
+    insert(&agent2->neuronList, new_BasicNeuron(9));
+    
+    printf("Distance a1 & a2: %lf\n", distance(agent1, agent2, 1.0, 1.0));
+
+    Agent* unwanted_child = crossOver(agent1, agent2);
+
+    char pid[255];
+    plot_agent(unwanted_child, pid);
+
+    system("Pause");
+
+    char cmd[255];
+    strcpy(cmd, "start taskkill /F /PID ");    
+    strcat(cmd, pid);
+    system(cmd);
+
+    free_agent(&unwanted_child);
+    free_agent(&agent1);
+    free_agent(&agent2);
+    return false;
 }
 
-// NEXT: check todo for 'distance()' and 'crossOver()' functions
 int main(int argc, char* argv[])
 {
     onStart(argc, argv);
@@ -32,6 +56,7 @@ int main(int argc, char* argv[])
 
     Agent* agent = * (Agent**) Population.start;
     save_agent("example_agent.g", agent);
+
 #if _WIN32
 
     char inp = '\0';
@@ -66,7 +91,7 @@ int main(int argc, char* argv[])
         }
     }
     
-#endif
+#endif // !_WIN32
 
     return EXIT_SUCCESS;
 }
@@ -74,8 +99,9 @@ int main(int argc, char* argv[])
 #ifdef _WIN32
 #include <sys\timeb.h> 
 struct timeb progStart, progEnd;
-#endif
+#endif // !_WIN32
 
+// TODO: add welcolme msg
 void onStart(int argc, char* argv[])
 {
     atexit(&onExit);
@@ -93,7 +119,7 @@ void onStart(int argc, char* argv[])
     
 #ifdef _WIN32
     ftime(&progStart);
-#endif
+#endif // !_WIN32
 
     for (int i=1; i<argc; i++)
     {
@@ -105,7 +131,7 @@ void onStart(int argc, char* argv[])
                 char cmd[255] = "python ";
 #else
                 char cmd[255] = "python3 ";
-#endif
+#endif // !_WIN32
                 strcat(cmd, BIN_PATH);
                 strcat(cmd, "plot.py ");
                 strcat(cmd, argv[i+1]);
@@ -126,7 +152,7 @@ void onExit(void)
 
 #if USE_DEBUG_MALLOC
     printLeaks();
-#endif
+#endif  // !USE_DEBUG_MALLOC
 
 #ifdef _WIN32
     ftime(&progEnd);
@@ -139,5 +165,5 @@ void onExit(void)
     strcat(cmd, BIN_PATH);
     strcat(cmd, "{*}");
     system(cmd);
-#endif
+#endif // !_WIN32
 }

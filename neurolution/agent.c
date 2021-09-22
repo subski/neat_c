@@ -8,6 +8,7 @@
 #include "neurolution/neurolution.h"
 
 #include "tools/utils.h"
+#include "tools/pcg_basic.h"
 
 Agent* new_Agent(uint32_t inputSize, uint32_t outputSize)
 {
@@ -75,7 +76,7 @@ Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize)
 	return new_agent;
 }
 
-// TODO: use ++ ont totalNeuron value so if its 2: both neurons are present (it saves an if check)
+// TODO: use ++ on totalNeuron value so if its 2: both neurons are present (it saves an if check)
 double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 {
 	double matching = 0;
@@ -86,14 +87,14 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 	// Create an array of 'int' the size of NeuronCount
 	// where a '1' indicate that a neuron exist in either agent
 	// and a '0' means no neurons.
-	vector totalNeuron = new_vector(sizeof(int), NeuronCount, 0);
+	vector totalNeuron = new_vector(sizeof(byte_t), NeuronCount, 0);
 	memset(totalNeuron.start, 0, totalNeuron.type_size * totalNeuron.count);
 
 	ITER_V(agent1->neuronList, neuron_node, neuron, Neuron*,
-		vec_set(&totalNeuron, &ONE, neuron->id - 1);
+		((byte_t*)totalNeuron.start)[neuron->id-1] = 1;
 	);
 	ITER_V(agent2->neuronList, neuron_node, neuron, Neuron*,
-		vec_set(&totalNeuron, &ONE, neuron->id - 1);
+		((byte_t*)totalNeuron.start)[neuron->id-1] += 2;
 	);
 
 	// Store the neuron of the agents 1 and 2 as we go through each neurons 
@@ -112,54 +113,55 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 
 	for (uint32_t i = 0; i < totalNeuron.count; i++)
 	{
-		// If neither agent has a neuron of id 'i+1' we got to the next neuron
-		if (*(int*)vec_get(&totalNeuron, i) == 0)
-			continue;
-
-		neuron_1 = getNeuronInAgent(agent1, i + 1);
-		neuron_2 = getNeuronInAgent(agent2, i + 1);
-
-		if (neuron_1 == NULL)
+		switch (((byte_t*)totalNeuron.start)[i])
 		{
-			disjoint += len(neuron_2->linkList);
-		}
-		else if (neuron_2 == NULL)
-		{
-			disjoint += len(neuron_1->linkList);
-		}
-		else
-		{
-			if (neuron_1->linkList != NULL)
-			{
-				neuron_matching_links = 0;
+            case 0: // No neurons in common
+                continue;
+            break;
+            case 1: // Neuron in agent1 only
+			    disjoint += len(getNeuronInAgent(agent1, i+1)->linkList);
+            break;
+            case 2: // Neuron in agent2 only
+		        disjoint += len(getNeuronInAgent(agent2, i+1)->linkList);
+            break;
+            case 3: // Neuron in both agents
+                neuron_1 = getNeuronInAgent(agent1, i + 1);
+		        neuron_2 = getNeuronInAgent(agent2, i + 1);
+                if (neuron_1->linkList != NULL)
+                {
+                    neuron_matching_links = 0;
 
-				// Cycle through the links in 'neuron_1'
-				n_node = neuron_1->linkList;
-				do
-				{
-					link_1 = (Link*)n_node->data;
-					
-					// If 'neuron_2' doesn't have the same link we increment disjoint and continue
-					link_2 = getLinkInNeuron(neuron_2, pairToId(link_1->source->id, link_1->target->id));
-					if (link_2 == NULL)
-					{
-						disjoint++;
-					}
-					else
-					{						
-						// Else we register the difference between links
-						neuron_matching_links++;
-						weight_diff += double_abs(link_1->weight - link_2->weight);
-					}
+                    // Cycle through the links in 'neuron_1'
+                    n_node = neuron_1->linkList;
+                    do
+                    {
+                        link_1 = (Link*)n_node->data;
+                        
+                        // If 'neuron_2' doesn't have the same link we increment disjoint and continue
+                        link_2 = getLinkInNeuron(neuron_2, pairToId(link_1->source->id, link_1->target->id));
+                        if (link_2 == NULL)
+                        {
+                            disjoint++;
+                        }
+                        else
+                        {						
+                            // Else we register the difference between links
+                            neuron_matching_links++;
+                            weight_diff += double_abs(link_1->weight - link_2->weight);
+                        }
 
-					next(n_node);
-				} while (n_node != neuron_1->linkList);
-			}
+                        next(n_node);
+                    } while (n_node != neuron_1->linkList);
+                }
 
-			// For every neuron we count disjoint and matching links
-			disjoint += len(neuron_2->linkList) - neuron_matching_links;
-			matching += neuron_matching_links;	
-		}		
+                // For every neuron we count disjoint and matching links
+                disjoint += len(neuron_2->linkList) - neuron_matching_links;
+                matching += neuron_matching_links;
+            break;
+            default:
+                continue; // TODO: raise error
+            break;
+        }
 	}
 
 	weight_diff /= matching;
@@ -170,11 +172,18 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 	return disjoint * c1 / total + weight_diff * c2;
 }
 
-// TODO: use the same totalNeuron as in 'distance()'
 // TODO: check if we can just cycle through links instead of neurons
 // https://github.com/CodeReclaimers/neat-python/blob/c2b79c88667a1798bfe33c00dd8e251ef8be41fa/neat/genome.py#L234
 Agent* crossOver(Agent* agent1, Agent* agent2)
 {
+	// Swap agent to always have 'agent1' as the fittest agent.
+	if (agent1->fitness < agent2->fitness)
+	{
+		Agent* tmp_agent = agent1;
+		agent1 = agent2;
+		agent2 = tmp_agent;
+	}
+
     Agent* new_agent = request(&P_AGENT, sizeof(Agent));
 
     new_agent->fitness = 0;
@@ -183,41 +192,85 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
     new_agent->inputVector = new_vector(sizeof(Neuron*), INPUT_SIZE, 0);
     new_agent->outputVector = new_vector(sizeof(Neuron*), OUTPUT_SIZE, 0);
 
-	vector totalNeuron_1 = new_vector(sizeof(int), NeuronCount, 0);
-	vector totalNeuron_2 = new_vector(sizeof(int), NeuronCount, 0);
-	memset(totalNeuron_1.start, 0, totalNeuron_1.type_size * totalNeuron_1.count);
-	memset(totalNeuron_2.start, 0, totalNeuron_2.type_size * totalNeuron_2.count);
+	vector totalNeuron = new_vector(sizeof(byte_t), NeuronCount, 0);
+	memset(totalNeuron.start, 0, totalNeuron.type_size * totalNeuron.count);
 
-	// TODO: use '2' when both neurons exist
 	ITER_V(agent1->neuronList, neuron_node, neuron, Neuron*,
-		vec_set(&totalNeuron_1, &ONE, neuron->id - 1);
+		((byte_t*)totalNeuron.start)[neuron->id-1] = 1;
 	);
 	ITER_V(agent2->neuronList, neuron_node, neuron, Neuron*,
-		vec_set(&totalNeuron_2, &ONE, neuron->id - 1);
+		((byte_t*)totalNeuron.start)[neuron->id-1] += 2;
 	);
 
-
-	bool exist_1;
-	bool exist_2;
-	for (uint32_t i = 0; i < NeuronCount; i++)
+	Neuron *neuron_1, *neuron_2, *new_neuron;
+	Link* link_2;
+	for (uint32_t i = 0; i < totalNeuron.count; i++)
 	{
-		// WARNING: check the syntax im too drunk
-		exist_1 = ((int*)totalNeuron_1.start)[i];
-		exist_2 = ((int*)totalNeuron_2.start)[i];
-
-		if (exist_1 == 1 && exist_2 == 0)
+		switch (((byte_t*)totalNeuron.start)[i])
 		{
+			case 0: // No neuron
+				continue;
+			break;
+			case 1: // Neuron in agent1 only
+				new_neuron = cloneNeuron(getNeuronInAgent(agent1, i+1));
+			break;
+			case 2: // Neuron in agent2 only
+				continue;
+			break;
+			case 3: // Neuron in both agents
+				neuron_1 = getNeuronInAgent(agent1, i+1);
+				neuron_2 = getNeuronInAgent(agent2, i+1);
+				new_neuron = new_Neuron(
+					neuron_1->id, 
+					neuron_1->enabled, 
+					neuron_1->activated, 
+					neuron_1->type, 
+					neuron_1->activationFunc, 
+					neuron_1->value, 
+					(neuron_1->bias + neuron_2->bias) / 2, // TODO: check bias crossover 
+					NULL);
 
+				ITER_V(neuron_1->linkList, link_node, link_1, Link*,
+					link_2 = getLinkInNeuron(neuron_2, pairToId(link_1->source->id, link_1->target->id));
+					if (link_2 == NULL || pcg32_doublerand() < 0.5)
+					{
+                        insert(&new_neuron->linkList,
+                            new_LinkId(
+                                link_1->source->id, 
+                                link_1->target->id, 
+                                link_1->weight, 
+                                link_1->enabled));
+					}
+					else
+					{
+                        insert(&new_neuron->linkList,
+                            new_LinkId(
+                                link_2->source->id, 
+                                link_2->target->id, 
+                                link_2->weight, 
+                                link_2->enabled));
+					}
+				);
+			break;
+			default:
+                continue; // TODO: raise error
+			break;
 		}
-		else if (exist_1 == 0 && exist_2 == 1)
-		{
 
-		}
-		else
-		{
-			
-		}
+        insert(&new_agent->neuronList, new_neuron);
 	}
+
+    free_vector(&totalNeuron);
+
+    uint32_t p1, p2;
+    ITER_V(new_agent->neuronList, neuron_node, neuron, Neuron*,
+        ITER_V(neuron->linkList, link_node, link, Link*,
+            insert(&new_agent->linkList, link);
+            idToPair(link->id, &p1, &p2);
+            link->source = getNeuronInAgent(new_agent, p1);
+            link->target = neuron;
+        );
+    );
 
     return new_agent;
 }
@@ -304,7 +357,6 @@ bool check_agent(Agent* agent)
 		if (((Neuron**)agent->inputVector.start)[i]->linkList != NULL)
 			return false;
 	}
-
 
 	return true;
 }
