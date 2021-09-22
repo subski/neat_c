@@ -248,3 +248,33 @@ bool test_io()
 
     return false;
 }
+
+bool test_crossover()
+{
+	NeuronCount = 10;
+
+    Agent* agent1 = new_BasicAgent(3, 2);
+    Agent* agent2 = new_BasicAgent(3, 2);
+    
+    mutate_neuron_insert(agent1);
+    insert(&agent2->neuronList, new_BasicNeuron(9));
+    
+    printf("Distance a1 & a2: %lf\n", distance(agent1, agent2, 1.0, 1.0));
+
+    Agent* unwanted_child = crossOver(agent1, agent2);
+
+    char pid[255];
+    plot_agent(unwanted_child, pid);
+
+    system("Pause");
+
+    char cmd[255];
+    strcpy(cmd, "start taskkill /F /PID ");    
+    strcat(cmd, pid);
+    system(cmd);
+
+    free_agent(&unwanted_child);
+    free_agent(&agent1);
+    free_agent(&agent2);
+    return false;
+}

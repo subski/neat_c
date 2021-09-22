@@ -196,3 +196,46 @@ int plot_agent(Agent* agent, char pid_str[])
 #endif
 	return 0;
 }
+
+void interactive_agent_plot(uint32_t inputSize, uint32_t outputSize)
+{
+	Agent* agent = new_Agent(inputSize, outputSize);
+
+	#if _WIN32
+
+    char inp = '\0';
+    char pid[32];
+    char cmd[100];
+    while (inp != 'q')
+    {
+        plot_agent(agent, pid);
+        printf(">");
+        scanf(" %c", &inp);
+
+        strcpy(cmd, "start taskkill /F /PID ");    
+        strcat(cmd, pid);
+        system(cmd); 
+
+        switch (inp)
+        {
+            case 'l':
+                mutate_link_add(agent);
+                break;
+            case 's':
+                mutate_link_shift(agent, 0.2);
+                break;
+            case 't':
+                mutate_link_toggle(agent);
+                break;
+            case 'n':
+                mutate_neuron_insert(agent);
+                break;
+            default:
+            break;
+        }
+    }
+    
+#endif // !_WIN32
+
+	free_agent(&agent);
+}

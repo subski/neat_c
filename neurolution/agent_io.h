@@ -3,10 +3,19 @@
 
 #include "neurolution/agent.h"
 
+/*
+    Print an agent's connections in the standard output.
+*/
 void print_agent(Agent* agent);
 
+/*
+    Save an agent in a given file.
+*/
 bool save_agent(char filename[], Agent* agent);
 
+/*
+    Load an agent from a given file.
+*/
 Agent* load_agent(char filename[]);
 
 /*
@@ -28,5 +37,15 @@ Agent* load_agent(char filename[]);
             system(cmd);        
 */
 int plot_agent(Agent* agent, char pid_str[]);
+
+/*
+    Display an agent's graph and apply mutations to it via the command line.
+    Commands:
+        'l': new link
+        't': toggle link
+        's': link shift
+        'n': new neuron
+*/
+void interactive_agent_plot(uint32_t inputSize, uint32_t outputSize);
 
 #endif
