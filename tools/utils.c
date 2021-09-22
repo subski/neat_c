@@ -2,6 +2,7 @@
 
 const int ZERO = 0;
 const int ONE = 1;
+const int TWO = 2;
 
 char BIN_PATH[255];
 

@@ -29,6 +29,7 @@
 
 extern const int ZERO;
 extern const int ONE;
+extern const int TWO;
 
 extern char BIN_PATH[];
 
