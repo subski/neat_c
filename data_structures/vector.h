@@ -3,6 +3,8 @@
 
 // TODO: Buffer before the start of the data array for faster top insertions
 
+#define VEC(vec, type, id) ((type*)(vec.start))[(id)]
+
 /*
     Sequence of bytes that can dynamically grow and shrink in size.
     In the form of a dynamic array.

@@ -68,8 +68,8 @@ Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize)
 			// 	*(Neuron**)vec_get(&new_agent->outputVector, i),
 			// 	0.0, true);
             Link* new_link = new_Link(
-				((Neuron**)new_agent->inputVector.start)[j],
-				((Neuron**)new_agent->outputVector.start)[i],
+				VEC(new_agent->inputVector, Neuron*, j),
+				VEC(new_agent->outputVector, Neuron*, i),
 				0.0, true);
 			insert(&new_agent->linkList, new_link);
 		}
@@ -92,10 +92,10 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 	memset(totalNeuron.start, 0, totalNeuron.type_size * totalNeuron.count);
 
 	ITER_V(agent1->neuronList, neuron_node, neuron, Neuron*,
-		((byte_t*)totalNeuron.start)[neuron->id-1] = 1;
+		VEC(totalNeuron, byte_t*, neuron->id-1) = 1;
 	);
 	ITER_V(agent2->neuronList, neuron_node, neuron, Neuron*,
-		((byte_t*)totalNeuron.start)[neuron->id-1] += 2;
+		VEC(totalNeuron, byte_t*, neuron->id-1) += 2;
 	);
 
 	// Store the neuron of the agents 1 and 2 as we go through each neurons 
@@ -114,7 +114,7 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 
 	for (uint32_t i = 0; i < totalNeuron.count; i++)
 	{
-		switch (((byte_t*)totalNeuron.start)[i])
+		switch (VEC(totalNeuron, byte_t*, i))
 		{
             case 0: // No neurons in common
                 continue;
@@ -202,10 +202,10 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
 	memset(totalNeuron.start, 0, totalNeuron.type_size * totalNeuron.count);
 
 	ITER_V(agent1->neuronList, neuron_node, neuron, Neuron*,
-		((byte_t*)totalNeuron.start)[neuron->id-1] = 1;
+		VEC(totalNeuron, byte_t, neuron->id-1) = 1;
 	);
 	ITER_V(agent2->neuronList, neuron_node, neuron, Neuron*,
-		((byte_t*)totalNeuron.start)[neuron->id-1] += 2;
+		VEC(totalNeuron, byte_t, neuron->id-1) += 2;
 	);
 
 
@@ -214,7 +214,7 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
 	Link* link_2;
 	for (uint32_t i = 0; i < totalNeuron.count; i++)
 	{
-		switch (((byte_t*)totalNeuron.start)[i])
+		switch (VEC(totalNeuron, byte_t, i))
 		{
 			case 0: // No neuron
 				continue;
@@ -365,7 +365,7 @@ bool check_agent(Agent* agent)
 	for (int i = 0; i < INPUT_SIZE; i++)
 	{
 		// if ((*(Neuron**)vec_get(&agent->inputVector, i))->linkList != NULL)
-		if (((Neuron**)agent->inputVector.start)[i]->linkList != NULL)
+		if (VEC(agent->inputVector, Neuron*, i)->linkList != NULL)
 			return false;
 	}
 

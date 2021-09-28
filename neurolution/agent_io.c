@@ -1,6 +1,7 @@
 #include "neurolution/agent_io.h"
 
 #include "neurolution/neuron.h"
+#include "neurolution/mutations.h"
 
 #include "tools/utils.h"
 

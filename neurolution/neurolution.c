@@ -47,6 +47,8 @@ void createInitialPopulation(vector* population, uint32_t count)
 	}
 }
 
+// TODO: Review the use of calculating pairs id instead of storing them.
+// Idea: A [{MAX_NEURONS}x{MAX_NEURONS}] matrix where each element is a {POPULATION_SIZE} array with pointers to links.
 void idToPair(int id, uint32_t* p1, uint32_t* p2)
 {
 	bool invert = false;

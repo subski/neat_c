@@ -19,10 +19,23 @@ void onExit(void);
 
 bool test(int argc, char* argv[])
 {
-    Agent* agent = new_BasicAgent(3, 2);
-    plot_agent(agent, NULL);
-    system("Pause");
-    free_agent(&agent);
+    NeuronCount = 10;
+
+    Agent* agent1 = new_BasicAgent(3, 2);
+    Agent* agent2 = new_BasicAgent(3, 2);
+    
+    mutate_neuron_insert(agent1);
+    insert(&agent2->neuronList, new_BasicNeuron(9));
+    
+    printf("Distance a1 & a2: %lf\n", distance(agent1, agent2, 1.0, 1.0));
+
+    Agent* unwanted_child = crossOver(agent1, agent2);
+
+    print_agent(unwanted_child);
+
+    free_agent(&unwanted_child);
+    free_agent(&agent1);
+    free_agent(&agent2);
     
     return true; // continue the program?
 }
