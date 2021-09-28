@@ -1,5 +1,7 @@
 #include "neurolution/agent.h"
 
+#include <assert.h>
+
 #include "data_structures/clist.h"
 #include "data_structures/pool.h"
 #include "data_structures/vector.h"
@@ -76,7 +78,6 @@ Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize)
 	return new_agent;
 }
 
-// TODO: use ++ on totalNeuron value so if its 2: both neurons are present (it saves an if check)
 double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 {
 	double matching = 0;
@@ -159,7 +160,8 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
                 matching += neuron_matching_links;
             break;
             default:
-                continue; // TODO: raise error
+				assert("agent.c > distance(): totalNeuron id incorrect.");
+                continue;
             break;
         }
 	}
@@ -172,11 +174,9 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 	return disjoint * c1 / total + weight_diff * c2;
 }
 
-// TODO: check if we can just cycle through links instead of neurons
-// https://github.com/CodeReclaimers/neat-python/blob/c2b79c88667a1798bfe33c00dd8e251ef8be41fa/neat/genome.py#L234
 Agent* crossOver(Agent* agent1, Agent* agent2)
 {
-	// Swap agent to always have 'agent1' as the fittest agent.
+	// Swap agents to always have 'agent1' as the fittest agent.
 	if (agent1->fitness < agent2->fitness)
 	{
 		Agent* tmp_agent = agent1;
@@ -184,6 +184,7 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
 		agent2 = tmp_agent;
 	}
 
+	// "Child" agent.
     Agent* new_agent = request(&P_AGENT, sizeof(Agent));
 
     new_agent->fitness = 0;
@@ -192,6 +193,11 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
     new_agent->inputVector = new_vector(sizeof(Neuron*), INPUT_SIZE, 0);
     new_agent->outputVector = new_vector(sizeof(Neuron*), OUTPUT_SIZE, 0);
 
+	// 'totalNeuron' is a summary of which neuron is present in which agents.
+	// '0': no neurons of id [index of vector] in either agents
+	// '1': neuron is present in 'agent1' only
+	// '2': neuron is present in 'agent2' only
+	// '3': neuron is present in both agents
 	vector totalNeuron = new_vector(sizeof(byte_t), NeuronCount, 0);
 	memset(totalNeuron.start, 0, totalNeuron.type_size * totalNeuron.count);
 
@@ -202,6 +208,8 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
 		((byte_t*)totalNeuron.start)[neuron->id-1] += 2;
 	);
 
+
+	// Iterate through the 'totalNeuron' sequence and form new neurons from agents
 	Neuron *neuron_1, *neuron_2, *new_neuron;
 	Link* link_2;
 	for (uint32_t i = 0; i < totalNeuron.count; i++)
@@ -212,6 +220,7 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
 				continue;
 			break;
 			case 1: // Neuron in agent1 only
+				// We copy the neuron to the childe 1 to 1
 				new_neuron = cloneNeuron(getNeuronInAgent(agent1, i+1));
 			break;
 			case 2: // Neuron in agent2 only
@@ -230,6 +239,7 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
 					(neuron_1->bias + neuron_2->bias) / 2, // TODO: check bias crossover 
 					NULL);
 
+				// We iterate through all the links of both neurons and we chose at random links from the neuron1 links.
 				ITER_V(neuron_1->linkList, link_node, link_1, Link*,
 					link_2 = getLinkInNeuron(neuron_2, pairToId(link_1->source->id, link_1->target->id));
 					if (link_2 == NULL || pcg32_doublerand() < 0.5)
@@ -256,12 +266,13 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
                 continue; // TODO: raise error
 			break;
 		}
-
+		// Add the neuron to the child agent
         insert(&new_agent->neuronList, new_neuron);
 	}
 
     free_vector(&totalNeuron);
 
+	// Actually initialize the links in the child. There is probably a better way.
     uint32_t p1, p2;
     ITER_V(new_agent->neuronList, neuron_node, neuron, Neuron*,
         ITER_V(neuron->linkList, link_node, link, Link*,
