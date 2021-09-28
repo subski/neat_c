@@ -42,13 +42,21 @@ target_include_directories(${PROJECT_NAME} PRIVATE ./)
 # precompile header
 target_precompile_headers(${PROJECT_NAME} PRIVATE pch.h)
 
-# Link the math library, needed on UNIX systems.
+# Linux specifics
 if (UNIX)
+    # Math lib
     target_link_libraries(${PROJECT_NAME} m)
+    find_package(SDL2 REQUIRED)
 endif (UNIX)
 
-# Add folder filters in Visual Studio projects.
+# Windows specifics
 if (WIN32)
+
+    # SDL lib/include path
+    set(SDL2_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/third_party/include")
+    set(SDL2_LIBRARIES "${CMAKE_CURRENT_LIST_DIR}/third_party/lib/x64/SDL2.lib;${CMAKE_CURRENT_LIST_DIR}/third_party/lib/x64/SDL2main.lib")
+    string(STRIP "${SDL2_LIBRARIES}" SDL2_LIBRARIES)
+
     get_target_property(sources ${PROJECT_NAME} SOURCES)
     foreach(file ${sources})
         get_filename_component(path "${file}" ABSOLUTE)
@@ -62,6 +70,10 @@ if (WIN32)
         source_group("${win_path}" REGULAR_EXPRESSION "${path}/[^/\\]+\\..*")
     endforeach()
 endif (WIN32)
+
+# lib SDL2
+include_directories(${PROJECT_NAME} ${SDL2_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
 
 # disable unsafe functions warnings
 # add_compile_options(/w44101)

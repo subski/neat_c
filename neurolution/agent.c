@@ -92,10 +92,10 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 	memset(totalNeuron.start, 0, totalNeuron.type_size * totalNeuron.count);
 
 	ITER_V(agent1->neuronList, neuron_node, neuron, Neuron*,
-		VEC(totalNeuron, byte_t*, neuron->id-1) = 1;
+		VEC(totalNeuron, byte_t, neuron->id-1) = 1;
 	);
 	ITER_V(agent2->neuronList, neuron_node, neuron, Neuron*,
-		VEC(totalNeuron, byte_t*, neuron->id-1) += 2;
+		VEC(totalNeuron, byte_t, neuron->id-1) += 2;
 	);
 
 	// Store the neuron of the agents 1 and 2 as we go through each neurons 
@@ -114,7 +114,7 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 
 	for (uint32_t i = 0; i < totalNeuron.count; i++)
 	{
-		switch (VEC(totalNeuron, byte_t*, i))
+		switch (VEC(totalNeuron, byte_t, i))
 		{
             case 0: // No neurons in common
                 continue;

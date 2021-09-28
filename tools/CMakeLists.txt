@@ -7,6 +7,9 @@ set(SOURCES
 
     utils.h
     utils.c
+
+    ui.h
+    ui.c
 )
 
 list(TRANSFORM SOURCES PREPEND ${CMAKE_CURRENT_LIST_DIR}/)

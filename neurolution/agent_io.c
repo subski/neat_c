@@ -92,6 +92,7 @@ Agent* load_agent(char filename[])
 				continue;
 			}
 
+			#pragma warning(disable : 4477)
 			sscanf(line, "%d\t%d\t%lf\t%d\n", &id_source, &id_target, &weight, &enabled);
 
 			if (!isNeuronInAgent(new_agent, id_source))

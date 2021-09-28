@@ -23,6 +23,7 @@ bool mutate_link_add(Agent* agent)
 	Neuron* neuron_source = random_max(agent->neuronList, neuron_count);
 	Neuron* neuron_target = random_max(agent->neuronList, neuron_count);
 
+	#pragma warning(disable : 4047 4022)
 	if (neuron_source == neuron_target || isPtrInArray(neuron_target, agent->inputVector.start, INPUT_SIZE))
 	{
 		return false;

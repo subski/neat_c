@@ -1,4 +1,5 @@
 #include <string.h>
+#include <SDL.h>
 
 #include "tools/utils.h"
 #include "tools/pcg_basic.h"
@@ -18,25 +19,7 @@ void onStart(int argc, char* argv[]);
 void onExit(void);
 
 bool test(int argc, char* argv[])
-{
-    NeuronCount = 10;
-
-    Agent* agent1 = new_BasicAgent(3, 2);
-    Agent* agent2 = new_BasicAgent(3, 2);
-    
-    mutate_neuron_insert(agent1);
-    insert(&agent2->neuronList, new_BasicNeuron(9));
-    
-    printf("Distance a1 & a2: %lf\n", distance(agent1, agent2, 1.0, 1.0));
-
-    Agent* unwanted_child = crossOver(agent1, agent2);
-
-    print_agent(unwanted_child);
-
-    free_agent(&unwanted_child);
-    free_agent(&agent1);
-    free_agent(&agent2);
-    
+{   
     return true; // continue the program?
 }
 
@@ -56,6 +39,7 @@ struct timeb progStart, progEnd;
 #endif // !_WIN32
 
 // TODO: add welcolme msg
+// TODO: use USE_DEBUG_MALLOC and USE_SDL from CMakeLists.txt
 void onStart(int argc, char* argv[])
 {
     // Add function on program exit event
@@ -104,10 +88,45 @@ void onStart(int argc, char* argv[])
             break;
         }
     }
+
+#if USE_SDL
+
+    // Init SDL
+    if(SDL_Init(SDL_INIT_VIDEO) != 0) {
+        fprintf(stderr, "Could not init SDL: %s\n", SDL_GetError());
+       exit(1);
+    }
+    // TODO: take cmake project name as window title
+    ui_screen = SDL_CreateWindow("NEAT_C",
+            SDL_WINDOWPOS_UNDEFINED,
+            SDL_WINDOWPOS_UNDEFINED,
+            UI_WIDTH, UI_HEIGHT,
+            0);
+    if(!ui_screen) {
+        fprintf(stderr, "Could not create window\n");
+        exit(1);
+    }
+    ui_renderer = SDL_CreateRenderer(ui_screen, -1, SDL_RENDERER_SOFTWARE);
+    if(!ui_renderer) {
+        fprintf(stderr, "Could not create renderer\n");
+        exit(1);
+    }
+
+    SDL_SetRenderDrawColor(ui_renderer, 0, 0, 0, 255);
+
+#endif // !USE_SDL
+
 }
 
 void onExit(void)
 {
+#if USE_SDL
+
+    SDL_DestroyWindow(ui_screen);
+    SDL_Quit();
+
+#endif // !USE_SDL
+
     free_neurolution();
 
 #if USE_DEBUG_MALLOC
@@ -115,6 +134,7 @@ void onExit(void)
 #endif  // !USE_DEBUG_MALLOC
 
 #ifdef _WIN32
+
     ftime(&progEnd);
     
     printf("\n\n---------------------------------------------------------------------------------------------------------------------\n");
@@ -126,5 +146,6 @@ void onExit(void)
     strcat(cmd, BIN_PATH);
     strcat(cmd, "{*}");
     system(cmd);
+
 #endif // !_WIN32
 }

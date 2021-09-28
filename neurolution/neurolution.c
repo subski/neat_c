@@ -10,6 +10,9 @@
 #include "neurolution/mutations.h"
 #include "neurolution/env_settings.h"
 
+#include "tools/ui.h"
+
+
 pool* P_AGENT  = NULL;
 pool* P_NEURON = NULL;
 pool* P_LINK   = NULL;
@@ -27,7 +30,12 @@ void evolve(void)
 	createInitialPopulation(&Population, MAX_POPULATION);
 	
 	// Speciate
+	printf("Speciation.\n");
 	
+
+	ui_init();
+	ui_exit();
+
 	// Selection
 	
 	// Reproduction
@@ -58,10 +66,13 @@ void idToPair(int id, uint32_t* p1, uint32_t* p2)
 		invert = true;
 	}
 
+	#pragma warning (push)
+	#pragma warning(disable : 4244)
 	float n1 = 0.5f + sqrt(2 * id + 0.25f); // magic formula
 	uint32_t n1_c = ceilf(n1);
 	
 	uint32_t n2 = (n1_c - 1) * (n1 - (n1_c - 1 ));
+	#pragma warning (pop)
 
 	if (!invert)
 	{
