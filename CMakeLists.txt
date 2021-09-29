@@ -46,16 +46,19 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE pch.h)
 if (UNIX)
     # Math lib
     target_link_libraries(${PROJECT_NAME} m)
-    find_package(SDL2 REQUIRED)
+    add_definitions(-DUSE_SDL=0)
 endif (UNIX)
 
 # Windows specifics
 if (WIN32)
 
     # SDL lib/include path
-    set(SDL2_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/third_party/include")
-    set(SDL2_LIBRARIES "${CMAKE_CURRENT_LIST_DIR}/third_party/lib/x64/SDL2.lib;${CMAKE_CURRENT_LIST_DIR}/third_party/lib/x64/SDL2main.lib")
-    string(STRIP "${SDL2_LIBRARIES}" SDL2_LIBRARIES)
+    add_definitions(-DUSE_SDL=1)
+    include_directories(${PROJECT_NAME} 
+        ${CMAKE_CURRENT_LIST_DIR}/third_party/include)
+    target_link_libraries(${PROJECT_NAME} 
+        ${CMAKE_CURRENT_LIST_DIR}/third_party/lib/x64/SDL2.lib
+        ${CMAKE_CURRENT_LIST_DIR}/third_party/lib/x64/SDL2main.lib)
 
     get_target_property(sources ${PROJECT_NAME} SOURCES)
     foreach(file ${sources})
@@ -70,10 +73,6 @@ if (WIN32)
         source_group("${win_path}" REGULAR_EXPRESSION "${path}/[^/\\]+\\..*")
     endforeach()
 endif (WIN32)
-
-# lib SDL2
-include_directories(${PROJECT_NAME} ${SDL2_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
 
 # disable unsafe functions warnings
 # add_compile_options(/w44101)

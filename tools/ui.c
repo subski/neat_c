@@ -1,5 +1,7 @@
 #include "tools/ui.h"
 
+#if USE_SDL
+
 #include <SDL.h>
 
 #include "data_structures/vector.h"
@@ -98,3 +100,5 @@ void ui_exit()
 {
 	free_vector(&points);
 }
+
+#endif // !USE_SDL

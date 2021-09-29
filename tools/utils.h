@@ -1,8 +1,6 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#define USE_SDL 1
-
 // Shortcut for checking return value of malloc.
 #define MCHECK(ptr, ret)								\
 	do {												\

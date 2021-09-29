@@ -1,5 +1,8 @@
 #include <string.h>
+
+#if USE_SDL
 #include <SDL.h>
+#endif // !USE_SDL
 
 #include "tools/utils.h"
 #include "tools/pcg_basic.h"

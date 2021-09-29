@@ -32,9 +32,10 @@ void evolve(void)
 	// Speciate
 	printf("Speciation.\n");
 	
-
+#if USE_SDL
 	ui_init();
 	ui_exit();
+#endif // !USE_SDL
 
 	// Selection
 	
