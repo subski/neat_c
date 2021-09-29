@@ -14,6 +14,9 @@ set(SOURCES
     mutations.h
     mutations.c
 
+    kmeans.h
+    kmeans.c
+
     env_settings.h
 )
 
