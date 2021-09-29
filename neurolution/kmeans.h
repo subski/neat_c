@@ -1,6 +1,8 @@
 #ifndef KMEANS_H
 #define KMEANS_H
 
+#include "neurolution/agent.h"
+
 #include "data_structures/clist.h"
 
 typedef struct Point
@@ -13,9 +15,8 @@ typedef struct Point
 typedef struct Specie
 {
 	int id;
-	int color[3];
-    Point centroid;
-	clist* points;
+    Agent* centroid;
+	clist* specimens;
 } Specie;
 
 void kmeans_init();

@@ -2,6 +2,8 @@
 
 #include "neurolution/neurolution.h"
 
+#include "tools/utils.h"
+
 #include "data_structures/clist.h"
 #include "data_structures/pool.h"
 

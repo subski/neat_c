@@ -12,6 +12,8 @@ typedef struct Agent Agent;
 
 struct Agent
 {
+    int specie;
+
     double fitness;
 
     vector inputVector;
@@ -69,5 +71,10 @@ void free_agent(Agent** agent);
     Verify the integrity on an Agent.
 */
 bool check_agent(Agent* agent);
+
+/*
+    Create a copy of a given agent.
+*/
+Agent* agent_clone(Agent* agent);
 
 #endif

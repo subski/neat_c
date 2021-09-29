@@ -17,13 +17,59 @@
 #include "neurolution/agent_io.h"
 #include "neurolution/neurolution.h"
 #include "neurolution/mutations.h"
+#include "neurolution/kmeans.h"
 
 void onStart(int argc, char* argv[]);
 void onExit(void);
 
 bool test(int argc, char* argv[])
 {   
-    return true; // continue the program?
+	Population = new_vector(sizeof(Agent*), 9, 0);
+
+    Agent* agent;
+    
+    agent = new_BasicAgent(3, 2);
+    VEC(Population, Agent*, 0) = agent;
+
+    agent = new_BasicAgent(3, 2);
+    VEC(Population, Agent*, 1) = agent;
+
+    agent = new_BasicAgent(3, 2);
+    VEC(Population, Agent*, 2) = agent;
+
+
+    agent = new_BasicAgent(3, 2);
+    mutate_neuron_insert(agent);
+    mutate_neuron_insert(agent);
+    VEC(Population, Agent*, 3) = agent;
+
+
+    VEC(Population, Agent*, 4) = agent_clone(agent);
+    mutate_link_add(VEC(Population, Agent*, 4));
+    
+    VEC(Population, Agent*, 5) = agent_clone(VEC(Population, Agent*, 4));
+    mutate_link_add(VEC(Population, Agent*, 5));
+
+    agent = new_BasicAgent(3, 2);
+    mutate_neuron_insert(agent);
+    mutate_neuron_insert(agent);
+    mutate_neuron_insert(agent);
+    mutate_neuron_insert(agent);
+    mutate_link_shift(agent, 0.2);
+    mutate_link_shift(agent, 0.2);
+    mutate_link_shift(agent, 0.2);
+    mutate_link_shift(agent, 0.2);
+    mutate_link_toggle(agent);
+    mutate_link_toggle(agent);
+    mutate_link_toggle(agent);
+
+    VEC(Population, Agent*, 6) = agent;
+
+    VEC(Population, Agent*, 7) = agent_clone(agent);
+
+    VEC(Population, Agent*, 8) = agent_clone(agent);
+
+    return false; // continue the program?
 }
 
 int main(int argc, char* argv[])

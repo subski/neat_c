@@ -46,10 +46,6 @@ void evolve(void);
 
 void createInitialPopulation(vector* population, uint32_t count);
 
-void idToPair(int id, uint32_t* p1, uint32_t* p2);
-
-int pairToId(uint32_t p1, uint32_t p2);
-
 void free_neurolution();
 
 #endif // !NEUROLUTION_H

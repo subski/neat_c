@@ -16,6 +16,7 @@ Agent* new_Agent(uint32_t inputSize, uint32_t outputSize)
 {
 	Agent* new_agent = request(&P_AGENT, sizeof(Agent));
 
+	new_agent->specie = 0;
 	new_agent->fitness = 0.0;
 	new_agent->neuronList = NULL;
 	new_agent->linkList = NULL;
@@ -32,6 +33,7 @@ Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize)
 	new_agent->inputVector = new_vector(sizeof(Neuron*), inputSize, 0);
 	new_agent->outputVector = new_vector(sizeof(Neuron*), outputSize, 0);
 
+	new_agent->specie = 0;
 	new_agent->fitness = 0.0;
 	new_agent->neuronList = NULL;
 	new_agent->linkList = NULL;
@@ -370,4 +372,27 @@ bool check_agent(Agent* agent)
 	}
 
 	return true;
+}
+
+Agent* agent_clone(Agent* agent)
+{
+	Agent* clone = new_Agent(agent->inputVector.count, agent->outputVector.count);
+	clone->specie = agent->specie;
+	clone->fitness = agent->fitness;
+
+	CY_ITER_DATA(agent->neuronList, neuron_node, neuron, Neuron*,
+        cy_insert(&clone->neuronList, cloneNeuron(neuron));
+	);
+
+	uint32_t p1, p2;
+    CY_ITER_DATA(clone->neuronList, neuron_node, neuron, Neuron*,
+        CY_ITER_DATA(neuron->linkList, link_node, link, Link*,
+            cy_insert(&clone->linkList, link);
+            idToPair(link->id, &p1, &p2);
+            link->source = getNeuronInAgent(clone, p1);
+            link->target = neuron;
+        );
+    );
+
+	return clone;
 }

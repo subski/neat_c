@@ -57,4 +57,8 @@ bool isPtrInArray(void* ptr, void* _array[], uint32_t arraySize);
 */
 double double_abs(double x);
 
+void idToPair(int id, uint32_t* p1, uint32_t* p2);
+
+int pairToId(uint32_t p1, uint32_t p2);
+
 #endif // !UTILS_H
