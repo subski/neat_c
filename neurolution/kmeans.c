@@ -88,7 +88,7 @@ int speciate( clist* datalist, clist* species )
         {							
             specie = (Specie*) specie_node->data;
 
-			target_specie_distance = distance( specie->centroid, agent );
+			target_specie_distance = distance( specie->centroid, agent, 1.0, 1.0 );
 			if ( target_specie_distance < nearest_specie_distance || nearest_specie_distance == 0 )
 			{
 				nearest_specie = specie;
