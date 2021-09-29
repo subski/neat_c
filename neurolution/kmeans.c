@@ -27,7 +27,7 @@ void kmeans_init(clist* datalist, clist* specieslist, int species_count)
 		specie->id = i;
 		cy_insert( &specie->specimens, agent_centroid );
 		cy_insert( &specieslist, specie );
-		cy_remove( &data, c );
+		cy_remove( &data, agent_centroid );
 	}
 
 	speciate(data, specieslist);
