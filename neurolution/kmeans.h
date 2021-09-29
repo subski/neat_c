@@ -20,7 +20,7 @@ typedef struct Specie
 
 void kmeans_init();
 
-int kmeans_run();
+void kmeans_run();
 
 void kmeans_end();
 
