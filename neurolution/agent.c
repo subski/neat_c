@@ -44,7 +44,7 @@ Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize)
 		input_neuron->type = INPUT_TYPE;
 
 		vec_set(&new_agent->inputVector, &input_neuron, i);
-		insert(&new_agent->neuronList, input_neuron);
+		cy_insert(&new_agent->neuronList, input_neuron);
 	}
 
 	// create output neurons
@@ -55,7 +55,7 @@ Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize)
 		output_neuron->type = OUTPUT_TYPE;
 
 		vec_set(&new_agent->outputVector, &output_neuron, i);
-		insert(&new_agent->neuronList, output_neuron);
+		cy_insert(&new_agent->neuronList, output_neuron);
 	}
 
 	// create links
@@ -71,7 +71,7 @@ Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize)
 				VEC(new_agent->inputVector, Neuron*, j),
 				VEC(new_agent->outputVector, Neuron*, i),
 				0.0, true);
-			insert(&new_agent->linkList, new_link);
+			cy_insert(&new_agent->linkList, new_link);
 		}
 	}
 
@@ -91,10 +91,10 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
 	vector totalNeuron = new_vector(sizeof(byte_t), NeuronCount, 0);
 	memset(totalNeuron.start, 0, totalNeuron.type_size * totalNeuron.count);
 
-	ITER_V(agent1->neuronList, neuron_node, neuron, Neuron*,
+	CY_ITER_DATA(agent1->neuronList, neuron_node, neuron, Neuron*,
 		VEC(totalNeuron, byte_t, neuron->id-1) = 1;
 	);
-	ITER_V(agent2->neuronList, neuron_node, neuron, Neuron*,
+	CY_ITER_DATA(agent2->neuronList, neuron_node, neuron, Neuron*,
 		VEC(totalNeuron, byte_t, neuron->id-1) += 2;
 	);
 
@@ -120,10 +120,10 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
                 continue;
             break;
             case 1: // Neuron in agent1 only
-			    disjoint += len(getNeuronInAgent(agent1, i+1)->linkList);
+			    disjoint += cy_len(getNeuronInAgent(agent1, i+1)->linkList);
             break;
             case 2: // Neuron in agent2 only
-		        disjoint += len(getNeuronInAgent(agent2, i+1)->linkList);
+		        disjoint += cy_len(getNeuronInAgent(agent2, i+1)->linkList);
             break;
             case 3: // Neuron in both agents
                 neuron_1 = getNeuronInAgent(agent1, i + 1);
@@ -156,7 +156,7 @@ double distance(Agent* agent1, Agent* agent2, double c1, double c2)
                 }
 
                 // For every neuron we count disjoint and matching links
-                disjoint += len(neuron_2->linkList) - neuron_matching_links;
+                disjoint += cy_len(neuron_2->linkList) - neuron_matching_links;
                 matching += neuron_matching_links;
             break;
             default:
@@ -201,10 +201,10 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
 	vector totalNeuron = new_vector(sizeof(byte_t), NeuronCount, 0);
 	memset(totalNeuron.start, 0, totalNeuron.type_size * totalNeuron.count);
 
-	ITER_V(agent1->neuronList, neuron_node, neuron, Neuron*,
+	CY_ITER_DATA(agent1->neuronList, neuron_node, neuron, Neuron*,
 		VEC(totalNeuron, byte_t, neuron->id-1) = 1;
 	);
-	ITER_V(agent2->neuronList, neuron_node, neuron, Neuron*,
+	CY_ITER_DATA(agent2->neuronList, neuron_node, neuron, Neuron*,
 		VEC(totalNeuron, byte_t, neuron->id-1) += 2;
 	);
 
@@ -240,11 +240,11 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
 					NULL);
 
 				// We iterate through all the links of both neurons and we chose at random links from the neuron1 links.
-				ITER_V(neuron_1->linkList, link_node, link_1, Link*,
+				CY_ITER_DATA(neuron_1->linkList, link_node, link_1, Link*,
 					link_2 = getLinkInNeuron(neuron_2, pairToId(link_1->source->id, link_1->target->id));
 					if (link_2 == NULL || pcg32_doublerand() < 0.5)
 					{
-                        insert(&new_neuron->linkList,
+                        cy_insert(&new_neuron->linkList,
                             new_LinkId(
                                 link_1->source->id, 
                                 link_1->target->id, 
@@ -253,7 +253,7 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
 					}
 					else
 					{
-                        insert(&new_neuron->linkList,
+                        cy_insert(&new_neuron->linkList,
                             new_LinkId(
                                 link_2->source->id, 
                                 link_2->target->id, 
@@ -267,16 +267,16 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
 			break;
 		}
 		// Add the neuron to the child agent
-        insert(&new_agent->neuronList, new_neuron);
+        cy_insert(&new_agent->neuronList, new_neuron);
 	}
 
     free_vector(&totalNeuron);
 
 	// Actually initialize the links in the child. There is probably a better way.
     uint32_t p1, p2;
-    ITER_V(new_agent->neuronList, neuron_node, neuron, Neuron*,
-        ITER_V(neuron->linkList, link_node, link, Link*,
-            insert(&new_agent->linkList, link);
+    CY_ITER_DATA(new_agent->neuronList, neuron_node, neuron, Neuron*,
+        CY_ITER_DATA(neuron->linkList, link_node, link, Link*,
+            cy_insert(&new_agent->linkList, link);
             idToPair(link->id, &p1, &p2);
             link->source = getNeuronInAgent(new_agent, p1);
             link->target = neuron;
@@ -288,7 +288,7 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
 
 bool isNeuronInAgent(Agent* agent, uint32_t id)
 {
-	ITER_V(agent->neuronList, neuron_node, neuron, Neuron*,
+	CY_ITER_DATA(agent->neuronList, neuron_node, neuron, Neuron*,
 		   if (neuron->id == id)
 			   return true;
 	);
@@ -297,7 +297,7 @@ bool isNeuronInAgent(Agent* agent, uint32_t id)
 
 Neuron* getNeuronInAgent(Agent* agent, uint32_t id)
 {
-	ITER_V(agent->neuronList, neuron_node, neuron, Neuron*,
+	CY_ITER_DATA(agent->neuronList, neuron_node, neuron, Neuron*,
 		   if (neuron->id == id)
 			   return neuron;
 	);
@@ -313,7 +313,7 @@ bool addLinkInAgent(Agent* agent, uint32_t source, uint32_t target, double weigh
 		return false;
 
 	Link* new_link = new_Link(neuron_source, neuron_target, weight, enabled);
-	insert(&agent->linkList, new_link);
+	cy_insert(&agent->linkList, new_link);
 
 	return true;
 }
@@ -321,13 +321,13 @@ bool addLinkInAgent(Agent* agent, uint32_t source, uint32_t target, double weigh
 void free_agent(Agent** agent)
 {
 	// free links and linkList containers inside of neurons
-	pclean(&(*agent)->linkList, &P_LINK);
-	ITER((*agent)->neuronList, neuron_node,
-		 clear(&((Neuron*)neuron_node->data)->linkList);
+	cy_pclean(&(*agent)->linkList, &P_LINK);
+	CY_ITER((*agent)->neuronList, neuron_node,
+		 cy_clear(&((Neuron*)neuron_node->data)->linkList);
 	);
 
 	// free neurons
-	pclean(&(*agent)->neuronList, &P_NEURON);
+	cy_pclean(&(*agent)->neuronList, &P_NEURON);
 
 	// free IO vectors
 	free_vector(&(*agent)->inputVector);
@@ -340,9 +340,9 @@ bool check_agent(Agent* agent)
 {
 	// Check dupplicate links
 	int cpt;
-	ITER_V(agent->linkList, link_node, link, Link*,
+	CY_ITER_DATA(agent->linkList, link_node, link, Link*,
 		cpt = 0;
-		ITER_V(agent->linkList, link_node2, link2, Link*,
+		CY_ITER_DATA(agent->linkList, link_node2, link2, Link*,
 			if (link->source->id == link2->source->id && link->target->id == link2->target->id)
 				cpt++;
 		);
@@ -351,9 +351,9 @@ bool check_agent(Agent* agent)
 	);
 	
 	// Check dupplicate neurons
-	ITER_V(agent->neuronList, neuron_node, neuron, Neuron*,
+	CY_ITER_DATA(agent->neuronList, neuron_node, neuron, Neuron*,
 		cpt = 0;
-		ITER_V(agent->neuronList, neuron_node2, neuron2, Neuron*,
+		CY_ITER_DATA(agent->neuronList, neuron_node2, neuron2, Neuron*,
 			if (neuron->id == neuron2->id)
 				cpt++;
 		);

@@ -10,12 +10,12 @@
 void print_agent(Agent* agent)
 {
 	printf("agent:\n");
-	ITER_V(agent->neuronList, neuron_node, neuron, Neuron*,
-		   ITER_V(neuron->linkList, link_node, link, Link*,
+	CY_ITER_DATA(agent->neuronList, neuron_node, neuron, Neuron*,
+		   CY_ITER_DATA(neuron->linkList, link_node, link, Link*,
 		   printf("%d -> %d [%.2lf, %d]\n", link->source->id, neuron->id, link->weight, link->enabled);
 	);	);
 
-	printf("Neurons: %d | Links: %d | Fitness: %lf\n\n", len(agent->neuronList), len(agent->linkList), agent->fitness);
+	printf("Neurons: %d | Links: %d | Fitness: %lf\n\n", cy_len(agent->neuronList), cy_len(agent->linkList), agent->fitness);
 }
 
 // TODO: maybe different format for neurons like: 'neuron_id': 'incoming connections'
@@ -35,7 +35,7 @@ bool save_agent(char filename[], Agent* agent)
 	fprintf(target_file, "%d\t%d\n\n", agent->inputVector.count, agent->outputVector.count);
 
 	fprintf(target_file, "# Connections (source target weight enabled).\n");
-	ITER_V(agent->linkList, link_node, link, Link*,
+	CY_ITER_DATA(agent->linkList, link_node, link, Link*,
 		fprintf(target_file, "%d\t%d\t%lf\t%d\n", link->source->id, link->target->id, link->weight, link->enabled);
 	);
 
@@ -98,7 +98,7 @@ Agent* load_agent(char filename[])
 			if (!isNeuronInAgent(new_agent, id_source))
 			{
 				neuron_source = new_BasicNeuron(id_source);
-				insert(&new_agent->neuronList, neuron_source);
+				cy_insert(&new_agent->neuronList, neuron_source);
 			}
 			else
 			{
@@ -108,14 +108,14 @@ Agent* load_agent(char filename[])
 			if (!isNeuronInAgent(new_agent, id_target))
 			{
 				neuron_target = new_BasicNeuron(id_target);
-				insert(&new_agent->neuronList, neuron_target);
+				cy_insert(&new_agent->neuronList, neuron_target);
 			}
 			else
 			{
 				neuron_target = getNeuronInAgent(new_agent, id_target);
 			}
 
-			insert(&new_agent->linkList, new_Link(neuron_source, neuron_target, weight, enabled));
+			cy_insert(&new_agent->linkList, new_Link(neuron_source, neuron_target, weight, enabled));
 			continue;
 		}
 

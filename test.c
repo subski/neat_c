@@ -82,7 +82,7 @@ void test_pool()
 	{
 		for (int i = 0; i < 1000; i++)
 		{
-			insert(&n, request(&neuron_pool, sizeof(Neuron)));
+			cy_insert(&n, request(&neuron_pool, sizeof(Neuron)));
 		}
 		printf("pool size: %d\n", len(neuron_pool));
 		printf("n list size: %d\n", len(n));
@@ -100,14 +100,14 @@ void test_pool()
 
 		for (int i = 0; i < 250; i++)
 		{
-			insert(&n, request(&neuron_pool, sizeof(Neuron)));
+			cy_insert(&n, request(&neuron_pool, sizeof(Neuron)));
 		}
 
 		printf("pool size: %d\n", len(neuron_pool));
 		printf("n list size: %d\n", len(n));
 
-		clean(&n);
-		clean(&neuron_pool);
+		cy_clean(&n);
+		cy_clean(&neuron_pool);
 	}
 }
 
@@ -194,7 +194,7 @@ void test_neuronInInput(void)
 	printf("\n");
 	printf("\n");
 
-	ITER_V(agent->neuronList, neuron_node, neuron, Neuron*,
+	CY_ITER_DATA(agent->neuronList, neuron_node, neuron, Neuron*,
 		   printf("Neuron %d: %p\n", neuron->id, neuron);
 	);
 }
@@ -257,7 +257,7 @@ bool test_crossover()
     Agent* agent2 = new_BasicAgent(3, 2);
     
     mutate_neuron_insert(agent1);
-    insert(&agent2->neuronList, new_BasicNeuron(9));
+    cy_insert(&agent2->neuronList, new_BasicNeuron(9));
     
     printf("Distance a1 & a2: %lf\n", distance(agent1, agent2, 1.0, 1.0));
 

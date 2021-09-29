@@ -19,9 +19,9 @@
 bool mutate_link_add(Agent* agent)
 {
 	// Select two random neurons that are different and not input neurons.
-	uint32_t neuron_count = len(agent->neuronList);
-	Neuron* neuron_source = random_max(agent->neuronList, neuron_count);
-	Neuron* neuron_target = random_max(agent->neuronList, neuron_count);
+	uint32_t neuron_count = cy_len(agent->neuronList);
+	Neuron* neuron_source = cy_random_max(agent->neuronList, neuron_count);
+	Neuron* neuron_target = cy_random_max(agent->neuronList, neuron_count);
 
 	#pragma warning(disable : 4047 4022)
 	if (neuron_source == neuron_target || isPtrInArray(neuron_target, agent->inputVector.start, INPUT_SIZE))
@@ -31,34 +31,34 @@ bool mutate_link_add(Agent* agent)
 
 	// Check if the two neurons are not connected to each other
 
-	ITER_V(neuron_target->linkList, node_link, link, Link*,
+	CY_ITER_DATA(neuron_target->linkList, node_link, link, Link*,
 		if (link->source == neuron_source)
 			return false;
 	);
 
-	ITER_V(neuron_source->linkList, node_link, link, Link*,
+	CY_ITER_DATA(neuron_source->linkList, node_link, link, Link*,
 		if (link->source == neuron_target)
 			return false;
 	);
 	
 	// Adding the link
 	Link* new_link = new_Link(neuron_source, neuron_target, 1.0, true);
-	insert(&agent->linkList, new_link);
+	cy_insert(&agent->linkList, new_link);
 
 	return true;
 }
 
 void mutate_link_toggle(Agent* agent)
 {
-	Link* target_link = random_data(agent->linkList);
+	Link* target_link = cy_random_data(agent->linkList);
 	target_link->enabled ^= 1;
 }
 
 bool mutate_link_shift(Agent* agent, double shift)
 {
 	// Select random enabled link
-	uint32_t link_count = len(agent->linkList);
-	Link* target_link = random_max(agent->linkList, link_count);
+	uint32_t link_count = cy_len(agent->linkList);
+	Link* target_link = cy_random_max(agent->linkList, link_count);
 	
 	if (!target_link->enabled)
 		return false;
@@ -71,13 +71,13 @@ bool mutate_link_shift(Agent* agent, double shift)
 
 void mutate_neuron_add(Agent* agent)
 {
-	insert(&agent->neuronList, new_BasicNeuron(++NeuronCount));
+	cy_insert(&agent->neuronList, new_BasicNeuron(++NeuronCount));
 }
 
 bool mutate_neuron_insert(Agent* agent)
 {
 	// Select random enabled link
-	Link* target_link = random_data(agent->linkList);
+	Link* target_link = cy_random_data(agent->linkList);
 	if (!target_link->enabled)
 		return false;
 
@@ -113,7 +113,7 @@ bool mutate_neuron_insert(Agent* agent)
 	}
 	else
 	{
-		ITER_V(agent->neuronList, neuron_node, neuron, Neuron*,
+		CY_ITER_DATA(agent->neuronList, neuron_node, neuron, Neuron*,
 			if (neuron->id == neuron_id)
 				return false;
 		);
@@ -124,13 +124,13 @@ bool mutate_neuron_insert(Agent* agent)
 	target_link->enabled = false;
 
 	Neuron* new_neuron = new_BasicNeuron(neuron_id);
-	insert(&agent->neuronList, new_neuron);
+	cy_insert(&agent->neuronList, new_neuron);
 
 	Link* link_src = new_Link(target_link->source, new_neuron, target_link->weight, true);
-	insert(&agent->linkList, link_src);
+	cy_insert(&agent->linkList, link_src);
 
 	Link* link_target = new_Link(new_neuron, target_link->target, 0.0, true);
-	insert(&agent->linkList, link_target);
+	cy_insert(&agent->linkList, link_target);
 
 	return true;
 }

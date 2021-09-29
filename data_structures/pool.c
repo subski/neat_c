@@ -40,7 +40,7 @@ void* request(pool** _pool, size_t size)
 
 void pfree(pool** _pool, void** data)
 {
-	insert(_pool, *data);
+	cy_insert(_pool, *data);
 
 	*data = NULL;
 }

@@ -113,9 +113,9 @@ void free_neurolution()
 
 
 	// Free memory pools
-	clean(&P_LINK);
-	clean(&P_NEURON);
-	clean(&P_AGENT);
+	cy_clean(&P_LINK);
+	cy_clean(&P_NEURON);
+	cy_clean(&P_AGENT);
 
 	// Free neuron history
 	NeuronHistory_s* node = NeuronHistory.next;

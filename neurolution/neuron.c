@@ -44,7 +44,7 @@ Link* new_Link(Neuron* source, Neuron* target, double weight, bool enabled)
 	link->weight = weight;
 	link->enabled = enabled;
 
-	insert(&target->linkList, link);
+	cy_insert(&target->linkList, link);
 
 	return link;
 }
@@ -64,7 +64,7 @@ Link* new_LinkId(uint32_t source, uint32_t target, double weight, bool enabled)
 
 Link* getLinkInNeuron(Neuron* neuron, int id)
 {
-	ITER_V(neuron->linkList, link_node, link, Link*,
+	CY_ITER_DATA(neuron->linkList, link_node, link, Link*,
 		   if (pairToId(link->source->id, link->target->id) == id)
 			   return link;
 	);
@@ -83,8 +83,8 @@ Neuron* cloneNeuron(Neuron* neuron)
 		neuron->bias, 
 		NULL);
 
-	ITER_V(neuron->linkList, link_node, link, Link*,
-		insert(&new_neuron->linkList,
+	CY_ITER_DATA(neuron->linkList, link_node, link, Link*,
+		cy_insert(&new_neuron->linkList,
 			new_LinkId(
 				link->source->id, 
 				link->target->id, 
