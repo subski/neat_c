@@ -33,7 +33,7 @@ void kmeans_init(clist* datalist, clist* specieslist, int species_count)
 	speciate(data, specieslist);
 
 	int count_point = 0;
-	CY_ITER_DATA( speciesList, specie_node, specie, Specie*,
+	CY_ITER_DATA( specieslist, specie_node, specie, Specie*,
 		printf("S°%d: %d\n", specie->id, cy_len(specie->specimens));
 		count_point += cy_len(specie->points);
 	);
@@ -60,11 +60,11 @@ void kmeans_run(clist* datalist, clist* specieslist)
         );
         
 
-        CY_ITER_DATA( speciesList, specie_node, specie, Specie*,
+        CY_ITER_DATA( specieslist, specie_node, specie, Specie*,
             cy_clear(&specie->specimens);
         );
 
-        changes = speciate(datalist, speciesList);
+        changes = speciate(datalist, specieslist);
     } while (changes != 0);
 }
 
