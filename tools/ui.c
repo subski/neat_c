@@ -11,24 +11,6 @@
 #include "tools/utils.h"
 #include "tools/pcg_basic.h"
 
-typedef struct Point
-{
-    double x;
-    double y;
-} Point;
-
-typedef struct Specie
-{
-	int id;
-	int color[3];
-    Point centroid;
-	clist* points;
-} Specie;
-
-double distance_point( Point *p1, Point *p2 )
-{
-	return  sqrt( ( p1->x - p2->x ) * ( p1->x - p2->x ) +  ( p1->y - p2->y ) * ( p1->y - p2->y ) );
-}
 
 vector points;
 int point_count = 100;
@@ -37,11 +19,58 @@ int specie_count = 3;
 clist *speciesList = NULL;
 clist *pointList = NULL;
 
+
+double distance_point( Point *p1, Point *p2 )
+{
+	return  sqrt( ( p1->x - p2->x ) * ( p1->x - p2->x ) +  ( p1->y - p2->y ) * ( p1->y - p2->y ) );
+}
+
+int speciate( clist* pointlist, clist* species )
+{
+	CY_ITER_DATA( species, specie_node, specie, Specie*,
+		cy_clear(&specie->points);
+	);
+
+	int changes = 0;
+	Specie* nearest_specie;
+	double nearest_specie_distance = 0;
+	double target_specie_distance;
+	CY_ITER_DATA( pointlist, point_node, point, Point*,
+		nearest_specie_distance = 0;
+
+		clist* specie_node = species;			
+        Specie* specie;					
+        do
+        {							
+            specie = (Specie*) specie_node->data;
+
+			target_specie_distance = distance_point( &specie->centroid, point );
+			if ( target_specie_distance < nearest_specie_distance || nearest_specie_distance == 0 )
+			{
+				nearest_specie = specie;
+				nearest_specie_distance = target_specie_distance;
+			}
+
+            next(specie_node);				
+        } while (specie_node != species);
+
+		if (point->specie != nearest_specie->id)
+		{
+			changes++;
+			point->specie = nearest_specie->id;
+		}
+
+		cy_insert(&nearest_specie->points, point);
+	);
+
+	return changes;
+}
+
 void ui_init()
 {
 
     points = new_vector( sizeof( Point ), point_count, 0 );
-	
+
 	for ( int i = 0; i < point_count; i++ )
 	{
 		VEC( points, Point, i ) = (Point) { UI_WIDTH*pcg32_doublerand(), UI_HEIGHT*pcg32_doublerand() };
@@ -63,29 +92,13 @@ void ui_init()
 		cy_remove( &pointList, c );
 	}
 
-	Specie* nearest_specie;
-	double nearest_specie_distance = 0;
-	double target_specie_distance;
-	CY_ITER_DATA( pointList, point_node, point, Point*,
-		nearest_specie_distance = 0;
+	speciate(pointList, speciesList);
 
-		clist* specie_node = speciesList;			
-        Specie* specie;					
-        do
-        {							
-            specie = (Specie*) specie_node->data;
-
-			target_specie_distance = distance_point( &specie->centroid, point );
-			if ( target_specie_distance < nearest_specie_distance || nearest_specie_distance == 0 )
-			{
-				nearest_specie = specie;
-				nearest_specie_distance = target_specie_distance;
-			}
-
-            next(specie_node);				
-        } while (specie_node != speciesList);
-		cy_insert(&nearest_specie->points, point);
-	);
+	cy_clear(&pointList);
+	for ( int i = 0; i < point_count; i++ )
+	{
+		cy_insert( &pointList, &VEC( points, Point, i ) );
+	}
 
 	int count_point = 0;
 	CY_ITER_DATA( speciesList, specie_node, specie, Specie*,
@@ -101,7 +114,7 @@ void ui_init()
 		SDL_Delay( 10 );
 }
 
-bool step = false;
+int step = 0;
 int ui_run()
 {
 	#pragma warning ( disable : 4090 )
@@ -121,6 +134,35 @@ int ui_run()
 			case SDL_QUIT:
 				return false;
 			case SDL_MOUSEBUTTONDOWN:
+				break;
+			case SDL_KEYUP:
+				if ( e.key.keysym.sym == SDLK_SPACE)
+				{
+					if (step % 2 == 0)
+					{
+						step++;
+						CY_ITER_DATA(speciesList, specie_node, specie, Specie*,
+
+							specie->centroid.x = 0;
+							specie->centroid.y = 0;
+
+							CY_ITER_DATA(specie->points, point_node, point, Point*,
+								specie->centroid.x += point->x;
+								specie->centroid.y += point->y;
+							);
+
+							double s_count = cy_len(specie->points);
+							specie->centroid.x /= s_count;
+							specie->centroid.y /= s_count;
+						);
+					}
+					else
+					{
+						step++;
+
+						printf("Changes: %d\n", speciate(pointList, speciesList));
+					}
+				}
 				break;
 			case SDL_MOUSEMOTION:
 				mx = e.button.x;
@@ -148,26 +190,6 @@ int ui_run()
 	// 	SDL_RenderFillRect( ui_renderer, &r );
 	// 	SDL_RenderDrawRect( ui_renderer, &r );
 	// }
-
-	if ( keys[SDL_SCANCODE_SPACE] && !step)
-	{
-		step = true;
-
-		CY_ITER_DATA(speciesList, specie_node, specie, Specie*,
-
-			specie->centroid.x = 0;
-			specie->centroid.y = 0;
-
-			CY_ITER_DATA(specie->points, point_node, point, Point*,
-				specie->centroid.x += point->x;
-				specie->centroid.y += point->y;
-			);
-
-			double s_count = cy_len(specie->points);
-			specie->centroid.x /= s_count;
-			specie->centroid.y /= s_count;
-		);
-	}
 
     if ( keys[SDL_SCANCODE_ESCAPE])
         return false;
