@@ -16,7 +16,6 @@ void kmeans_init(clist* datalist, clist* specieslist, int species_count)
 {
 	Agent* agent_centroid;
 	Specie* specie;
-    // NEXT: finish kmeans & cy_clone(list)
     clist *data = cy_clone(datalist);
 	for ( int i = 0; i < species_count; i++ )
 	{

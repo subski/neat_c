@@ -177,3 +177,14 @@ bool cy_remove( clist** node, void* data )
 	} while ( iter != *node );
 	return false;
 }
+
+clist* cy_clone(clist* node)
+{
+    clist* clone = NULL;
+
+    CY_ITER_DATA(node, iter, data, void*,
+        cy_insert(&clone, data);
+    );
+
+    return clone;
+}

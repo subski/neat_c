@@ -116,4 +116,9 @@ bool cy_find(clist* node, void* data);
 */
 bool cy_remove(clist** node, void* data);
 
+/*
+    Copy all the nodes->data to a new chaine list.
+*/
+clist* cy_clone(clist* node);
+
 #endif
