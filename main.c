@@ -68,7 +68,7 @@ bool test(int argc, char* argv[])
     VEC(Population, Agent*, 7) = agent_clone(agent);
 
     VEC(Population, Agent*, 8) = agent_clone(agent);
-
+    
     return false; // continue the program?
 }
 

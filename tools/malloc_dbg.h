@@ -13,8 +13,6 @@
 #ifndef MALLOC_DBG_H
 #define MALLOC_DBG_H
 
-#define USE_DEBUG_MALLOC 1
-
 #if USE_DEBUG_MALLOC
 
  /** This macro replace the standard malloc function with malloc_dbg.

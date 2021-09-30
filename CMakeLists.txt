@@ -81,5 +81,8 @@ if (WIN32)
     set(CMAKE_C_FLAGS "/D_CRT_NONSTDC_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE ${CMAKE_C_FLAGS}")
 endif (WIN32)
 
+# Keep track of memory leaks
+add_definitions(-DUSE_DEBUG_MALLOC=1)
+
 # disable ZERO_CHECK project
 set(CMAKE_SUPPRESS_REGENERATION true)
