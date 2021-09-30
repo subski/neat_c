@@ -1,4 +1,4 @@
-[![Build](https://github.com/subski/neat_c/workflows/CMake/badge.svg)](https://github.com/subski/neat_c/actions)
+[![Build](https://github.com/subski/neat_c/workflows/CMake/badge.svg)](https://github.com/subski/neat_c/actions) [![Code](https://www.code-inspector.com/project/29248/score/svg)](https://frontend.code-inspector.com/public/project/29248/neat_c/dashboard)
 ## How to build (Linux & Windows)
 
 1. Build the CMake project with the command: `cmake -B build/`
