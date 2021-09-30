@@ -12,7 +12,7 @@
 #include "tools/utils.h"
 #include "tools/pcg_basic.h"
 
-void kmeans_init(clist* datalist, clist* specieslist, int species_count)
+void kmeans_init(clist* datalist, clist** specieslist, int species_count)
 {
 	Agent* agent_centroid;
 	Specie* specie;
@@ -21,23 +21,24 @@ void kmeans_init(clist* datalist, clist* specieslist, int species_count)
 	{
 		agent_centroid = cy_random_data( data );
 		specie = malloc( sizeof( Specie ) );
-		specie->centroid = request( &P_AGENT, sizeof( Agent ) );
-        memcpy(specie->centroid, agent_centroid, sizeof( Agent ) );
+        specie->centroid = agent_clone(agent_centroid);
 		specie->specimens = NULL;
-		specie->id = i;
+		specie->id = i+1;
 		cy_insert( &specie->specimens, agent_centroid );
-		cy_insert( &specieslist, specie );
+		cy_insert( specieslist, specie );
 		cy_remove( &data, agent_centroid );
 	}
 
-	speciate(data, specieslist);
+	speciate(data, *specieslist);
 
 	int count_point = 0;
-	CY_ITER_DATA( specieslist, specie_node, specie, Specie*,
-		printf("S°%d: %d\n", specie->id, cy_len(specie->specimens));
+	CY_ITER_DATA( *specieslist, specie_node, specie, Specie*,
+		printf("S%d: %d\n", specie->id, cy_len(specie->specimens));
 		count_point += cy_len(specie->specimens);
 	);
 	printf("Total specimens speciated: %d\n", count_point);
+
+	cy_clear(&data);
 }
 
 void kmeans_run(clist* datalist, clist* specieslist)
@@ -68,11 +69,6 @@ void kmeans_run(clist* datalist, clist* specieslist)
     } while (changes != 0);
 }
 
-double distance_point( Point *p1, Point *p2 )
-{
-	return  sqrt( ( p1->x - p2->x ) * ( p1->x - p2->x ) +  ( p1->y - p2->y ) * ( p1->y - p2->y ) );
-}
-
 int speciate( clist* datalist, clist* species )
 {
 	int changes = 0;
@@ -80,7 +76,7 @@ int speciate( clist* datalist, clist* species )
 	double nearest_specie_distance = 0;
 	double target_specie_distance;
 	CY_ITER_DATA( datalist, agent_node, agent, Agent*,
-		nearest_specie_distance = 0;
+		nearest_specie_distance = -1;
 
 		clist* specie_node = species;			
         Specie* specie;					
@@ -89,7 +85,7 @@ int speciate( clist* datalist, clist* species )
             specie = (Specie*) specie_node->data;
 
 			target_specie_distance = distance( specie->centroid, agent, 1.0, 1.0 );
-			if ( target_specie_distance < nearest_specie_distance || nearest_specie_distance == 0 )
+			if ( target_specie_distance < nearest_specie_distance || nearest_specie_distance == -1 )
 			{
 				nearest_specie = specie;
 				nearest_specie_distance = target_specie_distance;
@@ -103,9 +99,10 @@ int speciate( clist* datalist, clist* species )
 			changes++;
 			agent->specie = nearest_specie->id;
 		}
-
 		cy_insert(&nearest_specie->specimens, agent);
 	);
+
+	printf("Changes: %d\n", changes); 
 
 	return changes;
 }

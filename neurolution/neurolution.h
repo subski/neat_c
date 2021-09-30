@@ -4,6 +4,8 @@
 #include "data_structures/vector.h"
 #include "data_structures/pool.h"
 
+#include "neurolution/agent.h"
+
 // Web links for speciation methods:
 /*
  * K-means algo in plain C :
@@ -32,7 +34,15 @@ extern uint32_t NeuronCount;
 
 extern NeuronHistory_s NeuronHistory;
 
-extern vector Population;
+extern clist* Population;
+extern clist* Species;
+
+typedef struct Specie
+{
+	int id;
+    Agent* centroid;
+	clist* specimens;
+} Specie;
 
 struct NeuronHistory_s
 {
@@ -44,7 +54,7 @@ struct NeuronHistory_s
 
 void evolve(void);
 
-void createInitialPopulation(vector* population, uint32_t count);
+void createInitialPopulation(clist** population, uint32_t count);
 
 void free_neurolution();
 

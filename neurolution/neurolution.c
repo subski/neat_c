@@ -19,12 +19,11 @@ uint32_t NeuronCount = INPUT_SIZE + OUTPUT_SIZE;
 
 NeuronHistory_s NeuronHistory = { 0, 0, NULL };
 
-vector Population;
+clist* Population = NULL;
+clist* Species = NULL;
 
 void evolve(void)
 {
-	Population = new_vector(sizeof(Agent*), MAX_POPULATION, 0);
-
 	createInitialPopulation(&Population, MAX_POPULATION);
 	
 	// Speciate
@@ -44,25 +43,29 @@ void evolve(void)
 
 }
 
-void createInitialPopulation(vector* population, uint32_t count)
+void createInitialPopulation(clist** population, uint32_t count)
 {
 	for (uint32_t i = 0; i < count; i++)
 	{
 		Agent* agent = new_BasicAgent(INPUT_SIZE, OUTPUT_SIZE);
-		vec_set(population, &agent, i);
+		cy_insert(population, agent);
 	}
 }
 
 void free_neurolution()
 {
 	// Free the agents
-	for (uint32_t i = 0; i < Population.count; i++)
-	{
-		free_agent(&VEC(Population, Agent*, i));
-	}
+	CY_ITER_DATA(Population, agent_node, agent, Agent*, 
+		free_agent(&agent);
+	);
+	cy_clear(&Population);
 
-	free_vector(&Population);
+	CY_ITER_DATA(Species, specie_node, specie, Specie*,
+		free_agent(&specie->centroid);
+		cy_clear(&specie->specimens);
+	);
 
+	cy_clean(&Species);
 
 	// Free memory pools
 	cy_clean(&P_LINK);

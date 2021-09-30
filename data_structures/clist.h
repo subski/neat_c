@@ -69,7 +69,7 @@ struct clist
     Insert a node at the top of the list.
     If the list was empty, the node.next will point to itself.
 */
-bool cy_insert(clist** node, void* data);
+void* cy_insert(clist** node, void* data);
 
 /*
     Free the memory used by all the nodes in a given list while preserving the data referenced by the list.

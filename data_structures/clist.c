@@ -3,10 +3,10 @@
 #include "tools/pcg_basic.h"
 #include "tools/utils.h"
 
-bool cy_insert(clist** node, void* data)
+void* cy_insert(clist** node, void* data)
 {
 	clist* new_node = malloc(sizeof(clist));
-	MCHECK(new_node, false);
+	MCHECK(new_node, NULL);
 
 	if (*node == NULL) // empty list
 	{
@@ -22,7 +22,7 @@ bool cy_insert(clist** node, void* data)
 		(*node)->next = new_node;
 	}
 
-	return true; // SUCCESS
+	return data; // SUCCESS
 }
 
 void cy_clear(clist** node)

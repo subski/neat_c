@@ -20,31 +20,60 @@ void onExit(void);
 
 bool test(int argc, char* argv[])
 {
-	Population = new_vector(sizeof(Agent*), 9, 0);
+    Agent *a1, *a2, *a3, *a4;
+
+    a1 = new_BasicAgent(3, 2);
+    cy_insert(&Population, a1);
+    a2 = new_BasicAgent(3, 2);
+    cy_insert(&Population, a2);
+
+    a3 = new_BasicAgent(3, 2);
+    mutate_neuron_insert(a3);
+    mutate_neuron_insert(a3);
+    mutate_neuron_insert(a3);
+    cy_insert(&Population, a3);
+
+    a4 = cy_insert(&Population,  agent_clone(a3));
+
+    kmeans_init(Population, &Species, 2);
+    kmeans_run(Population, Species);
+    // printf("A1-A2: %lf\n", distance(a1, a2, 1, 1));
+    // printf("A1-A3: %lf\n", distance(a1, a3, 1, 1));
+    // printf("A1-A4: %lf\n", distance(a1, a4, 1, 1));
+    // printf("\n");
+
+    // printf("A2-A3: %lf\n", distance(a2, a3, 1, 1));
+    // printf("A2-A4: %lf\n", distance(a2, a4, 1, 1));
+    // printf("\n");
+
+    // printf("A3-A4: %lf\n", distance(a3, a4, 1, 1));
+    // printf("\n");
+ 
+    return false; // continue the program?
 
     Agent* agent;
+
+    agent = new_BasicAgent(3, 2);
+    agent = (Agent*) cy_insert(&Population, agent);
+
+    agent = new_BasicAgent(3, 2);
+    agent = (Agent*) cy_insert(&Population, agent);
+
+    agent = new_BasicAgent(3, 2);
+    agent = (Agent*) cy_insert(&Population, agent);
+
+
+    agent = new_BasicAgent(3, 2);
+    mutate_neuron_insert(agent);
+    mutate_neuron_insert(agent);
+    agent = (Agent*) cy_insert(&Population, agent);
+
+
+    agent = (Agent*) cy_insert(&Population, agent_clone(agent));
+    mutate_link_add(agent);
     
-    agent = new_BasicAgent(3, 2);
-    VEC(Population, Agent*, 0) = agent;
-
-    agent = new_BasicAgent(3, 2);
-    VEC(Population, Agent*, 1) = agent;
-
-    agent = new_BasicAgent(3, 2);
-    VEC(Population, Agent*, 2) = agent;
-
-
-    agent = new_BasicAgent(3, 2);
-    mutate_neuron_insert(agent);
-    mutate_neuron_insert(agent);
-    VEC(Population, Agent*, 3) = agent;
-
-
-    VEC(Population, Agent*, 4) = agent_clone(agent);
-    mutate_link_add(VEC(Population, Agent*, 4));
-    
-    VEC(Population, Agent*, 5) = agent_clone(VEC(Population, Agent*, 4));
-    mutate_link_add(VEC(Population, Agent*, 5));
+    agent = (Agent*) cy_insert(&Population, agent_clone(agent));
+    mutate_link_add(agent);
 
     agent = new_BasicAgent(3, 2);
     mutate_neuron_insert(agent);
@@ -59,11 +88,11 @@ bool test(int argc, char* argv[])
     mutate_link_toggle(agent);
     mutate_link_toggle(agent);
 
-    VEC(Population, Agent*, 6) = agent;
+    agent = (Agent*) cy_insert(&Population, agent);
 
-    VEC(Population, Agent*, 7) = agent_clone(agent);
+    agent = (Agent*) cy_insert(&Population, agent_clone(agent));
 
-    VEC(Population, Agent*, 8) = agent_clone(agent);
+    agent = (Agent*) cy_insert(&Population, agent_clone(agent));
     
     return false; // continue the program?
 }
