@@ -1,5 +1,7 @@
 #include "tools/utils.h"
 
+#include <math.h>
+
 const int ZERO = 0;
 const int ONE = 1;
 const int TWO = 2;
@@ -25,26 +27,6 @@ double double_abs(double x)
 	return x;
 }
 
-#if USE_SDL
-
-void DrawCircle(SDL_Renderer *renderer, int x, int y, int radius)
-{
-    for (int w = 0; w < radius * 2; w++)
-    {
-        for (int h = 0; h < radius * 2; h++)
-        {
-            int dx = radius - w; // horizontal offset
-            int dy = radius - h; // vertical offset
-            if ((dx*dx + dy*dy) <= (radius * radius))
-            {
-                SDL_RenderDrawPoint(renderer, x + dx, y + dy);
-            }
-        }
-    }
-}
-
-#endif // !USE_SDL
-
 // TODO: Review the use of calculating pairs id instead of storing them.
 // Idea: A [{MAX_NEURONS}x{MAX_NEURONS}] matrix where each element is a {POPULATION_SIZE} array with pointers to links.
 void idToPair(int id, uint32_t* p1, uint32_t* p2)
@@ -59,7 +41,9 @@ void idToPair(int id, uint32_t* p1, uint32_t* p2)
 	#pragma warning (push)
 	#pragma warning(disable : 4244)
 	float n1 = 0.5f + sqrt(2 * id + 0.25f); // magic formula
+	
 	uint32_t n1_c = ceilf(n1);
+	
 	
 	uint32_t n2 = (n1_c - 1) * (n1 - (n1_c - 1 ));
 	#pragma warning (pop)

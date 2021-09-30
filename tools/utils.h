@@ -33,20 +33,6 @@ extern const int TWO;
 
 extern char BIN_PATH[];
 
-
-#if USE_SDL
-
-#include <SDL.h>
-
-#define UI_WIDTH 900
-#define UI_HEIGHT 500
-
-SDL_Window* ui_screen;
-SDL_Renderer* ui_renderer;
-
-void DrawCircle(SDL_Renderer *renderer, int x, int y, int radius);
-
-#endif // !USE_SDL
 /*
 	Check if a given pointer is in an array.
 */

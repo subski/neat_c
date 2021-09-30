@@ -4,17 +4,43 @@
 
 #include <SDL.h>
 
-#include "tools/utils.h"
 #include "tools/pcg_basic.h"
+
+SDL_Window* ui_screen;
+SDL_Renderer* ui_renderer;
 
 void ui_init()
 {
+	// Init SDL
+    if(SDL_Init(SDL_INIT_VIDEO) != 0) {
+        fprintf(stderr, "Could not init SDL: %s\n", SDL_GetError());
+       exit(1);
+    }
+    
+    ui_screen = SDL_CreateWindow(APP_NAME,
+            SDL_WINDOWPOS_UNDEFINED,
+            SDL_WINDOWPOS_UNDEFINED,
+            UI_WIDTH, UI_HEIGHT,
+            0);
+    if(!ui_screen) {
+        fprintf(stderr, "Could not create window\n");
+        exit(1);
+    }
+    ui_renderer = SDL_CreateRenderer(ui_screen, -1, SDL_RENDERER_SOFTWARE);
+    if(!ui_renderer) {
+        fprintf(stderr, "Could not create renderer\n");
+        exit(1);
+    }
+
+    SDL_SetRenderDrawColor(ui_renderer, 0, 0, 0, 255);
 
     SDL_RenderClear( ui_renderer );
     SDL_RenderPresent( ui_renderer );
 
     while ( ui_run() )
 		SDL_Delay( 10 );
+	
+	ui_exit();
 }
 
 int ui_run()
@@ -81,7 +107,24 @@ int ui_run()
 
 void ui_exit()
 {
+	SDL_DestroyWindow(ui_screen);
+    SDL_Quit();
+}
 
+void DrawCircle(SDL_Renderer *renderer, int x, int y, int radius)
+{
+    for (int w = 0; w < radius * 2; w++)
+    {
+        for (int h = 0; h < radius * 2; h++)
+        {
+            int dx = radius - w; // horizontal offset
+            int dy = radius - h; // vertical offset
+            if ((dx*dx + dy*dy) <= (radius * radius))
+            {
+                SDL_RenderDrawPoint(renderer, x + dx, y + dy);
+            }
+        }
+    }
 }
 
 #endif // !USE_SDL

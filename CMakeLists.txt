@@ -83,6 +83,7 @@ endif (WIN32)
 
 # Keep track of memory leaks
 add_definitions(-DUSE_DEBUG_MALLOC=1)
+add_definitions(-DAPP_NAME="${PROJECT_NAME}")
 
 # disable ZERO_CHECK project
 set(CMAKE_SUPPRESS_REGENERATION true)

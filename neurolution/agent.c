@@ -8,6 +8,7 @@
 
 #include "neurolution/neuron.h"
 #include "neurolution/neurolution.h"
+#include "neurolution/agent_io.h"
 
 #include "tools/utils.h"
 #include "tools/pcg_basic.h"
@@ -265,7 +266,8 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
 				);
 			break;
 			default:
-                continue; // TODO: raise error
+                printf("Incorrect totalNeuron id : %d in agent > crossover.\n", VEC(totalNeuron, byte_t, i));
+				continue;
 			break;
 		}
 		// Add the neuron to the child agent
@@ -381,7 +383,7 @@ Agent* agent_clone(Agent* agent)
 	clone->fitness = agent->fitness;
 
 	CY_ITER_DATA(agent->neuronList, neuron_node, neuron, Neuron*,
-        cy_insert(&clone->neuronList, cloneNeuron(neuron));
+		cy_insert(&clone->neuronList, cloneNeuron(neuron));
 	);
 
 	uint32_t p1, p2;

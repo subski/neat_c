@@ -1,9 +1,5 @@
 #include <string.h>
 
-#if USE_SDL
-#include <SDL.h>
-#endif // !USE_SDL
-
 #include "tools/utils.h"
 #include "tools/pcg_basic.h"
 
@@ -23,7 +19,7 @@ void onStart(int argc, char* argv[]);
 void onExit(void);
 
 bool test(int argc, char* argv[])
-{   
+{
 	Population = new_vector(sizeof(Agent*), 9, 0);
 
     Agent* agent;
@@ -77,7 +73,7 @@ int main(int argc, char* argv[])
     onStart(argc, argv);
     if (!test(argc, argv)) return 0;
     
-    evolve();
+    // evolve();
 
     return EXIT_SUCCESS;
 }
@@ -87,10 +83,15 @@ int main(int argc, char* argv[])
 struct timeb progStart, progEnd;
 #endif // !_WIN32
 
-// TODO: add welcolme msg
-// TODO: use USE_DEBUG_MALLOC and USE_SDL from CMakeLists.txt
 void onStart(int argc, char* argv[])
 {
+    printf(
+" _      _____ ____  _____     ____ \n"
+"/ \\  /|/  __//  _ \\/__ __\\   /   _\\\n"
+"| |\\ |||  \\  | / \\|  / \\     |  /  \n"
+"| | \\|||  /_ | |-||  | |     |  \\__\n"
+"\\_/  \\|\\____\\\\_/ \\|  \\_/_____\\____/\n"
+"                        \\____\\ \n\n");
     // Add function on program exit event
     atexit(&onExit);
     // Setup the random number generator
@@ -137,45 +138,10 @@ void onStart(int argc, char* argv[])
             break;
         }
     }
-
-#if USE_SDL
-
-    // Init SDL
-    if(SDL_Init(SDL_INIT_VIDEO) != 0) {
-        fprintf(stderr, "Could not init SDL: %s\n", SDL_GetError());
-       exit(1);
-    }
-    // TODO: take cmake project name as window title
-    ui_screen = SDL_CreateWindow("NEAT_C",
-            SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED,
-            UI_WIDTH, UI_HEIGHT,
-            0);
-    if(!ui_screen) {
-        fprintf(stderr, "Could not create window\n");
-        exit(1);
-    }
-    ui_renderer = SDL_CreateRenderer(ui_screen, -1, SDL_RENDERER_SOFTWARE);
-    if(!ui_renderer) {
-        fprintf(stderr, "Could not create renderer\n");
-        exit(1);
-    }
-
-    SDL_SetRenderDrawColor(ui_renderer, 0, 0, 0, 255);
-
-#endif // !USE_SDL
-
 }
 
 void onExit(void)
 {
-#if USE_SDL
-
-    SDL_DestroyWindow(ui_screen);
-    SDL_Quit();
-
-#endif // !USE_SDL
-
     free_neurolution();
 
 #if USE_DEBUG_MALLOC

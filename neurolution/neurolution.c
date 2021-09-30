@@ -1,7 +1,5 @@
 #include "neurolution/neurolution.h"
 
-#include <math.h>
-
 #include "data_structures/pool.h"
 #include "data_structures/clist.h"
 #include "data_structures/vector.h"
@@ -34,7 +32,6 @@ void evolve(void)
 	
 #if USE_SDL
 	ui_init();
-	ui_exit();
 #endif // !USE_SDL
 
 	// Selection

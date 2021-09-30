@@ -56,7 +56,7 @@ void kmeans_run(clist* datalist, clist* specieslist)
             // double s_count = cy_len(specie->points);
             // specie->centroid.x /= s_count;
             // specie->centroid.y /= s_count;
-
+			
         );
         
 
