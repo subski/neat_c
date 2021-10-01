@@ -11,6 +11,6 @@ void kmeans_run(clist* datalist, clist* specieslist);
 
 int speciate( clist* pointlist, clist* species );
 
-Agent* CalculateCentroidAgent(clist* agentList);
+void CalculateCentroidAgent(clist* agentList, Agent* centroid_agent);
 
 #endif // !KMEANS_H

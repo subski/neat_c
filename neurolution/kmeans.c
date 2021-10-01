@@ -32,13 +32,6 @@ void kmeans_init(clist* datalist, clist** specieslist, int species_count)
 
 	speciate(data, *specieslist);
 
-	int count_point = 0;
-	CY_ITER_DATA( *specieslist, specie_node, specie, Specie*,
-		printf("S%d: %d\n", specie->id, cy_len(specie->specimens));
-		count_point += cy_len(specie->specimens);
-	);
-	printf("Total specimens speciated: %d\n", count_point);
-
 	cy_clear(&data);
 }
 
@@ -48,27 +41,15 @@ void kmeans_run(clist* datalist, clist* specieslist)
     do
     {
         CY_ITER_DATA(specieslist, specie_node, specie, Specie*,
-			if (cy_len(specie->specimens) == 0)
-				printf("Specie %d empty.\n", specie->id);
-			else
-			{
-				free_agent(&specie->centroid);
-				specie->centroid = CalculateCentroidAgent(specie->specimens);
-			}
+			CalculateCentroidAgent(specie->specimens, specie->centroid);
 		);
         
-		// only recalculate centroid for agents that have been modified
+		// only recalculate centroid for species that have been modified
         CY_ITER_DATA( specieslist, specie_node, specie, Specie*,
             cy_clear(&specie->specimens);
         );
 
         changes = speciate(datalist, specieslist);
-		int count_point = 0;
-		CY_ITER_DATA( specieslist, specie_node, specie, Specie*,
-			printf("S%d: %d\n", specie->id, cy_len(specie->specimens));
-			count_point += cy_len(specie->specimens);
-		);
-		printf("Total specimens speciated: %d\n", count_point);
     } while (changes != 0);
 }
 
@@ -105,14 +86,23 @@ int speciate( clist* datalist, clist* species )
 		cy_insert(&nearest_specie->specimens, agent);
 	);
 
-	printf("Changes: %d\n", changes); 
+	CY_ITER_DATA( species, specie_node, specie, Specie*,
+		printf("S%d: %d\n", specie->id, cy_len(specie->specimens));
+	);
+	NEWLINE();
 
 	return changes;
 }
 
-Agent* CalculateCentroidAgent(clist* agentList)
+void CalculateCentroidAgent(clist* agentList, Agent* centroid_agent)
 {
-	Agent* centroid_agent = new_Agent(INPUT_SIZE, OUTPUT_SIZE);
+	if (cy_len(agentList) == 0) return;
+	cy_pclean(&centroid_agent->linkList, &P_LINK);
+	CY_ITER_DATA(centroid_agent->neuronList, neuron_node, neuron, Neuron*,
+		 cy_clear(&neuron->linkList);
+	);
+	cy_pclean(&centroid_agent->neuronList, &P_NEURON);
+
 	double agent_count = 0;
 	clist* iter_agent = agentList;
 	Agent* agent;
@@ -172,6 +162,4 @@ Agent* CalculateCentroidAgent(clist* agentList)
 			link->weight *= agent_count;
         );
     );
-
-    return centroid_agent;
 }

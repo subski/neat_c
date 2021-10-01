@@ -6,6 +6,7 @@
 
 #include "neurolution/agent.h"
 #include "neurolution/mutations.h"
+#include "neurolution/kmeans.h"
 #include "neurolution/env_settings.h"
 
 #include "tools/ui.h"
@@ -24,13 +25,15 @@ clist* Species = NULL;
 
 void evolve(void)
 {
-	//createInitialPopulation(&Population, MAX_POPULATION);
+	createInitialPopulation(&Population, MAX_POPULATION);
 	
 	// Speciate
-	printf("Speciation.\n");
+	kmeans_init(Population, &Species, 3);
+	kmeans_run(Population, Species);
 	
 #if USE_SDL
 	ui_init();
+	ui_run();
 #endif // !USE_SDL
 
 	// Selection
@@ -47,8 +50,7 @@ void createInitialPopulation(clist** population, uint32_t count)
 {
 	for (uint32_t i = 0; i < count; i++)
 	{
-		Agent* agent = new_BasicAgent(INPUT_SIZE, OUTPUT_SIZE);
-		cy_insert(population, agent);
+		cy_insert(population, new_BasicAgent(INPUT_SIZE, OUTPUT_SIZE));
 	}
 }
 
