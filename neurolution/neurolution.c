@@ -25,24 +25,65 @@ clist* Species = NULL;
 
 void evolve(void)
 {
+#if USE_SDL
+	// ui_init();
+	// ui_run();
+#endif // !USE_SDL
+	// TODO: create offsprings before killing agents
 	createInitialPopulation(&Population, MAX_POPULATION);
 	
-	// Speciate
+	// speciate
 	kmeans_init(Population, &Species, 3);
 	kmeans_run(Population, Species);
-	
-#if USE_SDL
-	ui_init();
-	ui_run();
-#endif // !USE_SDL
 
-	// Selection
-	
-	// Reproduction
+	for (int step = 1; step <= 1; step++)
+	{
+		// fitness sharing
+		double agent_count = 1.0 / cy_len(Population);
+		CY_ITER_DATA(Species, specie_node, specie, Specie*,
+			specie->fitness = 0.0;
+			CY_ITER_DATA(specie->specimens, agent_node, agent, Agent*,
+				specie->fitness += agent->fitness;
+			);
+			specie->proportion = specie->fitness * agent_count * MAX_POPULATION * 0.5;
+		);
 
-	// Mutation
+		// killing agents
+		int dead_count = 0;
+		Agent* dead_agent;
+		clist* specie_node = Species;
+		Specie* specie;
+		do
+		{
+			specie = (Specie*) specie_node->data;
+			printf("Killing specie: %d -> %lf\n", specie->id, specie->proportion);
+			for (int i=0; i < (int) specie->proportion; i++)
+			{
+				dead_count++;
+				dead_agent = specie->specimens->data;
+				
+				cy_remove(&Population, dead_agent);
+				cy_remove(&specie->specimens, dead_agent);
+				free_agent(&dead_agent);
+			}
+			next(specie_node);
+		} while (specie_node != Species);
 
-	// Calcul Fitness
+		printf("dead: %d\n", dead_count);
+
+		// get centroid of elite agents
+		kmeans_run(Population, Species);
+
+		//T create offsprings
+		//T add offsprings to pop
+
+
+		//T add offsprings in correct specie
+		// speciate entire pop
+		kmeans_run(Population, Species);
+
+		//T Eval Fitness
+	}
 
 }
 

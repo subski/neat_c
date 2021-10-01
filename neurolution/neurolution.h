@@ -42,6 +42,8 @@ typedef struct Specie
 	int id;
     Agent* centroid;
 	clist* specimens;
+	double fitness;
+	double proportion;
 } Specie;
 
 struct NeuronHistory_s
