@@ -4,6 +4,7 @@
 
 #include "neurolution/neurolution.h"
 #include "neurolution/agent.h"
+#include "neurolution/neuron.h"
 
 #include "data_structures/vector.h"
 #include "data_structures/clist.h"
@@ -47,25 +48,27 @@ void kmeans_run(clist* datalist, clist* specieslist)
     do
     {
         CY_ITER_DATA(specieslist, specie_node, specie, Specie*,
-            // NEXT: calculate new centroid
-            // specie->centroid.x = 0;
-            // specie->centroid.y = 0;
-            // CY_ITER_DATA(specie->specimens, agent_node, agent, Agent*,
-            //     specie->centroid.x += point->x;
-            //     specie->centroid.y += point->y;
-            // );
-            // double s_count = cy_len(specie->points);
-            // specie->centroid.x /= s_count;
-            // specie->centroid.y /= s_count;
-			
-        );
+			if (cy_len(specie->specimens) == 0)
+				printf("Specie %d empty.\n", specie->id);
+			else
+			{
+				free_agent(&specie->centroid);
+				specie->centroid = CalculateCentroidAgent(specie->specimens);
+			}
+		);
         
-
+		// only recalculate centroid for agents that have been modified
         CY_ITER_DATA( specieslist, specie_node, specie, Specie*,
             cy_clear(&specie->specimens);
         );
 
         changes = speciate(datalist, specieslist);
+		int count_point = 0;
+		CY_ITER_DATA( specieslist, specie_node, specie, Specie*,
+			printf("S%d: %d\n", specie->id, cy_len(specie->specimens));
+			count_point += cy_len(specie->specimens);
+		);
+		printf("Total specimens speciated: %d\n", count_point);
     } while (changes != 0);
 }
 
@@ -84,7 +87,7 @@ int speciate( clist* datalist, clist* species )
         {							
             specie = (Specie*) specie_node->data;
 
-			target_specie_distance = distance( specie->centroid, agent, 1.0, 1.0 );
+			target_specie_distance = agent_euclidean_distance( specie->centroid, agent);
 			if ( target_specie_distance < nearest_specie_distance || nearest_specie_distance == -1 )
 			{
 				nearest_specie = specie;
@@ -105,4 +108,70 @@ int speciate( clist* datalist, clist* species )
 	printf("Changes: %d\n", changes); 
 
 	return changes;
+}
+
+Agent* CalculateCentroidAgent(clist* agentList)
+{
+	Agent* centroid_agent = new_Agent(INPUT_SIZE, OUTPUT_SIZE);
+	double agent_count = 0;
+	clist* iter_agent = agentList;
+	Agent* agent;
+	Neuron *neuron_centroid;
+	Link* link_centroid;
+	do
+	{
+		agent = (Agent*) iter_agent->data;
+
+		CY_ITER_DATA(agent->neuronList, neuron_node, neuron_agent, Neuron*,
+			neuron_centroid = getNeuronInAgent(centroid_agent, neuron_agent->id);
+			if (!neuron_centroid)
+			{
+				neuron_centroid = new_Neuron(
+					neuron_agent->id, 
+					neuron_agent->enabled, 
+					neuron_agent->activated, 
+					neuron_agent->type, 
+					neuron_agent->activationFunc, 
+					neuron_agent->value, 
+					neuron_agent->bias,
+					NULL);
+				cy_insert(&centroid_agent->neuronList, neuron_centroid);
+			}
+
+			// We iterate through all the links of both neurons and we chose at random links from the neuron1 links.
+			CY_ITER_DATA(neuron_agent->linkList, link_node, link_agent, Link*,
+				link_centroid = getLinkInNeuron(neuron_centroid, link_agent->id);
+				if (link_centroid == NULL)
+				{
+					link_centroid = cy_insert(&neuron_centroid->linkList,
+						new_LinkId(
+							link_agent->source->id, 
+							link_agent->target->id, 
+							link_agent->weight, 
+							link_agent->enabled));
+				}
+				else
+				{
+					link_centroid->weight += link_agent->weight;
+				}
+			);
+		);
+		agent_count++;
+		next(iter_agent);
+	} while (iter_agent != agentList);
+
+	// Actually initialize the links in the child. There is probably a better way.
+    agent_count = 1 / agent_count;
+	uint32_t p1, p2;
+    CY_ITER_DATA(centroid_agent->neuronList, neuron_node, neuron, Neuron*,
+        CY_ITER_DATA(neuron->linkList, link_node, link, Link*,
+            cy_insert(&centroid_agent->linkList, link);
+            idToPair(link->id, &p1, &p2);
+            link->source = getNeuronInAgent(centroid_agent, p1);
+            link->target = neuron;
+			link->weight *= agent_count;
+        );
+    );
+
+    return centroid_agent;
 }

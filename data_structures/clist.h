@@ -109,7 +109,7 @@ void* cy_random_max(clist* node, uint32_t max);
 /*
     Return true if the given data is in the list.
 */
-bool cy_find(clist* node, void* data);
+clist* cy_find(clist* node, void* data);
 
 /*
     Search for a node that has (param : data) as data and remove it from the chain as well as freeing the node.

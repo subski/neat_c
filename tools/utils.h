@@ -26,6 +26,7 @@
 		}												\
 	} while (0);
 
+#define NEWLINE() printf("\n");
 
 extern const int ZERO;
 extern const int ONE;

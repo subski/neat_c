@@ -40,7 +40,7 @@ Link* new_Link(Neuron* source, Neuron* target, double weight, bool enabled)
 {
 	Link* link = request(&P_LINK, sizeof(Link));
 
-	link->id = 0;
+	link->id = pairToId(source->id, target->id);
 	link->source = source;
 	link->target = target;
 	link->weight = weight;
@@ -66,14 +66,21 @@ Link* new_LinkId(uint32_t source, uint32_t target, double weight, bool enabled)
 
 Link* getLinkInNeuron(Neuron* neuron, int id)
 {
-	CY_ITER_DATA(neuron->linkList, link_node, link, Link*,
-		   if (pairToId(link->source->id, link->target->id) == id)
+	return getLinkInList(neuron->linkList, id);
+}
+
+Link* getLinkInList(clist* neuronlist, int id)
+{
+	CY_ITER_DATA(neuronlist, link_node, link, Link*,
+		   if (link->id == id)
 			   return link;
 	);
 	return NULL;
 }
 
-Neuron* cloneNeuron(Neuron* neuron)
+
+
+Neuron* clone_neuron(Neuron* neuron)
 {
 	Neuron* new_neuron = new_Neuron(
 		neuron->id, 
@@ -95,4 +102,22 @@ Neuron* cloneNeuron(Neuron* neuron)
 	);
 
 	return new_neuron;
+}
+
+
+void print_link_id_matrix(int size)
+{
+	printf(" . ");
+	for (int i = 1; i < size; i++)
+		printf("  %d  ", i);
+	NEWLINE();
+	for (int i = 1; i < size; i++)
+	{
+		printf(" %d ", i);
+		for (int j = 1; j < size; j++)
+		{
+			printf(" %003d ", pairToId(j, i));
+		}
+		NEWLINE();	
+	}
 }

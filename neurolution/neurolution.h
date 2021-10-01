@@ -56,6 +56,8 @@ void evolve(void);
 
 void createInitialPopulation(clist** population, uint32_t count);
 
+void free_specie(Specie* specie);
+
 void free_neurolution();
 
 #endif // !NEUROLUTION_H

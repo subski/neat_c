@@ -73,6 +73,10 @@ Link* new_LinkId(uint32_t source, uint32_t target, double weight, bool enabled);
 
 Link* getLinkInNeuron(Neuron* neuron, int id);
 
-Neuron* cloneNeuron(Neuron* neuron);
+Link* getLinkInList(clist* neuronlist, int id);
+
+Neuron* clone_neuron(Neuron* neuron);
+
+void print_link_id_matrix(int size);
 
 #endif

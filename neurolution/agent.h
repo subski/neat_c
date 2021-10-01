@@ -40,6 +40,8 @@ Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize);
 */
 double distance(Agent* agent1, Agent* agent2, double c1, double c2);
 
+double agent_euclidean_distance(Agent* agent1, Agent* agent2);
+
 /*
     Create a new Agent from two existing agents.
 */
@@ -76,5 +78,7 @@ bool check_agent(Agent* agent);
     Create a copy of a given agent.
 */
 Agent* agent_clone(Agent* agent);
+
+double agent_weight(Agent* agent);
 
 #endif

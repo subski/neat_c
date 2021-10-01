@@ -42,7 +42,7 @@ bool mutate_link_add(Agent* agent)
 	);
 	
 	// Adding the link
-	Link* new_link = new_Link(neuron_source, neuron_target, 1.0, true);
+	Link* new_link = new_Link(neuron_source, neuron_target, pcg32_doublerand(), true);
 	cy_insert(&agent->linkList, new_link);
 
 	return true;
@@ -129,7 +129,7 @@ bool mutate_neuron_insert(Agent* agent)
 	Link* link_src = new_Link(target_link->source, new_neuron, target_link->weight, true);
 	cy_insert(&agent->linkList, link_src);
 
-	Link* link_target = new_Link(new_neuron, target_link->target, 0.0, true);
+	Link* link_target = new_Link(new_neuron, target_link->target, 1.0, true);
 	cy_insert(&agent->linkList, link_target);
 
 	return true;

@@ -24,7 +24,7 @@ clist* Species = NULL;
 
 void evolve(void)
 {
-	createInitialPopulation(&Population, MAX_POPULATION);
+	//createInitialPopulation(&Population, MAX_POPULATION);
 	
 	// Speciate
 	printf("Speciation.\n");
@@ -52,20 +52,26 @@ void createInitialPopulation(clist** population, uint32_t count)
 	}
 }
 
+void free_specie(Specie* specie)
+{
+	free_agent(&specie->centroid);
+	cy_clear(&specie->specimens);
+}
+
 void free_neurolution()
 {
+	CY_ITER_DATA(Species, specie_node, specie, Specie*,
+		free_specie(specie);
+	);
+
+	cy_clean(&Species);
+
+
 	// Free the agents
 	CY_ITER_DATA(Population, agent_node, agent, Agent*, 
 		free_agent(&agent);
 	);
 	cy_clear(&Population);
-
-	CY_ITER_DATA(Species, specie_node, specie, Specie*,
-		free_agent(&specie->centroid);
-		cy_clear(&specie->specimens);
-	);
-
-	cy_clean(&Species);
 
 	// Free memory pools
 	cy_clean(&P_LINK);

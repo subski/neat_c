@@ -20,38 +20,9 @@ void onExit(void);
 
 bool test(int argc, char* argv[])
 {
-    Agent *a1, *a2, *a3, *a4;
-
-    a1 = new_BasicAgent(3, 2);
-    cy_insert(&Population, a1);
-    a2 = new_BasicAgent(3, 2);
-    cy_insert(&Population, a2);
-
-    a3 = new_BasicAgent(3, 2);
-    mutate_neuron_insert(a3);
-    mutate_neuron_insert(a3);
-    mutate_neuron_insert(a3);
-    cy_insert(&Population, a3);
-
-    a4 = cy_insert(&Population,  agent_clone(a3));
-
-    kmeans_init(Population, &Species, 2);
-    kmeans_run(Population, Species);
-    // printf("A1-A2: %lf\n", distance(a1, a2, 1, 1));
-    // printf("A1-A3: %lf\n", distance(a1, a3, 1, 1));
-    // printf("A1-A4: %lf\n", distance(a1, a4, 1, 1));
-    // printf("\n");
-
-    // printf("A2-A3: %lf\n", distance(a2, a3, 1, 1));
-    // printf("A2-A4: %lf\n", distance(a2, a4, 1, 1));
-    // printf("\n");
-
-    // printf("A3-A4: %lf\n", distance(a3, a4, 1, 1));
-    // printf("\n");
- 
-    return false; // continue the program?
-
+    print_link_id_matrix(15);
     Agent* agent;
+    Agent* a1, * a2, * a3;
 
     agent = new_BasicAgent(3, 2);
     agent = (Agent*) cy_insert(&Population, agent);
@@ -62,12 +33,14 @@ bool test(int argc, char* argv[])
     agent = new_BasicAgent(3, 2);
     agent = (Agent*) cy_insert(&Population, agent);
 
+    a1 = agent;
 
     agent = new_BasicAgent(3, 2);
     mutate_neuron_insert(agent);
     mutate_neuron_insert(agent);
     agent = (Agent*) cy_insert(&Population, agent);
 
+    a2 = agent;
 
     agent = (Agent*) cy_insert(&Population, agent_clone(agent));
     mutate_link_add(agent);
@@ -88,12 +61,46 @@ bool test(int argc, char* argv[])
     mutate_link_toggle(agent);
     mutate_link_toggle(agent);
 
+    a3 = agent;
+
     agent = (Agent*) cy_insert(&Population, agent);
 
     agent = (Agent*) cy_insert(&Population, agent_clone(agent));
 
     agent = (Agent*) cy_insert(&Population, agent_clone(agent));
+
     
+    // Specie s = { 0, NULL, NULL };
+    // cy_insert(&s.specimens, a1);
+    // cy_insert(&s.specimens, a2);
+    // cy_insert(&s.specimens, a3);
+
+    // printf("a1:\n");
+	// print_agent(a1);
+	// printf("a2:\n");
+	// print_agent(a2);
+	// printf("a3:\n");
+	// print_agent(a3);
+
+    // s.centroid = CalculateCentroidAgent(s.specimens);
+    
+	// printf("c:\n");
+    // print_agent(s.centroid);
+
+    // printf("Distance A1-C : %lf\n", agent_euclidean_distance(a1, s.centroid));
+    // printf("Distance A2-C : %lf\n", agent_euclidean_distance(a2, s.centroid));
+    // printf("Distance A3-C : %lf\n", agent_euclidean_distance(a3, s.centroid));
+
+    // printf("Distance A3-A1 : %lf\n", agent_euclidean_distance(a3, a1));
+    // printf("Distance A3-A2 : %lf\n", agent_euclidean_distance(a3, a2));
+
+    // printf("Distance A1-A2 : %lf\n", agent_euclidean_distance(a1, a2));
+
+    // free_specie(&s);
+
+    kmeans_init(Population, &Species, 3);
+    kmeans_run(Population, Species);
+
     return false; // continue the program?
 }
 

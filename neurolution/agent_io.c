@@ -12,10 +12,10 @@ void print_agent(Agent* agent)
 	printf("agent:\n");
 	CY_ITER_DATA(agent->neuronList, neuron_node, neuron, Neuron*,
 		   CY_ITER_DATA(neuron->linkList, link_node, link, Link*,
-		   printf("%d -> %d [%.2lf, %d]\n", link->source->id, neuron->id, link->weight, link->enabled);
+		   printf("(%d>%d) : %d -> %d [%.2lf, %d]\n", neuron->id, link->id, link->source->id, neuron->id, link->weight, link->enabled);
 	);	);
 
-	printf("Neurons: %d | Links: %d | Fitness: %lf\n\n", cy_len(agent->neuronList), cy_len(agent->linkList), agent->fitness);
+	printf("Neurons: %d | Links: %d | Fitness: %lf | Weights: %lf\n\n", cy_len(agent->neuronList), cy_len(agent->linkList), agent->fitness, agent_weight(agent));
 }
 
 // TODO: maybe different format for neurons like: 'neuron_id': 'incoming connections'

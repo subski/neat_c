@@ -124,17 +124,17 @@ void* cy_random_max(clist* node, uint32_t max)
 	return NULL;
 }
 
-bool cy_find(clist* node, void* data)
+clist* cy_find(clist* node, void* data)
 {
 	if (node == NULL)
-		return false;
+		return NULL;
 
 	CY_ITER(node, iter,
 		if (iter->data == data)
-			return true;
+			return iter;
 	);
 
-	return false;
+	return NULL;
 }
 
 bool cy_remove( clist** node, void* data )
@@ -144,9 +144,9 @@ bool cy_remove( clist** node, void* data )
 	
 	if ( (*node)->next == *node )
 	{
-		printf("ALERT!!!\n");
 		if ( (*node)->data == data )
 		{
+			free(*node);
 			*node = NULL;
 			return true;
 		}
