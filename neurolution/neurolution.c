@@ -43,7 +43,7 @@ void evolve(void)
 	{
 		NextGeneration = (Generation) { NULL, NULL };
 
-		// TodoStep: eval fitness of the population
+		// TODO Step : eval fitness of the population
 		
 		fitnessSharing(CurrentGeneration.Species);
 
@@ -68,9 +68,8 @@ void createInitialPopulation(clist** population, uint32_t count)
 
 void fitnessSharing(clist* species)
 {
-
 	//double proportion_leftover = 0;
-	// _fitness sharing
+	
 	// the fitness of a specie is the sum of the fitness of his agent divided by the number of agents
 	// So a specie cannot afford to become too big
 	double totalFitness = 0.0;
@@ -93,31 +92,33 @@ void fitnessSharing(clist* species)
 
 void produceNextGeneration(Generation *_gen, Generation *_nxtGen)
 {
-
-	// TODO: if specie only has a couple members -> merge it with the nearest specie
+	// TODO: if specie only has a couple members -> merge agents to nearest specie
 
 	// Put all the elites to the next generation and mutate them
-	clist* specie_node = _gen->Species;
+	clist* specie_node, * elite_node;
 	Specie* currentSpecie, * nextSpecie;
-	Agent* elite;
-	clist* elite_node;
-	int specie_size, nb_elite;
+	Agent* elite, parent1, * parent2, * offSpring;
+	bool asexualOnly;
+
+	// ELITES
+	specie_node = _gen->Species
 	do
 	{
 		currentSpecie = (Specie*)specie_node->data;
 		nextSpecie = specie_copy(currentSpecie);
 		specie_sortByFitness(currentSpecie, -1);
-		specie_size = cy_len(currentSpecie->specimens);
-		nb_elite = (int)round(currentSpecie->proportion * elite_percentage);
+
 		elite_node = currentSpecie->specimens;
-		//printf("nb elite: %d\n", nb_elite);
-		for (int i = 0; i < nb_elite; i++)
+		for (int i = 0; i < (int)round(currentSpecie->proportion * elite_percentage); i++)
 		{
 			elite = (Agent*)elite_node->data;
 			elite->survive = true;
+
 			cy_insert(&NextGeneration.Population, elite);
 			cy_insert(&nextSpecie->specimens, elite);
+
 			mutate_agent(elite);
+
 			next(elite_node);
 		}
 
@@ -128,23 +129,19 @@ void produceNextGeneration(Generation *_gen, Generation *_nxtGen)
 
 	kmeans_run(_nxtGen->Population, NextGeneration.Species);
 
-
-	// _create offsprings
+	// OFFSPRINGS
 	specie_node = _gen->Species;
 	do
 	{
 		currentSpecie = (Specie*)specie_node->data;
 
-		//printf("S %d : nb offsprings: %d\n", currentSpecie->id, (int)round(currentSpecie->proportion * (1.f - elite_percentage)));
-
-		bool asexualOnly = false;
 		if (cy_len(currentSpecie->specimens) == 1)
 			asexualOnly = true;
+		else
+			asexualOnly = false;
 
 		for (int i = 0; i < (int)round(currentSpecie->proportion * (1.f - elite_percentage)); i++)
 		{
-			Agent* agent1 = NULL, * agent2 = NULL, * offSpring = NULL;
-
 			if (asexualOnly)
 			{
 				offSpring = agent_clone((Agent*)currentSpecie->specimens->data);
@@ -152,17 +149,18 @@ void produceNextGeneration(Generation *_gen, Generation *_nxtGen)
 			}
 			else
 			{
-				while (agent1 == agent2)
+				while (parent1 == parent2)
 				{
-					agent1 = cy_random_data(currentSpecie->specimens);
-					agent2 = cy_random_data(currentSpecie->specimens);
+					parent1 = cy_random_data(currentSpecie->specimens);
+					parent2 = cy_random_data(currentSpecie->specimens);
 				}
-				offSpring = crossOver(agent1, agent2);
+				offSpring = crossOver(parent1, parent2);
 			}
 
 			cy_insert(&_nxtGen->Population, offSpring);
 			species_insert(_nxtGen->Species, offSpring);
 		}
+
 		next(specie_node);
 	} while (specie_node != _gen->Species);
 }
@@ -171,19 +169,19 @@ void produceNextGeneration(Generation *_gen, Generation *_nxtGen)
 void _advanceGeneration()
 {
 	CY_ITER_DATA(CurrentGeneration.Population, agent_node, agent, Agent*,
-				 if (agent->survive)
-				 {
-					 agent->survive = false;
-				 }
-				 else
-				 {
-					 free_agent(&agent);
-				 }
+		if (agent->survive)
+		{
+			agent->survive = false;
+		}
+		else
+		{
+			free_agent(&agent);
+		}
 	);
 	cy_clear(&CurrentGeneration.Population);
 
 	CY_ITER_DATA(CurrentGeneration.Species, specie_node, specie, Specie*,
-				 free_specie(specie);
+		free_specie(specie);
 	);
 
 	cy_clean(&CurrentGeneration.Species);

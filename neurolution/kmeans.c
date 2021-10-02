@@ -47,7 +47,7 @@ void kmeans_run(clist* datalist, clist* specieslist)
 			CalculateCentroidAgent(specie->specimens, specie->centroid);
 		);
         
-		// only recalculate centroid for species that have been modified
+		// TODO: only recalculate centroid for species that have been modified
         CY_ITER_DATA( specieslist, specie_node, specie, Specie*,
             cy_clear(&specie->specimens);
         );
