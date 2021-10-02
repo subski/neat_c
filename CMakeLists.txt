@@ -46,7 +46,12 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE pch.h)
 if (UNIX)
     # Math lib
     target_link_libraries(${PROJECT_NAME} m)
-    add_definitions(-DUSE_SDL=0)
+    # add_definitions(-DUSE_SDL=0)
+    find_package(SDL2 REQUIRED)
+    include_directories(${PROJECT_NAME} 
+    ${CMAKE_CURRENT_LIST_DIR}/third_party/include)
+    include_directories(${SDL2_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
 endif (UNIX)
 
 # Windows specifics
