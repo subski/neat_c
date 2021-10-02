@@ -109,7 +109,7 @@ void onExit(void)
     
     printf("\n\n---------------------------------------------------------------------------------------------------------------------\n");
     printf("Program ended in %.3f seconds.\n", (1000 * (progEnd.time - progStart.time) + (progEnd.millitm - progStart.millitm)) / 1000.f);
-    //system("pause");
+    system("pause");
 
     // Clear temporary files created when ploting agents
     char cmd[255] = "start cmd /c del ";

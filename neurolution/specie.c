@@ -5,6 +5,30 @@
 
 #include "data_structures/clist.h"
 
+int species_insert(clist* species, Agent* agent)
+{
+    int changes = 0;
+    Specie* nearest_specie;
+    double nearest_distance = -1;
+    double target_specie_distance;
+    CY_ITER_DATA(species, specie_node, specie, Specie*,
+        
+        target_specie_distance = agent_euclidean_distance( specie->centroid, agent);
+        if ( target_specie_distance < nearest_distance || nearest_distance == -1 )
+        {
+            nearest_specie = specie;
+            nearest_distance = target_specie_distance;
+        }
+    );
+    if (agent->specie != nearest_specie->id)
+    {
+        changes = 1;
+        agent->specie = nearest_specie->id;
+    }
+    cy_insert(&nearest_specie->specimens, agent);
+    return changes;
+}
+
 void specie_sortByFitness(Specie* specie, int order)
 {
     clist* ordered = NULL;
@@ -69,6 +93,19 @@ Specie* specie_copy(Specie* specie)
     copy->fitness = specie->fitness;
     copy->proportion = specie->proportion;
     return copy;
+}
+
+void print_specie(Specie* specie)
+{
+    printf("Specie %d (%d) -> fit : %lf | prop : %d\n", specie->id, cy_len(specie->specimens), specie->fitness, specie->proportion);
+}
+
+
+void print_species(clist* species)
+{
+    CY_ITER_DATA(species, specie_node, specie, Specie*,
+                 print_specie(specie);
+                 );
 }
 
 void free_specie(Specie* specie)

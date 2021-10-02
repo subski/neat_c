@@ -14,6 +14,8 @@ typedef struct Specie
 	int proportion;
 } Specie;
 
+int species_insert(clist* species, Agent* agent);
+
 void specie_sortByFitness(Specie* specie, int order);
 
 void specie_computeFitness(Specie* specie);
@@ -21,6 +23,10 @@ void specie_computeFitness(Specie* specie);
 void specie_mutate(Specie* specie);
 
 Specie* specie_copy(Specie* specie);
+
+void print_specie(Specie* specie);
+
+void print_species(clist* species);
 
 void free_specie(Specie* specie);
 

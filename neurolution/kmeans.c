@@ -59,34 +59,8 @@ void kmeans_run(clist* datalist, clist* specieslist)
 int speciate( clist* datalist, clist* species )
 {
 	int changes = 0;
-	Specie* nearest_specie;
-	double nearest_specie_distance = 0;
-	double target_specie_distance;
 	CY_ITER_DATA( datalist, agent_node, agent, Agent*,
-		nearest_specie_distance = -1;
-
-		clist* specie_node = species;			
-        Specie* specie;					
-        do
-        {							
-            specie = (Specie*) specie_node->data;
-
-			target_specie_distance = agent_euclidean_distance( specie->centroid, agent);
-			if ( target_specie_distance < nearest_specie_distance || nearest_specie_distance == -1 )
-			{
-				nearest_specie = specie;
-				nearest_specie_distance = target_specie_distance;
-			}
-
-            next(specie_node);				
-        } while (specie_node != species);
-
-		if (agent->specie != nearest_specie->id)
-		{
-			changes++;
-			agent->specie = nearest_specie->id;
-		}
-		cy_insert(&nearest_specie->specimens, agent);
+		changes += species_insert(species, agent);
 	);
 	
 	return changes;

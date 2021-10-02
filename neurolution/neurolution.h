@@ -56,6 +56,12 @@ void evolve(void);
 
 void createInitialPopulation(clist** population, uint32_t count);
 
+void fitnessSharing(clist* species);
+
+void produceNextGeneration(Generation* _gen, Generation* _nxtGen);
+
+void _advanceGeneration();
+
 void free_neurolution();
 
 #endif // !NEUROLUTION_H
