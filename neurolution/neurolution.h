@@ -1,8 +1,8 @@
 #ifndef NEUROLUTION_H
 #define NEUROLUTION_H
 
-#include "data_structures/vector.h"
 #include "data_structures/pool.h"
+#include "data_structures/clist.h"
 
 #include "neurolution/agent.h"
 
@@ -24,6 +24,7 @@
  *  https://www.researchgate.net/publication/220741366_Speciation_in_evolutionary_algorithms_Adaptive_Species_Discovery
  */
 
+typedef struct Generation Generation;
 typedef struct NeuronHistory_s NeuronHistory_s;
 
 extern pool* P_AGENT;
@@ -34,9 +35,14 @@ extern uint32_t NeuronCount;
 
 extern NeuronHistory_s NeuronHistory;
 
-extern clist* Population;
-extern clist* Species;
+extern Generation CurrentGeneration;
+extern Generation NextGeneration;
 
+struct Generation
+{
+	clist* Population;
+	clist* Species;
+};
 
 struct NeuronHistory_s
 {

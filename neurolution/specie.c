@@ -1,18 +1,19 @@
 #include "neurolution/specie.h"
 
 #include "neurolution/agent.h"
+#include "neurolution/mutations.h"
 
 #include "data_structures/clist.h"
 
-void specie_sort(Specie* specie, int order)
+void specie_sortByFitness(Specie* specie, int order)
 {
-    clist* ordered = NULL;;
+    clist* ordered = NULL;
 
     clist* tmp;
-    CY_ITER_DATA(specie->specimens, agent_node, agent, Agent*,;
+    CY_ITER_DATA(specie->specimens, agent_node, agent, Agent*,
         if (ordered == NULL)
         {
-            cy_insert(&ordered, agent);            
+            cy_insert(&ordered, agent);
         }
         else
         {
@@ -41,6 +42,33 @@ void specie_sort(Specie* specie, int order)
 
     cy_clear(&specie->specimens);
     specie->specimens = ordered;
+}
+
+void specie_computeFitness(Specie* specie)
+{
+    specie->fitness = 0.0;
+    CY_ITER_DATA(specie->specimens, agent_node, agent, Agent*,
+        specie->fitness += agent->fitness;
+    );
+    specie->fitness /= cy_len(specie->specimens);
+}
+
+void specie_mutate(Specie* specie)
+{
+    CY_ITER_DATA(specie->specimens, agent_node, agent, Agent*,
+        mutate_agent(agent);
+    );
+}
+
+Specie* specie_copy(Specie* specie)
+{
+    Specie* copy = malloc(sizeof(Specie));
+    copy->id = specie->id;
+    copy->centroid = agent_clone(specie->centroid);
+    copy->specimens = NULL;
+    copy->fitness = specie->fitness;
+    copy->proportion = specie->proportion;
+    return copy;
 }
 
 void free_specie(Specie* specie)

@@ -14,6 +14,8 @@ struct Agent
 {
     int specie;
 
+    bool survive;
+
     double fitness;
 
     vector inputVector;

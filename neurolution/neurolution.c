@@ -1,5 +1,7 @@
 #include "neurolution/neurolution.h"
 
+#include <math.h>
+
 #include "data_structures/pool.h"
 #include "data_structures/clist.h"
 #include "data_structures/vector.h"
@@ -22,8 +24,8 @@ uint32_t NeuronCount = INPUT_SIZE + OUTPUT_SIZE;
 
 NeuronHistory_s NeuronHistory = { 0, 0, NULL };
 
-clist* Population = NULL;
-clist* Species = NULL;
+Generation CurrentGeneration = { NULL, NULL };
+Generation NextGeneration = { NULL, NULL };
 
 void evolve(void)
 {
@@ -31,80 +33,115 @@ void evolve(void)
 	// ui_init();
 	// ui_run();
 #endif // !USE_SDL
-	// TODO: create offsprings before killing agents
-	createInitialPopulation(&Population, MAX_POPULATION);
+	// TODO: create offsprings before killing agents (elitism reproduction)
+	// _Initialize population
+	printf("\033[1;33mInitializing 'Population' \033[0m\n\n");
+	createInitialPopulation(&CurrentGeneration.Population, MAX_POPULATION);
 	
-	// speciate
-	kmeans_init(Population, &Species, 3);
-	kmeans_run(Population, Species);
+	
+	const float elite_percentage = 0.5f;
+	clist* deadPopulation;	
+	double proportion_leftover;
+
+	// _speciate
+	printf("\033[1;33mInitial Speciation \033[0m\n\n");
+	kmeans_init(CurrentGeneration.Population, &CurrentGeneration.Species, 3);
+	kmeans_run(CurrentGeneration.Population, CurrentGeneration.Species);
 
 	for (int step = 1; step <= 1; step++)
 	{
-		// fitness sharing
-		double agent_count = 1.0 / cy_len(Population);
+		NextGeneration = (Generation) { NULL, NULL };
+		deadPopulation = NULL;
+		proportion_leftover = 0.0;
+
+		// T: eval fitness of the population
+		
+		// _fitness sharing
+		// the fitness of a specie is the sum of the fitness of his agent divided by the number of agents
+		// So a specie cannot afford to become too big
+		printf("\033[1;33mComputing fitness of species \033[0m\n\n");
 		double totalFitness = 0.0;
-		CY_ITER_DATA(Species, specie_node, specie, Specie*,
-			specie->fitness = 0.0;
-			CY_ITER_DATA(specie->specimens, agent_node, agent, Agent*,
-				specie->fitness += agent->fitness;
-			);
-			specie->fitness /= cy_len(specie->specimens);
+		CY_ITER_DATA(CurrentGeneration.Species, specie_node, specie, Specie*,
+			specie_computeFitness(specie);
 			totalFitness += specie->fitness;
 		);
-		CY_ITER_DATA(Species, specie_node, specie, Specie*,
-			specie->proportion = specie->fitness / totalFitness * MAX_POPULATION;
+
+		// Proportion is the number of agents the specie is allowed to have in the next generation
+		// and is proportionnal on how high the specie's fitness is.
+		CY_ITER_DATA(CurrentGeneration.Species, specie_node, specie, Specie*,
+			double _prop = specie->fitness / totalFitness * MAX_POPULATION;
+			proportion_leftover += _prop - (int)_prop;
+			specie->proportion = (int)_prop;
 		);
 
 		// TODO: if specie only has a couple members -> merge it with the nearest specie
-		// killing agents
-		int dead_count = 0;
-		Agent* dead_agent;
-		clist* specie_node = Species;
-		Specie* specie;
+		
+		printf("\033[1;33mSelection of the elite based on fitness \033[0m\n\n");
+		clist* specie_node = CurrentGeneration.Species;
+		Specie* specie, * nextSpecie;
+		Agent* elite;
+		clist* elite_node;
+		int specie_size, nb_elite;
 		do
 		{
 			specie = (Specie*) specie_node->data;
-			printf("Killing specie: %d -> %lf\n", specie->id, specie->proportion * 0.5);
-			specie_sort(specie, 1);
-			// TODO: make sure elites are not killed
-			for (int i=0; i < cy_len(specie->specimens) * 0.5; i++)
+			nextSpecie = specie_copy(specie);
+			specie_sortByFitness(specie, -1);
+			specie_size = cy_len(specie->specimens);
+			nb_elite = (int) round(specie->proportion * elite_percentage);
+			elite_node = specie->specimens;
+			for (int i=0; i < nb_elite; i++)
 			{
-				dead_count++;
-				dead_agent = specie->specimens->data;
-				
-				cy_remove(&Population, dead_agent);
-				cy_remove(&specie->specimens, dead_agent);
-				free_agent(&dead_agent);
+				elite = (Agent*) elite_node->data;
+				elite->survive = true;
+				cy_insert(&NextGeneration.Population, elite);
+				cy_insert(&nextSpecie->specimens, elite);
+        		mutate_agent(elite);
+				next(elite_node);
 			}
+			cy_insert(&NextGeneration.Species, nextSpecie);
+
 			next(specie_node);
-		} while (specie_node != Species);
+		} while (specie_node != CurrentGeneration.Species);
 
-		printf("dead: %d\n", dead_count);
+		kmeans_run(NextGeneration.Population, NextGeneration.Species);
 
-		// get centroid of elite agents
-		kmeans_run(Population, Species);
 
 		//T create offsprings
-		// TODO: mutate elite and complete with crossover
-		int agent_counter;
-		CY_ITER_DATA(Species, specie_node, specie, Specie*,
-			agent_counter = 0;
-			specie_sort(specie, -1);
-			CY_ITER_DATA(specie->specimens, agent_node, agent, Agent*,
-				printf("Agent %lf\n", agent->fitness);
-			);
-			NEWLINE();
-		);
-		//T add offsprings to pop
+
+		// TODO: what to do with the leftovers ?
+		printf("Leftover: %lf\n", proportion_leftover);
 
 
 		//T add offsprings in correct specie
-		// speciate entire pop
-		kmeans_run(Population, Species);
+		// _speciate entire pop
+		// kmeans_run(Population, Species);
 
 		//T Eval Fitness
-	}
 
+		// _free agents
+		printf("\033[1;33mRemoving dead agents and moving to the next gen\033[0m\n\n");
+		CY_ITER_DATA(CurrentGeneration.Population, agent_node, agent, Agent*,
+			if (agent->survive)
+			{
+				agent->survive = false;
+			}
+			else
+			{
+				free_agent(&agent);
+			}
+		);
+		cy_clear(&CurrentGeneration.Population);
+
+		CY_ITER_DATA(CurrentGeneration.Species, specie_node, specie, Specie*,
+			free_specie(specie);
+		);
+		
+		cy_clean(&CurrentGeneration.Species);
+		
+		CurrentGeneration.Population = NextGeneration.Population;
+		CurrentGeneration.Species = NextGeneration.Species;
+	}
 }
 
 void createInitialPopulation(clist** population, uint32_t count)
@@ -120,18 +157,18 @@ void createInitialPopulation(clist** population, uint32_t count)
 
 void free_neurolution()
 {
-	CY_ITER_DATA(Species, specie_node, specie, Specie*,
+	CY_ITER_DATA(CurrentGeneration.Species, specie_node, specie, Specie*,
 		free_specie(specie);
 	);
 
-	cy_clean(&Species);
+	cy_clean(&CurrentGeneration.Species);
 
 
 	// Free the agents
-	CY_ITER_DATA(Population, agent_node, agent, Agent*, 
+	CY_ITER_DATA(CurrentGeneration.Population, agent_node, agent, Agent*, 
 		free_agent(&agent);
 	);
-	cy_clear(&Population);
+	cy_clear(&CurrentGeneration.Population);
 
 	// Free memory pools
 	cy_clean(&P_LINK);

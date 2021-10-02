@@ -11,10 +11,16 @@ typedef struct Specie
     Agent* centroid;
 	clist* specimens;
 	double fitness;
-	double proportion;
+	int proportion;
 } Specie;
 
-void specie_sort(Specie* specie, int order);
+void specie_sortByFitness(Specie* specie, int order);
+
+void specie_computeFitness(Specie* specie);
+
+void specie_mutate(Specie* specie);
+
+Specie* specie_copy(Specie* specie);
 
 void free_specie(Specie* specie);
 

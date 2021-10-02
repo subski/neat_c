@@ -14,6 +14,8 @@
 #include "tools/utils.h"
 #include "tools/pcg_basic.h"
 
+// TODO: add documention for KMeans algo
+
 void kmeans_init(clist* datalist, clist** specieslist, int species_count)
 {
 	Agent* agent_centroid;
@@ -86,12 +88,7 @@ int speciate( clist* datalist, clist* species )
 		}
 		cy_insert(&nearest_specie->specimens, agent);
 	);
-
-	CY_ITER_DATA( species, specie_node, specie, Specie*,
-		printf("S%d: %d\n", specie->id, cy_len(specie->specimens));
-	);
-	NEWLINE();
-
+	
 	return changes;
 }
 
