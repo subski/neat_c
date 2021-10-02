@@ -1,12 +1,11 @@
 #include "data_structures/clist.h"
 
 #include "tools/pcg_basic.h"
-#include "tools/utils.h"
 
 void* cy_insert(clist** node, void* data)
 {
 	clist* new_node = malloc(sizeof(clist));
-	MCHECK(new_node, NULL);
+	if (new_node == NULL) return NULL;
 
 	if (*node == NULL) // empty list
 	{
@@ -62,7 +61,7 @@ void cy_clean(clist** node)
 
 void cy_pclean(clist** node, clist** pool)
 {
-	if (*node == NULL)
+	if (node == NULL || *node == NULL)
 		return;
 
 	clist* current = *node;

@@ -4,6 +4,7 @@
 
 #include "neurolution/neurolution.h"
 #include "neurolution/agent.h"
+#include "neurolution/specie.h"
 #include "neurolution/neuron.h"
 
 #include "data_structures/vector.h"

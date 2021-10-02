@@ -1,7 +1,5 @@
 #include "data_structures/llist.h"
 
-#include "tools/utils.h"
-
 void llpush(llist** head, void* data_ptr)
 {
 	if (head == NULL) {
@@ -10,7 +8,7 @@ void llpush(llist** head, void* data_ptr)
 	}
 
 	llist* new = malloc(sizeof(llist));
-	MCHECK(new, );
+	if (new == NULL) return;
 
 	new->next = *head;
 	new->data = data_ptr;
@@ -30,7 +28,7 @@ void llappend(llist* node, void* data_ptr)
 	}
 
 	llist* new = malloc(sizeof(llist));
-	MCHECK(new, );
+	if (new == NULL ) return;
 
 	new->data = data_ptr;
 	new->next = NULL;

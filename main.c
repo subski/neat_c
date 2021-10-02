@@ -7,6 +7,7 @@
 
 #include "neurolution/env_settings.h"
 #include "neurolution/neuron.h"
+#include "neurolution/specie.h"
 #include "neurolution/agent.h"
 #include "neurolution/agent_io.h"
 #include "neurolution/neurolution.h"

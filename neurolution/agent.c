@@ -36,7 +36,7 @@ Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize)
 	new_agent->outputVector = new_vector(sizeof(Neuron*), outputSize, 0);
 
 	new_agent->specie = 0;
-	new_agent->fitness = 1.0;
+	new_agent->fitness = 0.0;
 	new_agent->neuronList = NULL;
 	new_agent->linkList = NULL;
 

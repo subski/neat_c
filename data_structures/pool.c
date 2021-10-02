@@ -1,7 +1,6 @@
 #include "data_structures/pool.h"
 
 #include "data_structures/clist.h"
-#include "tools/utils.h"
 
 void* request(pool** _pool, size_t size)
 {
@@ -9,7 +8,7 @@ void* request(pool** _pool, size_t size)
 	if (*_pool == NULL) // empty pool
 	{
 		result = malloc(size);
-		MCHECK(result, NULL);
+		if (result == NULL) return NULL;
 
 		return result;
 	}

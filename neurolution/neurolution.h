@@ -37,14 +37,6 @@ extern NeuronHistory_s NeuronHistory;
 extern clist* Population;
 extern clist* Species;
 
-typedef struct Specie
-{
-	int id;
-    Agent* centroid;
-	clist* specimens;
-	double fitness;
-	double proportion;
-} Specie;
 
 struct NeuronHistory_s
 {
@@ -57,8 +49,6 @@ struct NeuronHistory_s
 void evolve(void);
 
 void createInitialPopulation(clist** population, uint32_t count);
-
-void free_specie(Specie* specie);
 
 void free_neurolution();
 

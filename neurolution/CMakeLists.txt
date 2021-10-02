@@ -17,6 +17,9 @@ set(SOURCES
     kmeans.h
     kmeans.c
 
+    specie.h
+    specie.c
+
     env_settings.h
 )
 

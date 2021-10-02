@@ -5,11 +5,13 @@
 #include "data_structures/vector.h"
 
 #include "neurolution/agent.h"
+#include "neurolution/specie.h"
 #include "neurolution/mutations.h"
 #include "neurolution/kmeans.h"
 #include "neurolution/env_settings.h"
 
 #include "tools/ui.h"
+#include "tools/utils.h"
 
 
 pool* P_AGENT  = NULL;
@@ -40,14 +42,20 @@ void evolve(void)
 	{
 		// fitness sharing
 		double agent_count = 1.0 / cy_len(Population);
+		double totalFitness = 0.0;
 		CY_ITER_DATA(Species, specie_node, specie, Specie*,
 			specie->fitness = 0.0;
 			CY_ITER_DATA(specie->specimens, agent_node, agent, Agent*,
 				specie->fitness += agent->fitness;
 			);
-			specie->proportion = specie->fitness * agent_count * MAX_POPULATION * 0.5;
+			specie->fitness /= cy_len(specie->specimens);
+			totalFitness += specie->fitness;
+		);
+		CY_ITER_DATA(Species, specie_node, specie, Specie*,
+			specie->proportion = specie->fitness / totalFitness * MAX_POPULATION;
 		);
 
+		// TODO: if specie only has a couple members -> merge it with the nearest specie
 		// killing agents
 		int dead_count = 0;
 		Agent* dead_agent;
@@ -56,8 +64,10 @@ void evolve(void)
 		do
 		{
 			specie = (Specie*) specie_node->data;
-			printf("Killing specie: %d -> %lf\n", specie->id, specie->proportion);
-			for (int i=0; i < (int) specie->proportion; i++)
+			printf("Killing specie: %d -> %lf\n", specie->id, specie->proportion * 0.5);
+			specie_sort(specie, 1);
+			// TODO: make sure elites are not killed
+			for (int i=0; i < cy_len(specie->specimens) * 0.5; i++)
 			{
 				dead_count++;
 				dead_agent = specie->specimens->data;
@@ -75,6 +85,16 @@ void evolve(void)
 		kmeans_run(Population, Species);
 
 		//T create offsprings
+		// TODO: mutate elite and complete with crossover
+		int agent_counter;
+		CY_ITER_DATA(Species, specie_node, specie, Specie*,
+			agent_counter = 0;
+			specie_sort(specie, -1);
+			CY_ITER_DATA(specie->specimens, agent_node, agent, Agent*,
+				printf("Agent %lf\n", agent->fitness);
+			);
+			NEWLINE();
+		);
 		//T add offsprings to pop
 
 
@@ -91,15 +111,12 @@ void createInitialPopulation(clist** population, uint32_t count)
 {
 	for (uint32_t i = 0; i < count; i++)
 	{
-		cy_insert(population, new_BasicAgent(INPUT_SIZE, OUTPUT_SIZE));
+		Agent* agent = new_BasicAgent(INPUT_SIZE, OUTPUT_SIZE);
+		agent->fitness = i;
+		cy_insert(population, agent);
 	}
 }
 
-void free_specie(Specie* specie)
-{
-	free_agent(&specie->centroid);
-	cy_clear(&specie->specimens);
-}
 
 void free_neurolution()
 {

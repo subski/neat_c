@@ -1,7 +1,5 @@
 #include "data_structures/vector.h"
 
-#include "tools/utils.h"
-
 vector new_vector(size_t type_size, uint32_t elementCount, uint32_t cacheCount)
 {
     vector new_vector;
@@ -50,7 +48,7 @@ void vec_pop(vector* vec, void** dest)
     }
 
     *dest = malloc(vec->type_size);
-    MCHECK(*dest, );
+    if (*dest == NULL) return;
 
     vec->finish = vec->finish - vec->type_size;
     memcpy(*dest, vec->finish, vec->type_size);
@@ -81,7 +79,7 @@ void vec_resize(vector* vec, uint32_t maxCount)
     }
 
     byte_t* new_mem = realloc(vec->start, vec->type_size * maxCount);
-    MCHECK(new_mem, );
+    if (new_mem == NULL) return;
 
     vec->start = new_mem;
     vec->finish = new_mem + vec->count * vec->type_size;
