@@ -84,6 +84,7 @@ Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize)
 	return new_agent;
 }
 
+
 double agent_euclidean_distance(Agent* agent1, Agent* agent2)
 {
 	

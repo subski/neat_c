@@ -12,6 +12,8 @@
 #include "neurolution/kmeans.h"
 #include "neurolution/env_settings.h"
 
+#include "tasks/XorEvaluator.h"
+
 #include "tools/ui.h"
 #include "tools/utils.h"
 
@@ -19,6 +21,8 @@
 pool* P_AGENT  = NULL;
 pool* P_NEURON = NULL;
 pool* P_LINK   = NULL;
+
+void (*fitneseEvaluator)(Agent*);
 
 uint32_t NeuronCount = INPUT_SIZE + OUTPUT_SIZE;
 
@@ -31,6 +35,8 @@ const float elite_percentage = 0.5f;
 
 void evolve(void)
 {
+	fitneseEvaluator = &XorEvaluator;
+
 	// initial population
 	createInitialPopulation(&CurrentGeneration.Population, MAX_POPULATION);
 
@@ -44,6 +50,7 @@ void evolve(void)
 		NextGeneration = (Generation) { NULL, NULL };
 
 		// TODO Step : eval fitness of the population
+		population_eval(CurrentGeneration.Population);
 		
 		fitnessSharing(CurrentGeneration.Species);
 
@@ -65,6 +72,14 @@ void createInitialPopulation(clist** population, uint32_t count)
 		cy_insert(population, agent);
 	}
 }
+
+void population_eval(clist* agents)
+{
+	CY_ITER_DATA(agents, agent_node, agent, Agent*,
+		fitneseEvaluator(agent);
+	);
+}
+
 
 void fitnessSharing(clist* species)
 {

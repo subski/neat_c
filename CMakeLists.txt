@@ -34,6 +34,7 @@ add_custom_command(
 # sub folders
 add_subdirectory(neurolution)
 add_subdirectory(data_structures)
+add_subdirectory(tasks)
 add_subdirectory(tools)
 
 # includes

@@ -56,6 +56,8 @@ void evolve(void);
 
 void createInitialPopulation(clist** population, uint32_t count);
 
+void population_eval(clist* agents);
+
 void fitnessSharing(clist* species);
 
 void produceNextGeneration(Generation* _gen, Generation* _nxtGen);
