@@ -97,11 +97,11 @@ void produceNextGeneration(Generation *_gen, Generation *_nxtGen)
 	// Put all the elites to the next generation and mutate them
 	clist* specie_node, * elite_node;
 	Specie* currentSpecie, * nextSpecie;
-	Agent* elite, parent1, * parent2, * offSpring;
+	Agent* elite, * parent1, * parent2, * offSpring;
 	bool asexualOnly;
 
 	// ELITES
-	specie_node = _gen->Species
+	specie_node = _gen->Species;
 	do
 	{
 		currentSpecie = (Specie*)specie_node->data;
@@ -149,6 +149,7 @@ void produceNextGeneration(Generation *_gen, Generation *_nxtGen)
 			}
 			else
 			{
+				parent1 = NULL; parent2 = NULL;
 				while (parent1 == parent2)
 				{
 					parent1 = cy_random_data(currentSpecie->specimens);
