@@ -29,7 +29,7 @@ Agent* new_Agent(uint32_t inputSize, uint32_t outputSize)
 	return new_agent;
 }
 
-Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize)
+Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize, double (*activationFunc)(double))
 {
 	Agent* new_agent = request(&P_AGENT, sizeof(Agent));
 
@@ -45,7 +45,7 @@ Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize)
 	// create input neurons
 	for (uint32_t i = 0; i < inputSize; i++)
 	{
-		Neuron* input_neuron = new_BasicNeuron(i + 1);
+		Neuron* input_neuron = new_BasicNeuron(i + 1, NULL);
 
 		input_neuron->type = INPUT_TYPE;
 
@@ -56,7 +56,7 @@ Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize)
 	// create output neurons
 	for (uint32_t i = 0; i < outputSize; i++)
 	{
-		Neuron* output_neuron = new_BasicNeuron(inputSize + i + 1);
+		Neuron* output_neuron = new_BasicNeuron(inputSize + i + 1, activationFunc);
 
 		output_neuron->type = OUTPUT_TYPE;
 

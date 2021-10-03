@@ -97,7 +97,7 @@ Agent* load_agent(char filename[])
 
 			if (!isNeuronInAgent(new_agent, id_source))
 			{
-				neuron_source = new_BasicNeuron(id_source);
+				neuron_source = new_BasicNeuron(id_source, NULL);
 				cy_insert(&new_agent->neuronList, neuron_source);
 			}
 			else
@@ -107,7 +107,7 @@ Agent* load_agent(char filename[])
 
 			if (!isNeuronInAgent(new_agent, id_target))
 			{
-				neuron_target = new_BasicNeuron(id_target);
+				neuron_target = new_BasicNeuron(id_target, NULL);
 				cy_insert(&new_agent->neuronList, neuron_target);
 			}
 			else
@@ -245,7 +245,7 @@ void interactive_agent_plot(uint32_t inputSize, uint32_t outputSize)
                 mutate_link_toggle(agent);
                 break;
             case 'n':
-                mutate_neuron_insert(agent);
+                mutate_neuron_insert(agent, NULL);
                 break;
             default:
             break;

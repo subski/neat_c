@@ -33,9 +33,9 @@ Neuron* new_Neuron(
 	return neuron;
 }
 
-Neuron* new_BasicNeuron(uint32_t id)
+Neuron* new_BasicNeuron(uint32_t id, double (*activationFunc)(double))
 {
-	return new_Neuron(id, true, false, HIDDEN_TYPE, &fast_tanh, 0.0, 0.0, NULL);
+	return new_Neuron(id, true, false, HIDDEN_TYPE, activationFunc, 0.0, 0.0, NULL);
 }
 
 Link* new_Link(Neuron* source, Neuron* target, double weight, bool enabled)

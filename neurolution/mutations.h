@@ -11,7 +11,7 @@ bool mutate_link_shift   (Agent* agent, double shift);
 
 void mutate_neuron_add   (Agent* agent);
 
-bool mutate_neuron_insert(Agent* agent);
+bool mutate_neuron_insert(Agent* agent, double (*activationFunc)(double));
 
 void mutate_neuron_toggle(Agent* agent);
 

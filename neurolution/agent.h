@@ -33,7 +33,7 @@ Agent* new_Agent(uint32_t inputSize, uint32_t outputSize);
 /*
     Create an Agent with inputs connected to the outputs.
 */
-Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize);
+Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize, double (*activationFunc)(double));
 
 // TODO agent eval
 vector* agent_eval(Agent* agent, double inputs[]);

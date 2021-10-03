@@ -14,12 +14,14 @@
 #include "neurolution/mutations.h"
 #include "neurolution/kmeans.h"
 
+#include "CPPN/activations.h"
+
 void onStart(int argc, char* argv[]);
 void onExit(void);
 
 bool test(int argc, char* argv[])
 {
-    Agent* agent = new_BasicAgent(3, 1);
+    Agent* agent = new_BasicAgent(3, 1, &fast_tanh);
 
     ColorBlue();
     print_agent(agent);
@@ -37,7 +39,7 @@ bool test(int argc, char* argv[])
     ColorYellow();
     printf("Inputs:\n\n");
     ColorReset();
-    for (int i=0; i < agent->inputVector.count; i++)
+    for (uint32_t i = 0; i < agent->inputVector.count; i++)
     {
         printf("id %d -> %lf\n", VEC(agent->inputVector, Neuron*, i)->id, VEC(agent->inputVector, Neuron*, i)->value);
     }
@@ -46,7 +48,7 @@ bool test(int argc, char* argv[])
     ColorYellow();
     printf("Outputs:\n\n");
     ColorReset();
-    for (int i=0; i < agent->outputVector.count; i++)
+    for (uint32_t i = 0; i < agent->outputVector.count; i++)
     {
         printf("id %d -> %lf\n", VEC(agent->outputVector, Neuron*, i)->id, VEC(agent->outputVector, Neuron*, i)->value);
     }

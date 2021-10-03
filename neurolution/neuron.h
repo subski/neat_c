@@ -66,7 +66,7 @@ Neuron* new_Neuron(
 
     clist* links);
 
-Neuron* new_BasicNeuron(uint32_t id);
+Neuron* new_BasicNeuron(uint32_t id, double (*activationFunc)(double));
 
 Link* new_Link(Neuron* source, Neuron* target, double weight, bool enabled);
 

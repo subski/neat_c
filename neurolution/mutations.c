@@ -10,6 +10,8 @@
 #include "tools/pcg_basic.h"
 #include "tools/utils.h"
 
+#include "CPPN/activations.h"
+
 // TODO: select neurons from a list of neurons.
 // TODO: record metrics to check performance.
 // TODO: mutate links only from enabled neurons.
@@ -71,10 +73,10 @@ bool mutate_link_shift(Agent* agent, double shift)
 
 void mutate_neuron_add(Agent* agent)
 {
-	cy_insert(&agent->neuronList, new_BasicNeuron(++NeuronCount));
+	// cy_insert(&agent->neuronList, new_BasicNeuron(++NeuronCount));
 }
 
-bool mutate_neuron_insert(Agent* agent)
+bool mutate_neuron_insert(Agent* agent, double (*activationFunc)(double))
 {
 	// Select random enabled link
 	Link* target_link = cy_random_data(agent->linkList);
@@ -123,7 +125,7 @@ bool mutate_neuron_insert(Agent* agent)
 
 	target_link->enabled = false;
 
-	Neuron* new_neuron = new_BasicNeuron(neuron_id);
+	Neuron* new_neuron = new_BasicNeuron(neuron_id, activationFunc);
 	cy_insert(&agent->neuronList, new_neuron);
 
 	Link* link_src = new_Link(target_link->source, new_neuron, target_link->weight, true);
@@ -156,5 +158,5 @@ void mutate_agent(Agent* agent)
 		mutate_link_toggle(agent);
 	
 	if (0.01 > pcg32_doublerand())
-		mutate_neuron_insert(agent);
+		mutate_neuron_insert(agent, &fast_tanh);
 }

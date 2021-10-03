@@ -17,6 +17,8 @@
 #include "tools/ui.h"
 #include "tools/utils.h"
 
+#include "CPPN/activations.h"
+
 pool* P_AGENT  = NULL;
 pool* P_NEURON = NULL;
 pool* P_LINK   = NULL;
@@ -66,7 +68,7 @@ void createInitialPopulation(clist** population, uint32_t count)
 {
 	for (uint32_t i = 0; i < count; i++)
 	{
-		Agent* agent = new_BasicAgent(INPUT_SIZE, OUTPUT_SIZE);
+		Agent* agent = new_BasicAgent(INPUT_SIZE, OUTPUT_SIZE, &fast_tanh);
 		agent->fitness = i;
 		cy_insert(population, agent);
 	}
