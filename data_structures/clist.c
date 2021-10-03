@@ -187,3 +187,20 @@ clist* cy_clone(clist* node)
 
     return clone;
 }
+
+bool* cy_isUnique(clist* node)
+{
+	if (node == NULL)
+		return true;
+	int cpt;
+	CY_ITER(node, iter,
+		cpt = 0;
+		CY_ITER(node, iter1,
+			if (iter->data == iter1->data)
+				cpt++;
+		);
+		if (cpt > 1)
+			return false;
+	);
+	return true;
+}

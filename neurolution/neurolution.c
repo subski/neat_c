@@ -7,6 +7,7 @@
 #include "data_structures/vector.h"
 
 #include "neurolution/agent.h"
+#include "neurolution/agent_io.h"
 #include "neurolution/specie.h"
 #include "neurolution/mutations.h"
 #include "neurolution/kmeans.h"
@@ -23,7 +24,7 @@ pool* P_AGENT  = NULL;
 pool* P_NEURON = NULL;
 pool* P_LINK   = NULL;
 
-void (*fitneseEvaluator)(Agent*);
+double (*fitneseEvaluator)(Agent*);
 
 uint32_t NeuronCount = INPUT_SIZE + OUTPUT_SIZE;
 
@@ -34,8 +35,9 @@ Generation NextGeneration = { NULL, NULL };
 
 const float elite_percentage = 0.5f;
 
-void evolve(void)
+void evolve(int max_step)
 {
+	Agent* top_agent;
 	fitneseEvaluator = &XorEvaluator;
 
 	// initial population
@@ -43,24 +45,37 @@ void evolve(void)
 
 	// initial speciation
 	kmeans_init(CurrentGeneration.Population, &CurrentGeneration.Species, 3);
+
 	kmeans_run(CurrentGeneration.Population, CurrentGeneration.Species);
+	
 
 	// generations
-	for (int step = 1; step <= 1; step++)
+	for (int step = 1; step <= max_step; step++)
 	{
 		NextGeneration = (Generation) { NULL, NULL };
 
-		// TODO Step : eval fitness of the population
-		population_eval(CurrentGeneration.Population);
+		top_agent = population_eval(CurrentGeneration.Population);
 		
 		fitnessSharing(CurrentGeneration.Species);
 
 		produceNextGeneration(&CurrentGeneration, &NextGeneration);
 
-		// speciation
 		kmeans_run(NextGeneration.Population, NextGeneration.Species);
 
 		_advanceGeneration();
+		
+		CY_ITER_DATA(CurrentGeneration.Population, agent_node, agent, Agent*,
+			if (check_agent(agent) != 0)
+				return;
+		);
+
+		printf("Gen %d: species=%d fitness=%.2lf pop=%d ncount=%d \n", 
+			step,
+			cy_len(CurrentGeneration.Species),
+			top_agent->fitness,
+			cy_len(CurrentGeneration.Population),
+			NeuronCount
+		);
 	}
 }
 
@@ -69,16 +84,22 @@ void createInitialPopulation(clist** population, uint32_t count)
 	for (uint32_t i = 0; i < count; i++)
 	{
 		Agent* agent = new_BasicAgent(INPUT_SIZE, OUTPUT_SIZE, &fast_tanh);
-		agent->fitness = i;
 		cy_insert(population, agent);
 	}
 }
 
-void population_eval(clist* agents)
+Agent* population_eval(clist* agents)
 {
+	Agent* top_agent = NULL;
 	CY_ITER_DATA(agents, agent_node, agent, Agent*,
-		fitneseEvaluator(agent);
+		agent->fitness = fitneseEvaluator(agent);
+		if (top_agent == NULL || agent->fitness > top_agent->fitness)
+		{
+			top_agent = agent;
+		}
 	);
+
+	return top_agent;
 }
 
 
@@ -125,7 +146,11 @@ void produceNextGeneration(Generation *_gen, Generation *_nxtGen)
 		specie_sortByFitness(currentSpecie, -1);
 
 		elite_node = currentSpecie->specimens;
-		for (int i = 0; i < (int)round(currentSpecie->proportion * elite_percentage); i++)
+		int elite_count = ceil(currentSpecie->proportion * elite_percentage);
+		int specimen_count = cy_len(currentSpecie->specimens);
+		elite_count = min(elite_count, specimen_count);
+
+		for (int i = 0; i < elite_count; i++)
 		{
 			elite = (Agent*)elite_node->data;
 			elite->survive = true;
@@ -139,12 +164,12 @@ void produceNextGeneration(Generation *_gen, Generation *_nxtGen)
 		}
 
 		cy_insert(&_nxtGen->Species, nextSpecie);
-
+			
 		next(specie_node);
 	} while (specie_node != _gen->Species);
 
 	kmeans_run(_nxtGen->Population, NextGeneration.Species);
-
+	
 	// OFFSPRINGS
 	specie_node = _gen->Species;
 	do
@@ -156,7 +181,7 @@ void produceNextGeneration(Generation *_gen, Generation *_nxtGen)
 		else
 			asexualOnly = false;
 
-		for (int i = 0; i < (int)round(currentSpecie->proportion * (1.f - elite_percentage)); i++)
+		for (int i = 0; i < (int) (currentSpecie->proportion * (1.f - elite_percentage)); i++)
 		{
 			if (asexualOnly)
 			{

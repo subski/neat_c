@@ -59,7 +59,7 @@ struct NeuronHistory_s
 /*
 	Main evolution loop.
 */
-void evolve(void);
+void evolve(int max_step);
 
 /*
 	Fill a cyclic list with a number of Basic Agents.
@@ -69,7 +69,7 @@ void createInitialPopulation(clist** population, uint32_t count);
 /*
 	Compute the fitness of a list of agents.
 */
-void population_eval(clist* agents);
+Agent* population_eval(clist* agents);
 
 /*
 	Compute the fitness of each species in a list.

@@ -35,6 +35,8 @@ Agent* load_agent(char filename[]);
 */
 int plot_agent(Agent* agent, char pid_str[]);
 
+void show_agent(Agent* agent);
+
 /*
     TaskKill on the PID given;
 */

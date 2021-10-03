@@ -157,6 +157,6 @@ void mutate_agent(Agent* agent)
 	if (0.025 > pcg32_doublerand())
 		mutate_link_toggle(agent);
 	
-	if (0.01 > pcg32_doublerand())
+	if (0.1 > pcg32_doublerand())
 		mutate_neuron_insert(agent, &fast_tanh);
 }

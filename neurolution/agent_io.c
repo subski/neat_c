@@ -11,9 +11,12 @@ void print_agent(Agent* agent)
 {
 	printf("agent:\n");
 	CY_ITER_DATA(agent->neuronList, neuron_node, neuron, Neuron*,
-		   CY_ITER_DATA(neuron->linkList, link_node, link, Link*,
+		printf("neuron %d => value : %lf\n\n", neuron->id, neuron->value);
+		CY_ITER_DATA(neuron->linkList, link_node, link, Link*,
 		   printf("(%d>%d) : %d -> %d [%.2lf, %d]\n", neuron->id, link->id, link->source->id, neuron->id, link->weight, link->enabled);
-	);	);
+		);
+		printf("\n");
+	);
 
 	printf("Neurons: %d | Links: %d | Fitness: %lf | Weights: %lf\n\n", cy_len(agent->neuronList), cy_len(agent->linkList), agent->fitness, agent_weight(agent));
 }
@@ -197,6 +200,14 @@ int plot_agent(Agent* agent, char pid_str[])
 
 #endif
 	return 0;
+}
+
+void show_agent(Agent* agent)
+{
+	char pid[255];
+    plot_agent(agent, pid);
+    system("Pause");
+    plot_close(pid);
 }
 
 void plot_close(char pid_str[])

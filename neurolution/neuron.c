@@ -80,8 +80,6 @@ Link* getLinkInList(clist* neuronlist, int id)
 	return NULL;
 }
 
-
-
 Neuron* clone_neuron(Neuron* neuron)
 {
 	Neuron* new_neuron = new_Neuron(
@@ -112,7 +110,6 @@ void neuron_activate(Neuron* neuron)
 	CY_ITER_DATA(neuron->linkList, link_node, link, Link*,
 		if (link->enabled)
 		{
-			printf("%lf * %lf\n", link->source->value, link->weight);
 			neuron->buffer += link->source->value * link->weight;
 		}
 	);

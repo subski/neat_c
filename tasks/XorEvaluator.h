@@ -3,6 +3,6 @@
 
 #include "neurolution/agent.h"
 
-void XorEvaluator(Agent* agent);
+double XorEvaluator(Agent* agent);
 
 #endif // !XOR_EVALUATOR_H

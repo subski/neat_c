@@ -53,6 +53,7 @@ void kmeans_run(clist* datalist, clist* specieslist)
         );
 
         changes = speciate(datalist, specieslist);
+
     } while (changes != 0);
 }
 
@@ -69,6 +70,7 @@ int speciate( clist* datalist, clist* species )
 void CalculateCentroidAgent(clist* agentList, Agent* centroid_agent)
 {
 	if (cy_len(agentList) == 0) return;
+
 	cy_pclean(&centroid_agent->linkList, &P_LINK);
 	CY_ITER_DATA(centroid_agent->neuronList, neuron_node, neuron, Neuron*,
 		 cy_clear(&neuron->linkList);
@@ -94,7 +96,7 @@ void CalculateCentroidAgent(clist* agentList, Agent* centroid_agent)
 					neuron_agent->activated, 
 					neuron_agent->type, 
 					neuron_agent->activationFunc, 
-					neuron_agent->value, 
+					neuron_agent->value,
 					neuron_agent->bias,
 					NULL);
 				cy_insert(&centroid_agent->neuronList, neuron_centroid);

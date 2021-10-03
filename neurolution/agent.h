@@ -36,7 +36,7 @@ Agent* new_Agent(uint32_t inputSize, uint32_t outputSize);
 Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize, double (*activationFunc)(double));
 
 // TODO agent eval
-vector* agent_eval(Agent* agent, double inputs[]);
+vector* agent_eval(Agent* agent, const double inputs[], int max_step);
 
 /*
     Mesure the euclidian distance between two agents.
@@ -73,7 +73,7 @@ void free_agent(Agent** agent);
 /*
     Verify the integrity on an Agent.
 */
-bool check_agent(Agent* agent);
+int check_agent(Agent* agent);
 
 /*
     Create a copy of a given agent.

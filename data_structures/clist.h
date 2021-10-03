@@ -121,4 +121,6 @@ bool cy_remove(clist** node, void* data);
 */
 clist* cy_clone(clist* node);
 
+bool* cy_isUnique(clist* node);
+
 #endif

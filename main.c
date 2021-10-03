@@ -21,46 +21,7 @@ void onExit(void);
 
 bool test(int argc, char* argv[])
 {
-    Agent* agent = new_BasicAgent(3, 1, &fast_tanh);
-
-    ColorBlue();
-    print_agent(agent);
-    ColorReset();
-
-    double dataset[4][4] = {
-        { 0, 0, 1, 0 },
-        { 0, 1, 1, 1 },
-        { 1, 0, 1, 1 },
-        { 1, 1, 1, 0 }
-    };
-
-    agent_eval(agent, dataset[0]);
-
-    ColorYellow();
-    printf("Inputs:\n\n");
-    ColorReset();
-    for (uint32_t i = 0; i < agent->inputVector.count; i++)
-    {
-        printf("id %d -> %lf\n", VEC(agent->inputVector, Neuron*, i)->id, VEC(agent->inputVector, Neuron*, i)->value);
-    }
-    printf("\n");
-
-    ColorYellow();
-    printf("Outputs:\n\n");
-    ColorReset();
-    for (uint32_t i = 0; i < agent->outputVector.count; i++)
-    {
-        printf("id %d -> %lf\n", VEC(agent->outputVector, Neuron*, i)->id, VEC(agent->outputVector, Neuron*, i)->value);
-    }
-    printf("\n");
-
-    // char pid[255];
-    // plot_agent(agent, pid);
-    // system("Pause");
-    // plot_close(pid);
-
-    free_agent(&agent);
-    return false; // continue the program?
+    return true; // continue the program?
 }
 
 int main(int argc, char* argv[])
@@ -68,7 +29,7 @@ int main(int argc, char* argv[])
     onStart(argc, argv);
     if (!test(argc, argv)) return 0;
     
-    evolve();
+    evolve(100);
 
     return EXIT_SUCCESS;
 }

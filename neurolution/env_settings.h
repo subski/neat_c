@@ -10,7 +10,7 @@
 #define MAX_NEURON 200
 #define FITNESS_GOAL 14.0
 #define INPUT_SIZE 3
-#define OUTPUT_SIZE 2
+#define OUTPUT_SIZE 1
 #define MAX_POPULATION 10
 
 #endif
