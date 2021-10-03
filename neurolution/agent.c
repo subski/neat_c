@@ -86,12 +86,30 @@ Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize)
 
 vector* agent_eval(Agent* agent, double inputs[])
 {
-	for (uint32_t i = 0; i < agent->inputVector.count; i++)
-	{
-		VEC(agent->inputVector, Neuron*, i)->value = inputs[i];
-	}
+	CY_ITER_DATA(agent->neuronList, neuron_node, neuron, Neuron*,
+		printf("n %d : %d\n", neuron->id, neuron->type);
+		if (neuron->type == INPUT_TYPE)
+		{
+			neuron->value = inputs[neuron->id - 1];
+		}
+		else
+		{
+			neuron->value = 0;
+		}
+	);
 
-	 
+	CY_ITER_DATA(agent->neuronList, neuron_node, neuron, Neuron*,
+		if (neuron->type != INPUT_TYPE)
+		{
+			neuron_activate(neuron);
+		}
+	);
+	CY_ITER_DATA(agent->neuronList, neuron_node, neuron, Neuron*,
+		if (neuron->type != INPUT_TYPE)
+		{
+			neuron_update(neuron);
+		}
+	);	 
 
 	return NULL;
 }

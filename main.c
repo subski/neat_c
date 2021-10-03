@@ -52,10 +52,10 @@ bool test(int argc, char* argv[])
     }
     printf("\n");
 
-    char pid[255];
-    plot_agent(agent, pid);
-    system("Pause");
-    plot_close(pid);
+    // char pid[255];
+    // plot_agent(agent, pid);
+    // system("Pause");
+    // plot_close(pid);
 
     free_agent(&agent);
     return false; // continue the program?

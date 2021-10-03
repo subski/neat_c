@@ -36,6 +36,7 @@ add_subdirectory(neurolution)
 add_subdirectory(data_structures)
 add_subdirectory(tasks)
 add_subdirectory(tools)
+add_subdirectory(CPPN)
 
 # includes
 target_include_directories(${PROJECT_NAME} PRIVATE ./)

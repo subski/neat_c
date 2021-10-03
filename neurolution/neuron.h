@@ -46,6 +46,7 @@ struct Neuron
 
     double (*activationFunc)(double input);
     double value;
+    double buffer;
     double bias;
 
     clist* linkList;
@@ -76,6 +77,10 @@ Link* getLinkInNeuron(Neuron* neuron, int id);
 Link* getLinkInList(clist* neuronlist, int id);
 
 Neuron* clone_neuron(Neuron* neuron);
+
+void neuron_activate(Neuron* neuron);
+
+void neuron_update(Neuron* neuron);
 
 void print_link_id_matrix(int size);
 

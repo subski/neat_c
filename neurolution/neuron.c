@@ -7,6 +7,8 @@
 #include "data_structures/clist.h"
 #include "data_structures/pool.h"
 
+#include "CPPN/activations.h"
+
 Neuron* new_Neuron(
 	uint32_t id,
 	bool enabled,
@@ -33,7 +35,7 @@ Neuron* new_Neuron(
 
 Neuron* new_BasicNeuron(uint32_t id)
 {
-	return new_Neuron(id, true, false, HIDDEN_TYPE, NULL, 0.0, 0.0, NULL);
+	return new_Neuron(id, true, false, HIDDEN_TYPE, &fast_tanh, 0.0, 0.0, NULL);
 }
 
 Link* new_Link(Neuron* source, Neuron* target, double weight, bool enabled)
@@ -104,6 +106,24 @@ Neuron* clone_neuron(Neuron* neuron)
 	return new_neuron;
 }
 
+void neuron_activate(Neuron* neuron)
+{
+	neuron->buffer = 0;
+	CY_ITER_DATA(neuron->linkList, link_node, link, Link*,
+		if (link->enabled)
+		{
+			printf("%lf * %lf\n", link->source->value, link->weight);
+			neuron->buffer += link->source->value * link->weight;
+		}
+	);
+	neuron->buffer = neuron->activationFunc(neuron->buffer);
+}
+
+void neuron_update(Neuron* neuron)
+{
+	neuron->value = neuron->buffer;
+}
+
 
 void print_link_id_matrix(int size)
 {
@@ -116,7 +136,7 @@ void print_link_id_matrix(int size)
 		printf(" %d ", i);
 		for (int j = 1; j < size; j++)
 		{
-			printf(" %003d ", pairToId(j, i));
+			printf(" %03d ", pairToId(j, i));
 		}
 		NEWLINE();	
 	}
