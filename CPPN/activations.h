@@ -3,4 +3,6 @@
 
 double fast_tanh(double x);
 
+double leakyReLu(double x);
+
 #endif // !ACTIVATIONS_H

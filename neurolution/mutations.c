@@ -3,6 +3,7 @@
 #include "neurolution/neurolution.h"
 #include "neurolution/agent.h"
 #include "neurolution/neuron.h"
+#include "neurolution/env_settings.h"
 
 #include "data_structures/clist.h"
 #include "data_structures/pool.h"
@@ -128,10 +129,10 @@ bool mutate_neuron_insert(Agent* agent, double (*activationFunc)(double))
 	Neuron* new_neuron = new_BasicNeuron(neuron_id, activationFunc);
 	cy_insert(&agent->neuronList, new_neuron);
 
-	Link* link_src = new_Link(target_link->source, new_neuron, target_link->weight, true);
+	Link* link_src = new_Link(target_link->source, new_neuron, 1.0, true);
 	cy_insert(&agent->linkList, link_src);
 
-	Link* link_target = new_Link(new_neuron, target_link->target, 1.0, true);
+	Link* link_target = new_Link(new_neuron, target_link->target, target_link->weight, true);
 	cy_insert(&agent->linkList, link_target);
 
 	return true;
@@ -148,15 +149,18 @@ void mutate_neuron_bias(Agent* agent)
 
 void mutate_agent(Agent* agent)
 {
-	if (0.3 > pcg32_doublerand())
+	if (0.01 > pcg32_doublerand())
 		mutate_link_add(agent);
 	
-	if (0.85 > pcg32_doublerand())
+	if (0.94 > pcg32_doublerand())
+		mutate_link_shift(agent, 0.2);
+
+	if (0.94 > pcg32_doublerand())
 		mutate_link_shift(agent, 0.2);
 	
-	if (0.025 > pcg32_doublerand())
+	if (0.001 > pcg32_doublerand())
 		mutate_link_toggle(agent);
 	
-	if (0.1 > pcg32_doublerand())
-		mutate_neuron_insert(agent, &fast_tanh);
+	if (0.001 > pcg32_doublerand())
+		mutate_neuron_insert(agent, &ACT_FUNC);
 }

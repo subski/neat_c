@@ -33,8 +33,6 @@ NeuronHistory_s NeuronHistory = { 0, 0, NULL };
 Generation CurrentGeneration = { NULL, NULL };
 Generation NextGeneration = { NULL, NULL };
 
-const float elite_percentage = 0.5f;
-
 void evolve(int max_step)
 {
 	Agent* top_agent;
@@ -44,7 +42,7 @@ void evolve(int max_step)
 	createInitialPopulation(&CurrentGeneration.Population, MAX_POPULATION);
 
 	// initial speciation
-	kmeans_init(CurrentGeneration.Population, &CurrentGeneration.Species, 3);
+	kmeans_init(CurrentGeneration.Population, &CurrentGeneration.Species, SPECIE_COUNT);
 
 	kmeans_run(CurrentGeneration.Population, CurrentGeneration.Species);
 	
@@ -83,7 +81,7 @@ void createInitialPopulation(clist** population, uint32_t count)
 {
 	for (uint32_t i = 0; i < count; i++)
 	{
-		Agent* agent = new_BasicAgent(INPUT_SIZE, OUTPUT_SIZE, &fast_tanh);
+		Agent* agent = new_BasicAgent(INPUT_SIZE, OUTPUT_SIZE, &ACT_FUNC);
 		cy_insert(population, agent);
 	}
 }
@@ -146,7 +144,7 @@ void produceNextGeneration(Generation *_gen, Generation *_nxtGen)
 		specie_sortByFitness(currentSpecie, -1);
 
 		elite_node = currentSpecie->specimens;
-		int elite_count = ceil(currentSpecie->proportion * elite_percentage);
+		int elite_count = ceil(currentSpecie->proportion * ELITE_PROP);
 		int specimen_count = cy_len(currentSpecie->specimens);
 		elite_count = min(elite_count, specimen_count);
 
@@ -155,7 +153,7 @@ void produceNextGeneration(Generation *_gen, Generation *_nxtGen)
 			elite = (Agent*)elite_node->data;
 			elite->survive = true;
 
-			cy_insert(&NextGeneration.Population, elite);
+			cy_insert(&_nxtGen->Population, elite);
 			cy_insert(&nextSpecie->specimens, elite);
 
 			mutate_agent(elite);
@@ -168,20 +166,27 @@ void produceNextGeneration(Generation *_gen, Generation *_nxtGen)
 		next(specie_node);
 	} while (specie_node != _gen->Species);
 
-	kmeans_run(_nxtGen->Population, NextGeneration.Species);
+	kmeans_run(_nxtGen->Population, _nxtGen->Species);
 	
 	// OFFSPRINGS
 	specie_node = _gen->Species;
 	do
 	{
 		currentSpecie = (Specie*)specie_node->data;
+		CY_ITER_DATA(_nxtGen->Species, s_node, s, Specie*,
+			if (s->id == currentSpecie->id)
+			{
+				nextSpecie = s;
+				break;
+			}
+		);
 
 		if (cy_len(currentSpecie->specimens) == 1)
 			asexualOnly = true;
 		else
 			asexualOnly = false;
 
-		for (int i = 0; i < (int) (currentSpecie->proportion * (1.f - elite_percentage)); i++)
+		for (int i = 0; i < (int) (currentSpecie->proportion * (1.f - ELITE_PROP)); i++)
 		{
 			if (asexualOnly)
 			{
@@ -191,10 +196,21 @@ void produceNextGeneration(Generation *_gen, Generation *_nxtGen)
 			else
 			{
 				parent1 = NULL; parent2 = NULL;
-				while (parent1 == parent2)
+				if (ELITE_OFFSPRING)
 				{
-					parent1 = cy_random_data(currentSpecie->specimens);
-					parent2 = cy_random_data(currentSpecie->specimens);
+					while (parent1 == parent2)
+					{
+						parent1 = cy_random_data(currentSpecie->specimens);
+						parent2 = cy_random_data(currentSpecie->specimens);
+					}
+				}
+				else
+				{
+					while (parent1 == parent2)
+					{
+						parent1 = cy_random_data(nextSpecie->specimens);
+						parent2 = cy_random_data(nextSpecie->specimens);
+					}
 				}
 				offSpring = crossOver(parent1, parent2);
 			}

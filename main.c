@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
     onStart(argc, argv);
     if (!test(argc, argv)) return 0;
     
-    evolve(100);
+    evolve(150);
 
     return EXIT_SUCCESS;
 }
