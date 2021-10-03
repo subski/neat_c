@@ -26,13 +26,27 @@
 		}												\
 	} while (0);
 
+
+// Console prompt helpers
 #define NEWLINE() printf("\n");
 
-extern const int ZERO;
-extern const int ONE;
-extern const int TWO;
+#define ColorReset() printf("\033[0m");
+#define ColorBlack() printf("\033[0;30m");
+#define ColorRed() printf("\033[0;31m");
+#define ColorGreen() printf("\033[0;32m");
+#define ColorYellow() printf("\033[0;33m");
+#define ColorBlue() printf("\033[0;34m");
+#define ColorPurple() printf("\033[0;35m");
+#define ColorCyan() printf("\033[0;36m");
+#define ColorWhite() printf("\033[0;37m");
 
+// Path to the binary folder
 extern char BIN_PATH[];
+
+/*
+	Extract the binary folder path from the executable path. 
+*/
+void setup_binpath(char* path);
 
 /*
 	Check if a given pointer is in an array.

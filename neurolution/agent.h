@@ -35,6 +35,9 @@ Agent* new_Agent(uint32_t inputSize, uint32_t outputSize);
 */
 Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize);
 
+// TODO agent eval
+vector* agent_eval(Agent* agent, double inputs[]);
+
 /*
     Mesure the euclidian distance between two agents.
 */
@@ -77,6 +80,9 @@ bool check_agent(Agent* agent);
 */
 Agent* agent_clone(Agent* agent);
 
+/*
+    Returns the sum of the weights of all links in an Agent.
+*/
 double agent_weight(Agent* agent);
 
 #endif

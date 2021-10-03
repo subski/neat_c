@@ -27,14 +27,18 @@
 typedef struct Generation Generation;
 typedef struct NeuronHistory_s NeuronHistory_s;
 
+// Memory pools that are used to store data to be reused instead of freeing it.
 extern pool* P_AGENT;
 extern pool* P_NEURON;
 extern pool* P_LINK;
 
+// Total amount of neurons discovered by mutation.
 extern uint32_t NeuronCount;
 
+// Keeps track of links which split into a new neuron.
 extern NeuronHistory_s NeuronHistory;
 
+// Store the agents and species of a generation step.
 extern Generation CurrentGeneration;
 extern Generation NextGeneration;
 
@@ -52,18 +56,39 @@ struct NeuronHistory_s
 	NeuronHistory_s* next;
 };
 
+/*
+	Main evolution loop.
+*/
 void evolve(void);
 
+/*
+	Fill a cyclic list with a number of Basic Agents.
+*/
 void createInitialPopulation(clist** population, uint32_t count);
 
+/*
+	Compute the fitness of a list of agents.
+*/
 void population_eval(clist* agents);
 
+/*
+	Compute the fitness of each species in a list.
+*/
 void fitnessSharing(clist* species);
 
+/*
+	Perform a selection of the best agents and fill the next generation with offsprings.
+*/
 void produceNextGeneration(Generation* _gen, Generation* _nxtGen);
 
+/*
+	Free the current generation and put the NextGeneration as the current one.
+*/
 void _advanceGeneration();
 
+/*
+	Free resources used by the evolution algorithm.
+*/
 void free_neurolution();
 
 #endif // !NEUROLUTION_H

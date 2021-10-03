@@ -2,11 +2,19 @@
 
 #include <math.h>
 
-const int ZERO = 0;
-const int ONE = 1;
-const int TWO = 2;
-
 char BIN_PATH[255];
+void setup_binpath(char* path)
+{
+	strcpy(BIN_PATH, path);
+	for (size_t i=strlen(BIN_PATH)-1; i>=0; i--)
+	{
+		if (BIN_PATH[i] == '/' || BIN_PATH[i] == '\\')
+		{
+			BIN_PATH[i+1] = '\0';
+			break;
+		}
+	}
+}
 
 bool isPtrInArray(void* ptr, void* _array[], uint32_t arraySize)
 {

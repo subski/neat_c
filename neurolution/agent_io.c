@@ -199,6 +199,21 @@ int plot_agent(Agent* agent, char pid_str[])
 	return 0;
 }
 
+void plot_close(char pid_str[])
+{
+	char cmd[100] = "taskkill /F /PID ";    
+	strcat(cmd, pid_str);
+	system(cmd);
+}
+
+void plot_fileclear()
+{
+	char cmd[255] = "start cmd /c del ";
+    strcat(cmd, BIN_PATH);
+    strcat(cmd, "{*}");
+    system(cmd);
+}
+
 void interactive_agent_plot(uint32_t inputSize, uint32_t outputSize)
 {
 	Agent* agent = new_Agent(inputSize, outputSize);

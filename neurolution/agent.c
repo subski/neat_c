@@ -84,10 +84,20 @@ Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize)
 	return new_agent;
 }
 
+vector* agent_eval(Agent* agent, double inputs[])
+{
+	for (uint32_t i = 0; i < agent->inputVector.count; i++)
+	{
+		VEC(agent->inputVector, Neuron*, i)->value = inputs[i];
+	}
+
+	 
+
+	return NULL;
+}
 
 double agent_euclidean_distance(Agent* agent1, Agent* agent2)
 {
-	
 	double distance = 0;
 
 	// Create an array of 'int' the size of NeuronCount

@@ -19,8 +19,46 @@ void onExit(void);
 
 bool test(int argc, char* argv[])
 {
+    Agent* agent = new_BasicAgent(3, 1);
 
-    return true; // continue the program?
+    ColorBlue();
+    print_agent(agent);
+    ColorReset();
+
+    double dataset[4][4] = {
+        { 0, 0, 1, 0 },
+        { 0, 1, 1, 1 },
+        { 1, 0, 1, 1 },
+        { 1, 1, 1, 0 }
+    };
+
+    agent_eval(agent, dataset[0]);
+
+    ColorYellow();
+    printf("Inputs:\n\n");
+    ColorReset();
+    for (int i=0; i < agent->inputVector.count; i++)
+    {
+        printf("id %d -> %lf\n", VEC(agent->inputVector, Neuron*, i)->id, VEC(agent->inputVector, Neuron*, i)->value);
+    }
+    printf("\n");
+
+    ColorYellow();
+    printf("Outputs:\n\n");
+    ColorReset();
+    for (int i=0; i < agent->outputVector.count; i++)
+    {
+        printf("id %d -> %lf\n", VEC(agent->outputVector, Neuron*, i)->id, VEC(agent->outputVector, Neuron*, i)->value);
+    }
+    printf("\n");
+
+    char pid[255];
+    plot_agent(agent, pid);
+    system("Pause");
+    plot_close(pid);
+
+    free_agent(&agent);
+    return false; // continue the program?
 }
 
 int main(int argc, char* argv[])
@@ -51,17 +89,8 @@ void onStart(int argc, char* argv[])
     atexit(&onExit);
     // Setup the random number generator
     pcg32_srandom((unsigned long long)time(NULL), (unsigned long long) & printf);
-
     // Get the program binary path from the program arguments
-    strcpy(BIN_PATH, argv[0]);
-	for (size_t i=strlen(BIN_PATH)-1; i>=0; i--)
-	{
-		if (BIN_PATH[i] == '/' || BIN_PATH[i] == '\\')
-		{
-			BIN_PATH[i+1] = '\0';
-			break;
-		}
-	}
+    setup_binpath(argv[0]);
     
 #ifdef _WIN32
     // Save the time when the program starts to get the execution time later
@@ -109,13 +138,10 @@ void onExit(void)
     
     printf("\n\n---------------------------------------------------------------------------------------------------------------------\n");
     printf("Program ended in %.3f seconds.\n", (1000 * (progEnd.time - progStart.time) + (progEnd.millitm - progStart.millitm)) / 1000.f);
-    system("pause");
+    // system("pause");
 
     // Clear temporary files created when ploting agents
-    char cmd[255] = "start cmd /c del ";
-    strcat(cmd, BIN_PATH);
-    strcat(cmd, "{*}");
-    system(cmd);
+    plot_fileclear();
 
 #endif // !_WIN32
 }

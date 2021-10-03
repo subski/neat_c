@@ -31,12 +31,19 @@ Agent* load_agent(char filename[]);
         Store the agent into a file '<unique_id>'.
         Calls the command 'python plot.py <unique_id>'.
         Returns the python process id with 'tasklist'.
-        To close a plot window, use:
-            char cmd[100] = "taskkill /F /PID ";    
-            strcat(cmd, <PID>);
-            system(cmd);        
+        To close a plot window, use: plot_close(char pid_str[])
 */
 int plot_agent(Agent* agent, char pid_str[]);
+
+/*
+    TaskKill on the PID given;
+*/
+void plot_close(char pid_str[]);
+
+/*
+    Delete all files in the binaries folder where names correspond to '{*}' (files created when plotting agents).
+*/
+void plot_fileclear();
 
 /*
     Display an agent's graph and apply mutations to it via the command line.
