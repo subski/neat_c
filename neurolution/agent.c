@@ -93,9 +93,10 @@ vector* agent_eval(Agent* agent, const double inputs[], int max_step)
 		}
 		else
 		{
-			neuron->value = 0;
+			neuron->value = 0.0;
 		}
 	);
+
 	for (int step = 1; step <= max_step; step++)
 	{
 		CY_ITER_DATA(agent->neuronList, neuron_node, neuron, Neuron*,
@@ -411,9 +412,11 @@ int check_agent(Agent* agent)
 	);
 
 	// Input neurons are not supposed to have any links attached to them
+	Neuron* n;
 	for (int i = 0; i < agent->inputVector.count; i++)
 	{
-		if (VEC(agent->inputVector, Neuron*, i)->linkList != NULL)
+		n = VEC(agent->inputVector, Neuron*, i);
+		if (n->linkList != NULL)
 			err = 4;
 	}
 

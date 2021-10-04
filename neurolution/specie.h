@@ -22,6 +22,8 @@ void specie_computeFitness(Specie* specie);
 
 void specie_mutate(Specie* specie);
 
+Agent* specie_topAgent(Specie* specie);
+
 Specie* specie_copy(Specie* specie);
 
 void print_specie(Specie* specie);

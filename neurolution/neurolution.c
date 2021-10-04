@@ -9,6 +9,7 @@
 #include "neurolution/agent.h"
 #include "neurolution/agent_io.h"
 #include "neurolution/specie.h"
+#include "neurolution/neuron.h"
 #include "neurolution/mutations.h"
 #include "neurolution/kmeans.h"
 #include "neurolution/env_settings.h"
@@ -33,7 +34,7 @@ NeuronHistory_s NeuronHistory = { 0, 0, NULL };
 Generation CurrentGeneration = { NULL, NULL };
 Generation NextGeneration = { NULL, NULL };
 
-void evolve(int max_step)
+void evolve(double fitness_goal)
 {
 	Agent* top_agent;
 	fitneseEvaluator = &XorEvaluator;
@@ -48,8 +49,10 @@ void evolve(int max_step)
 	
 
 	// generations
-	for (int step = 1; step <= max_step; step++)
+	int step = 0;
+	do
 	{
+		step++;
 		NextGeneration = (Generation) { NULL, NULL };
 
 		top_agent = population_eval(CurrentGeneration.Population);
@@ -57,6 +60,9 @@ void evolve(int max_step)
 		fitnessSharing(CurrentGeneration.Species);
 
 		produceNextGeneration(&CurrentGeneration, &NextGeneration);
+
+		if (NextGeneration.Population == NULL)
+			printf("ERROR\n");
 
 		kmeans_run(NextGeneration.Population, NextGeneration.Species);
 
@@ -74,7 +80,37 @@ void evolve(int max_step)
 			cy_len(CurrentGeneration.Population),
 			NeuronCount
 		);
-	}
+
+	} while ( top_agent->fitness < fitness_goal );
+
+	printf("fitness=%lf\n", XorEvaluator(top_agent));
+
+	vector* outputs = agent_eval(top_agent, DATASET[0], 10);
+    double output = min(max(VEC((*outputs), Neuron*, 0)->value, 0.0), 1.0);
+    printf("Input : %.2lf %.2lf %.2lf Output : %.2lf\n", DATASET[0][0], DATASET[0][1], DATASET[0][2], output);
+
+    // Test case 0, 1.
+    outputs = agent_eval(top_agent, DATASET[1], 10);
+    output = min(max(VEC((*outputs), Neuron*, 0)->value, 0.0), 1.0);
+    printf("Input : %.2lf %.2lf %.2lf Output : %.2lf\n", DATASET[1][0], DATASET[1][1], DATASET[1][2], output);
+
+    // Test case 1, 0.
+    outputs = agent_eval(top_agent, DATASET[2], 10);
+    output = min(max(VEC((*outputs), Neuron*, 0)->value, 0.0), 1.0);
+    printf("Input : %.2lf %.2lf %.2lf Output : %.2lf\n", DATASET[2][0], DATASET[2][1], DATASET[2][2], output);
+
+    
+    // Test case 1, 1.
+    outputs = agent_eval(top_agent, DATASET[3], 10);
+    output = min(max(VEC((*outputs), Neuron*, 0)->value, 0.0), 1.0);
+    printf("Input : %.2lf %.2lf %.2lf Output : %.2lf\n", DATASET[3][0], DATASET[3][1], DATASET[3][2], output);
+
+	// CY_ITER_DATA(CurrentGeneration.Species, specie_node, specie, Specie*, 
+	// 	show_agent(specie_topAgent(specie));
+	// );
+	show_agent(top_agent);
+
+	
 }
 
 void createInitialPopulation(clist** population, uint32_t count)
@@ -142,6 +178,7 @@ void produceNextGeneration(Generation *_gen, Generation *_nxtGen)
 		currentSpecie = (Specie*)specie_node->data;
 		nextSpecie = specie_copy(currentSpecie);
 		specie_sortByFitness(currentSpecie, -1);
+		
 
 		elite_node = currentSpecie->specimens;
 		int elite_count = ceil(currentSpecie->proportion * ELITE_PROP);
@@ -166,6 +203,9 @@ void produceNextGeneration(Generation *_gen, Generation *_nxtGen)
 		next(specie_node);
 	} while (specie_node != _gen->Species);
 
+	if (_nxtGen->Population == NULL)
+		printf("ERROR\n");
+
 	kmeans_run(_nxtGen->Population, _nxtGen->Species);
 	
 	// OFFSPRINGS
@@ -181,28 +221,20 @@ void produceNextGeneration(Generation *_gen, Generation *_nxtGen)
 			}
 		);
 
-		if (cy_len(currentSpecie->specimens) == 1)
+		if (cy_len(currentSpecie->specimens) == 1 && !ELITE_OFFSPRING || cy_len(nextSpecie->specimens) == 1 && ELITE_OFFSPRING)
 			asexualOnly = true;
 		else
 			asexualOnly = false;
 
 		for (int i = 0; i < (int) (currentSpecie->proportion * (1.f - ELITE_PROP)); i++)
 		{
-			if (asexualOnly)
-			{
-				offSpring = agent_clone((Agent*)currentSpecie->specimens->data);
-				mutate_agent(offSpring);
-			}
-			else
-			{
-				parent1 = NULL; parent2 = NULL;
-				if (ELITE_OFFSPRING)
+			parent1 = NULL; parent2 = NULL;
+			if (ELITE_OFFSPRING)
+			{	
+				if (asexualOnly)
 				{
-					while (parent1 == parent2)
-					{
-						parent1 = cy_random_data(currentSpecie->specimens);
-						parent2 = cy_random_data(currentSpecie->specimens);
-					}
+					offSpring = agent_clone((Agent*)nextSpecie->specimens->data);
+					mutate_agent(offSpring);
 				}
 				else
 				{
@@ -211,8 +243,25 @@ void produceNextGeneration(Generation *_gen, Generation *_nxtGen)
 						parent1 = cy_random_data(nextSpecie->specimens);
 						parent2 = cy_random_data(nextSpecie->specimens);
 					}
+					offSpring = crossOver(parent1, parent2);
 				}
-				offSpring = crossOver(parent1, parent2);
+			}
+			else
+			{
+				if (asexualOnly)
+				{
+					offSpring = agent_clone((Agent*)currentSpecie->specimens->data);
+					mutate_agent(offSpring);
+				}
+				else
+				{
+					while (parent1 == parent2)
+					{
+						parent1 = cy_random_data(currentSpecie->specimens);
+						parent2 = cy_random_data(currentSpecie->specimens);
+					}
+					offSpring = crossOver(parent1, parent2);
+				}
 			}
 
 			cy_insert(&_nxtGen->Population, offSpring);

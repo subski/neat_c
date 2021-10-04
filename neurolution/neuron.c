@@ -113,12 +113,11 @@ void neuron_activate(Neuron* neuron)
 			neuron->buffer += link->source->value * link->weight;
 		}
 	);
-	neuron->buffer = neuron->activationFunc(neuron->buffer);
 }
 
 void neuron_update(Neuron* neuron)
 {
-	neuron->value = neuron->buffer;
+	neuron->value = neuron->activationFunc(neuron->buffer);
 }
 
 

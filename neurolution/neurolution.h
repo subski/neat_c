@@ -59,7 +59,7 @@ struct NeuronHistory_s
 /*
 	Main evolution loop.
 */
-void evolve(int max_step);
+void evolve(double fitness_goal);
 
 /*
 	Fill a cyclic list with a number of Basic Agents.

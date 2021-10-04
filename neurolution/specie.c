@@ -84,6 +84,17 @@ void specie_mutate(Specie* specie)
     );
 }
 
+Agent* specie_topAgent(Specie* specie)
+{
+    Agent* top_agent;
+    double top_fit = 0.0;
+    CY_ITER_DATA(specie->specimens, agent_node, agent, Agent*,
+        if (agent->fitness > top_fit)
+            top_agent = agent;
+    );
+    return top_agent;
+}
+
 Specie* specie_copy(Specie* specie)
 {
     Specie* copy = malloc(sizeof(Specie));

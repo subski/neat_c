@@ -20,10 +20,9 @@ def plot_agent(filename):
             if len(info) == 2:
                 inputSize = int(info[0])
                 outputSize = int(info[1])
-            if len(info) == 4:
-                if info[3] == "1":
-                    F.add_edge(int(info[0]), int(info[1]), weight=info[2][:4] if info[2][0] != '-' else info[2][:5] )
-                    print(f'{info[0]} {info[1]} {info[2]} {info[3]}')
+            if len(info) == 3:
+                F.add_edge(int(info[0]), int(info[1]), weight=info[2][:4] if info[2][0] != '-' else info[2][:5] )
+                print(f'{info[0]} {info[1]} {info[2]}')
 
     for i in range(1, inputSize+1):
         G.add_node(i, layer=1)

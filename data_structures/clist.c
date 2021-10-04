@@ -204,3 +204,12 @@ bool* cy_isUnique(clist* node)
 	);
 	return true;
 }
+
+void* cy_last(clist* node)
+{
+	CY_ITER(node, iter,
+		if (iter == node)
+			return iter->data;
+	);
+	return NULL;
+}

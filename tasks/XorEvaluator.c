@@ -10,21 +10,46 @@
 #include "tools/utils.h"
 
 const double DATASET[4][4] = {
-    { 0, 0, 1, 0 },
-    { 0, 1, 1, 1 },
+    { 1, 0, 0, 0 },
     { 1, 0, 1, 1 },
+    { 1, 1, 0, 1 },
     { 1, 1, 1, 0 }
 };
 
 double XorEvaluator(Agent* agent)
 {
-    vector* output;
-    double fitness = 0;
-    for (int i = 0; i < 4; i++)
-    {
-        output = agent_eval(agent, DATASET[i], 100);
-        fitness += VEC((*output), Neuron*, 0)->value;
+    double fitness = 0.0;
+    bool success = true;
+
+    // Test case 0, 0.
+    vector* outputs = agent_eval(agent, DATASET[0], 10);
+    double output = min(max(VEC((*outputs), Neuron*, 0)->value, 0.0), 1.0);
+    success &= output <= 0.5;
+    fitness += 1.0 - (output * output);
+    // printf("fitness: %lf\n", fitness);
+
+    // Test case 0, 1.
+    outputs = agent_eval(agent, DATASET[1], 10);
+    output = min(max(VEC((*outputs), Neuron*, 0)->value, 0.0), 1.0);
+    success &= output > 0.5;
+    fitness += 1.0 - ((1.0 - output) * (1.0 - output));
+
+    // Test case 1, 0.
+    outputs = agent_eval(agent, DATASET[2], 10);
+    output = min(max(VEC((*outputs), Neuron*, 0)->value, 0.0), 1.0);
+    success &= output > 0.5;
+    fitness += 1.0 - ((1.0 - output) * (1.0 - output));
+
+    
+    // Test case 1, 1.
+    outputs = agent_eval(agent, DATASET[3], 10);
+    output = min(max(VEC((*outputs), Neuron*, 0)->value, 0.0), 1.0);
+    success &= output <= 0.5;
+    fitness += 1.0 - (output * output);
+    
+    if(success) {
+        fitness += 10.0;
     }
 
-    return double_abs(fitness);
+    return fitness;
 }

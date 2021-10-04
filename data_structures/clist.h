@@ -35,7 +35,7 @@
         if (_ptr != NULL)						    \
         {										    \
             *_ptr = data;						    \
-            cy_insert(node, _ptr);					    \
+            cy_insert(node, _ptr);					\
         }										    \
     } while (0);
 
@@ -122,5 +122,7 @@ bool cy_remove(clist** node, void* data);
 clist* cy_clone(clist* node);
 
 bool* cy_isUnique(clist* node);
+
+void* cy_last(clist* node);
 
 #endif

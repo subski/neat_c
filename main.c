@@ -16,11 +16,15 @@
 
 #include "CPPN/activations.h"
 
+#include "tasks/XorEvaluator.h"
+
 void onStart(int argc, char* argv[]);
 void onExit(void);
 
 bool test(int argc, char* argv[])
 {
+    Agent* agent = load_agent("xor.genome");
+    printf("%lf\n", XorEvaluator(agent));
     return true; // continue the program?
 }
 
@@ -29,7 +33,7 @@ int main(int argc, char* argv[])
     onStart(argc, argv);
     if (!test(argc, argv)) return 0;
     
-    evolve(150);
+    evolve(FITNESS_GOAL);
 
     return EXIT_SUCCESS;
 }

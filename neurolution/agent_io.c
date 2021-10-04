@@ -5,6 +5,11 @@
 
 #include "tools/utils.h"
 
+#include "data_structures/clist.h"
+#include "data_structures/vector.h"
+
+#include "CPPN/activations.h"
+
 #include <stdio.h>
 
 void print_agent(Agent* agent)
@@ -39,7 +44,7 @@ bool save_agent(char filename[], Agent* agent)
 
 	fprintf(target_file, "# Connections (source target weight enabled).\n");
 	CY_ITER_DATA(agent->linkList, link_node, link, Link*,
-		fprintf(target_file, "%d\t%d\t%lf\t%d\n", link->source->id, link->target->id, link->weight, link->enabled);
+		fprintf(target_file, "%d\t%d\t%lf\n", link->source->id, link->target->id, link->weight);
 	);
 
 	fprintf(target_file, ";\n\n");
@@ -65,7 +70,6 @@ Agent* load_agent(char filename[])
 	Neuron* neuron_source;
 	Neuron* neuron_target;
 	double weight;
-	bool enabled;
 	// uint32_t activationFunctionId;
 	// char activationFunctionName[255];
 
@@ -96,29 +100,29 @@ Agent* load_agent(char filename[])
 			}
 
 			#pragma warning(disable : 4477)
-			sscanf(line, "%d\t%d\t%lf\t%d\n", &id_source, &id_target, &weight, &enabled);
+			sscanf(line, "%d\t%d\t%lf\n", &id_source, &id_target, &weight);
 
-			if (!isNeuronInAgent(new_agent, id_source))
+			if (!isNeuronInAgent(new_agent, id_source+1))
 			{
-				neuron_source = new_BasicNeuron(id_source, NULL);
+				neuron_source = new_BasicNeuron(id_source+1, &ACT_FUNC);
 				cy_insert(&new_agent->neuronList, neuron_source);
 			}
 			else
 			{
-				neuron_source = getNeuronInAgent(new_agent, id_source);
+				neuron_source = getNeuronInAgent(new_agent, id_source+1);
 			}
 
-			if (!isNeuronInAgent(new_agent, id_target))
+			if (!isNeuronInAgent(new_agent, id_target+1))
 			{
-				neuron_target = new_BasicNeuron(id_target, NULL);
+				neuron_target = new_BasicNeuron(id_target+1, &ACT_FUNC);
 				cy_insert(&new_agent->neuronList, neuron_target);
 			}
 			else
 			{
-				neuron_target = getNeuronInAgent(new_agent, id_target);
+				neuron_target = getNeuronInAgent(new_agent, id_target+1);
 			}
 
-			cy_insert(&new_agent->linkList, new_Link(neuron_source, neuron_target, weight, enabled));
+			cy_insert(&new_agent->linkList, new_Link(neuron_source, neuron_target, weight, 1));
 			continue;
 		}
 
@@ -131,8 +135,20 @@ Agent* load_agent(char filename[])
 
 	fclose(target_file);
 
-	//printf("Loaded agent from file: %s\n", filename);
+	CY_ITER_DATA(new_agent->neuronList, neuron_node, neuron, Neuron*,
+		if (neuron->id <= inputSize)
+		{
+			VEC(new_agent->inputVector, Neuron*, neuron->id - 1) = neuron;
+			neuron->type = INPUT_TYPE;
+		}
+		else if (neuron->id <= inputSize + outputSize)
+		{
+			VEC(new_agent->outputVector, Neuron*, neuron->id - inputSize - 1) = neuron;
+			neuron->type = OUTPUT_TYPE;
+		}
+	);
 
+	//printf("Loaded agent from file: %s\n", filename);
 	return new_agent;
 }
 
