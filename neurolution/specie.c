@@ -26,6 +26,10 @@ int species_insert(clist* species, Agent* agent)
         agent->specie = nearest_specie->id;
     }
     cy_insert(&nearest_specie->specimens, agent);
+
+    if (nearest_specie->specimens == NULL)
+        printf("ERROR\n");
+
     return changes;
 }
 

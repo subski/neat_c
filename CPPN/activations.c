@@ -18,3 +18,16 @@ double leakyReLu(double x)
     else
         return x*a;
 }
+
+double hopfield(double x)
+{
+    if (x > 0.5)
+        return 1.0;
+    else
+        return 0.0;
+}
+
+double sigmoid(double x)
+{
+    return 1.0 / (1.0 + exp(-x));
+}

@@ -26,8 +26,8 @@
 		}												\
 	} while (0);
 
-#define min(a, b) ((a) < (b) ? (a) : (b))
-#define max(a, b) ((a) > (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 // Console prompt helpers
 #define NEWLINE() printf("\n");

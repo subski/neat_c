@@ -32,7 +32,7 @@ bool mutate_link_add(Agent* agent)
 	Neuron* neuron_target = cy_random_max(agent->neuronList, neuron_count-1);
 
 	#pragma warning(disable : 4047 4022)
-	if (neuron_source == neuron_target || isPtrInArray(neuron_target, agent->inputVector.start, INPUT_SIZE))
+	if (neuron_source == neuron_target || neuron_target->type == INPUT_TYPE)
 	{
 		return false;
 	}
@@ -60,9 +60,9 @@ bool mutate_link_add(Agent* agent)
 	return true;
 }
 
+/*
 bool mutate_link_connect(Agent* agent)
 {
-	/*
 	def check_pair(I, x):
     if x in I:
         ind = I.index(x)+1
@@ -84,8 +84,8 @@ bool mutate_link_connect(Agent* agent)
 			print('i:', index - k_max/2, 'i:', index)
 			pair_list.append(idToPair(index))
 		pair_index.append(r_pair)
-	*/
 }
+*/
 
 void mutate_link_toggle(Agent* agent)
 {
@@ -186,23 +186,17 @@ void mutate_neuron_bias(Agent* agent)
 
 void mutate_agent(Agent* agent)
 {
-	if (0.025 > pcg32_doublerand())
+	if (pLINK_NEW > pcg32_doublerand())
 	{
 		for (int i=0; i<15 && !mutate_link_add(agent); i++ );
 	}
 
-	if (0.94 > pcg32_doublerand())
+	if (pLINK_SHIFT > pcg32_doublerand())
 		mutate_link_shift(agent, 0.2);
-	
-	if (0.94 > pcg32_doublerand())
-		mutate_link_shift(agent, 0.2);
-	
-	if (0.94 > pcg32_doublerand())
-		mutate_link_shift(agent, 0.2);		
-	
-	if (0.01 > pcg32_doublerand())
+
+	if (pLINK_TOGGLE > pcg32_doublerand())
 		mutate_link_toggle(agent);
 	
-	if (0.01 > pcg32_doublerand())
-		while (!mutate_neuron_insert(agent, &ACT_FUNC));
+	if (pNODE_NEW > pcg32_doublerand())
+		for (int i=0; i < 15 && !mutate_neuron_insert(agent, &ACT_FUNC); i++);
 }

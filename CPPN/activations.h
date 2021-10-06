@@ -5,4 +5,8 @@ double fast_tanh(double x);
 
 double leakyReLu(double x);
 
+double hopfield(double x);
+
+double sigmoid(double x);
+
 #endif // !ACTIVATIONS_H

@@ -9,6 +9,8 @@
 
 #include "tools/utils.h"
 
+#include "CPPN/activations.h"
+
 const double DATASET[4][4] = {
     { 1, 0, 0, 0 },
     { 1, 0, 1, 1 },
@@ -20,36 +22,38 @@ double XorEvaluator(Agent* agent)
 {
     double fitness = 0.0;
     bool success = true;
+    vector* outputVector;
+    double output;
 
-    // Test case 0, 0.
-    vector* outputs = agent_eval(agent, DATASET[0], 10);
-    double output = min(max(VEC((*outputs), Neuron*, 0)->value, 0.0), 1.0);
-    success &= output <= 0.5;
-    fitness += 1.0 - (output * output);
-    // printf("fitness: %lf\n", fitness);
-
-    // Test case 0, 1.
-    outputs = agent_eval(agent, DATASET[1], 10);
-    output = min(max(VEC((*outputs), Neuron*, 0)->value, 0.0), 1.0);
-    success &= output > 0.5;
-    fitness += 1.0 - ((1.0 - output) * (1.0 - output));
-
-    // Test case 1, 0.
-    outputs = agent_eval(agent, DATASET[2], 10);
-    output = min(max(VEC((*outputs), Neuron*, 0)->value, 0.0), 1.0);
-    success &= output > 0.5;
-    fitness += 1.0 - ((1.0 - output) * (1.0 - output));
-
-    
-    // Test case 1, 1.
-    outputs = agent_eval(agent, DATASET[3], 10);
-    output = min(max(VEC((*outputs), Neuron*, 0)->value, 0.0), 1.0);
-    success &= output <= 0.5;
-    fitness += 1.0 - (output * output);
-    
-    if(success) {
-        fitness += 10.0;
+    for (double i = 0; i < 1.0; i += 0.001)
+    {
+        outputVector = agent_eval(agent, &i, 10);
+        output = VEC((*outputVector), Neuron*, 0)->value;
+        fitness += 1.0 - double_abs(i - output*output);
     }
+
+
+    // for (int i = 0; i < 4; i++)
+    // {
+    //     outputVector = agent_eval(agent, DATASET[i], 50);
+    //     output = VEC((*outputVector), Neuron*, 0)->value;
+    //     output = min(max(output, 0.0), 1.0);
+
+    //     if (DATASET[i][3] == 1)
+    //     {
+    //         success &= output > 0.5;
+    //         fitness += 1.0 - ((1.0 - output) * (1.0 - output));
+    //     }
+    //     else
+    //     {
+    //         success &= output <= 0.5;
+    //         fitness += 1.0 - (output * output);
+    //     }
+    // }
+    
+    // if(success) {
+    //     fitness += 10.0;
+    // }
 
     return fitness;
 }

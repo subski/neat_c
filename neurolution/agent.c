@@ -31,16 +31,7 @@ Agent* new_Agent(uint32_t inputSize, uint32_t outputSize)
 
 Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize, double (*activationFunc)(double))
 {
-	Agent* new_agent = request(&P_AGENT, sizeof(Agent));
-
-	new_agent->inputVector = new_vector(sizeof(Neuron*), inputSize, 0);
-	new_agent->outputVector = new_vector(sizeof(Neuron*), outputSize, 0);
-
-	new_agent->specie = 0;
-	new_agent->survive = 0;
-	new_agent->fitness = 0.0;
-	new_agent->neuronList = NULL;
-	new_agent->linkList = NULL;
+	Agent* new_agent = new_Agent(inputSize, outputSize);
 
 	// create input neurons
 	for (uint32_t i = 0; i < inputSize; i++)
@@ -86,6 +77,7 @@ Agent* new_BasicAgent(uint32_t inputSize, uint32_t outputSize, double (*activati
 
 vector* agent_eval(Agent* agent, const double inputs[], int max_step)
 {
+    double* output = &VEC(agent->outputVector, Neuron*, 0)->value;
 	CY_ITER_DATA(agent->neuronList, neuron_node, neuron, Neuron*,
 		if (neuron->type == INPUT_TYPE)
 		{
@@ -93,7 +85,7 @@ vector* agent_eval(Agent* agent, const double inputs[], int max_step)
 		}
 		else
 		{
-			neuron->value = 0.0;
+			neuron->value = -100;
 		}
 	);
 
@@ -252,7 +244,7 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
 			break;
 			case 1: // Neuron in agent1 only
 				// We copy the neuron to the childe 1 to 1
-				new_neuron = clone_neuron(getNeuronInAgent(agent1, i+1));
+				new_neuron = clone_neuron(getNeuronInAgent(agent1, i+1), true);
 			break;
 			case 2: // Neuron in agent2 only
 				continue;
@@ -260,15 +252,8 @@ Agent* crossOver(Agent* agent1, Agent* agent2)
 			case 3: // Neuron in both agents
 				neuron_1 = getNeuronInAgent(agent1, i+1);
 				neuron_2 = getNeuronInAgent(agent2, i+1);
-				new_neuron = new_Neuron(
-					neuron_1->id, 
-					neuron_1->enabled, 
-					neuron_1->activated, 
-					neuron_1->type, 
-					neuron_1->activationFunc, 
-					neuron_1->value, 
-					(neuron_1->bias + neuron_2->bias) / 2, // TODO: check bias crossover 
-					NULL);
+				// TODO: check bias crossover 
+				new_neuron = clone_neuron(neuron_1, false);
 
 				// We iterate through all the links of both neurons and we chose at random links from the neuron1 links.
 				CY_ITER_DATA(neuron_1->linkList, link_node, link_1, Link*,
@@ -413,7 +398,7 @@ int check_agent(Agent* agent)
 
 	// Input neurons are not supposed to have any links attached to them
 	Neuron* n;
-	for (int i = 0; i < agent->inputVector.count; i++)
+	for (uint32_t i = 0; i < agent->inputVector.count; i++)
 	{
 		n = VEC(agent->inputVector, Neuron*, i);
 		if (n->linkList != NULL)
@@ -440,7 +425,7 @@ Agent* agent_clone(Agent* agent)
 	clone->fitness = agent->fitness;
 	Neuron* new_neuron;
 	CY_ITER_DATA(agent->neuronList, neuron_node, neuron, Neuron*,
-		new_neuron = (Neuron*) cy_insert(&clone->neuronList, clone_neuron(neuron));
+		new_neuron = (Neuron*) cy_insert(&clone->neuronList, clone_neuron(neuron, true));
 		if (new_neuron->id <= clone->inputVector.count + clone->outputVector.count)
 		{
 			if (new_neuron->id <= clone->inputVector.count)

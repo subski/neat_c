@@ -33,9 +33,9 @@ Neuron* new_Neuron(
 	return neuron;
 }
 
-Neuron* new_BasicNeuron(uint32_t id, double (*activationFunc)(double))
+Neuron* new_BasicNeuron(uint32_t id, double (*activationFunc)(double), uint32_t layer)
 {
-	return new_Neuron(id, true, false, HIDDEN_TYPE, activationFunc, 0.0, 0.0, NULL);
+	return new_Neuron(id, true, false, HIDDEN_TYPE, activationFunc, 0.0, 0.0, NULL, layer);
 }
 
 Link* new_Link(Neuron* source, Neuron* target, double weight, bool enabled)
@@ -80,7 +80,7 @@ Link* getLinkInList(clist* neuronlist, int id)
 	return NULL;
 }
 
-Neuron* clone_neuron(Neuron* neuron)
+Neuron* clone_neuron(Neuron* neuron, bool cloneLinks)
 {
 	Neuron* new_neuron = new_Neuron(
 		neuron->id, 
@@ -89,17 +89,21 @@ Neuron* clone_neuron(Neuron* neuron)
 		neuron->type, 
 		neuron->activationFunc, 
 		neuron->value, 
-		neuron->bias, 
+		neuron->bias,
 		NULL);
 
-	CY_ITER_DATA(neuron->linkList, link_node, link, Link*,
-		cy_insert(&new_neuron->linkList,
-			new_LinkId(
-				link->source->id, 
-				link->target->id, 
-				link->weight, 
-				link->enabled));
-	);
+	if (cloneLinks)
+	{
+	
+		CY_ITER_DATA(neuron->linkList, link_node, link, Link*,
+			cy_insert(&new_neuron->linkList,
+				new_LinkId(
+					link->source->id, 
+					link->target->id, 
+					link->weight, 
+					link->enabled));
+		);
+	}
 
 	return new_neuron;
 }
@@ -110,16 +114,17 @@ void neuron_activate(Neuron* neuron)
 	CY_ITER_DATA(neuron->linkList, link_node, link, Link*,
 		if (link->enabled)
 		{
-			neuron->buffer += link->source->value * link->weight;
+			if (link->source->value != 0.0)
+				neuron->buffer += link->source->value * link->weight;
 		}
 	);
 }
 
 void neuron_update(Neuron* neuron)
 {
+	// if (neuron->buffer != 0)
 	neuron->value = neuron->activationFunc(neuron->buffer);
 }
-
 
 void print_link_id_matrix(int size)
 {

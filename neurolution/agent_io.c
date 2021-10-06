@@ -16,7 +16,7 @@ void print_agent(Agent* agent)
 {
 	printf("agent:\n");
 	CY_ITER_DATA(agent->neuronList, neuron_node, neuron, Neuron*,
-		printf("neuron %d => value : %lf\n\n", neuron->id, neuron->value);
+		printf("neuron %d => value : %lf\n", neuron->id, neuron->value);
 		CY_ITER_DATA(neuron->linkList, link_node, link, Link*,
 		   printf("(%d>%d) : %d -> %d [%.2lf, %d]\n", neuron->id, link->id, link->source->id, neuron->id, link->weight, link->enabled);
 		);
@@ -114,7 +114,7 @@ Agent* load_agent(char filename[])
 
 			if (!isNeuronInAgent(new_agent, id_target+1))
 			{
-				neuron_target = new_BasicNeuron(id_target+1, &ACT_FUNC);
+				neuron_target = new_BasicNeuron(id_target+1, &ACT_FUNC, 0);
 				cy_insert(&new_agent->neuronList, neuron_target);
 			}
 			else
@@ -226,8 +226,9 @@ void show_agent(Agent* agent)
     plot_close(pid);
 }
 
-void plot_close(char pid_str[])
+void plot_close(char* pid_str)
 {
+	if (pid_str[0] == '\0') return;
 	char cmd[100] = "taskkill /F /PID ";    
 	strcat(cmd, pid_str);
 	system(cmd);

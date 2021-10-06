@@ -34,10 +34,12 @@ struct Link
 	bool enabled;
 };
 
-
+// TODO: store links in an hashset
 struct Neuron
 {
     uint32_t id;
+    uint32_t layer;
+
 
     bool enabled;
     bool activated;
@@ -76,7 +78,7 @@ Link* getLinkInNeuron(Neuron* neuron, int id);
 
 Link* getLinkInList(clist* neuronlist, int id);
 
-Neuron* clone_neuron(Neuron* neuron);
+Neuron* clone_neuron(Neuron* neuron, bool cloneLinks);
 
 void neuron_activate(Neuron* neuron);
 
